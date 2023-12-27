@@ -31,6 +31,7 @@ class Player:
 
     def update_scorecard(self, selected_category, selected_category_score):
         self.scorecard[selected_category] = selected_category_score
+        self.scorecard['Score'] += int(selected_category_score)
 
 
     def select_category(self, remaining_potential_categories_scores):
@@ -45,7 +46,9 @@ class Player:
 
 
     def select_berries(self, berries):
-        choices = berries.berries_list
+        choices = list(berries.berries_list)
+        choices.append("Roll Em All ;)")
+
         selected_berries = inquirer.select(
             message="Press SPACE to select berries to lock-in and then press ENTER to roll again:",
             choices=choices,

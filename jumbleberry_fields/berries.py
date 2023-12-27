@@ -68,13 +68,14 @@ class Berries:
     
 
     def roll_all(self):
-        print("Rolling Berries!")
+        print("Rolling Berries!\n")
         berry_types = list(self.berry_attributes.keys())
         probabilities = [v['probability'] for v in self.berry_attributes.values()]
         self.berries_list = random.choices(berry_types, weights=probabilities, k=self.num_of_berries)
 
  
     def roll_unselected(self, selected):
+        print("Rolling Berries!")
         unselected_indices = [index for index in range(len(self.berries_list)) if self.berries_list[index] not in selected]
         for index in unselected_indices:
             self.berries_list[index] = random.choices(list(self.berry_attributes.keys()), weights=[v['probability'] for v in self.berry_attributes.values()])[0]
