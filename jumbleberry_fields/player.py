@@ -1,3 +1,6 @@
+from berries import Berries
+
+
 from InquirerPy import prompt
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
@@ -41,17 +44,15 @@ class Player:
         return selected_category
 
 
-    def pick_category(self):
-        choices = [
-                    Choice(1, enabled=True),
-                    Choice(2, enabled=True),
-                    3,
-                    4,
-                    ]
+    def select_berries(self, berries):
+        choices = berries.berries_list.append("Roll Again")
 
         result = inquirer.select(
-            message="Selct one:", choices=choices, multiselect=True
+            message="Select berries to lock-in (SPACE) and roll again (ENTER):",
+            choices=choices,
+            multiselect=True
         ).execute()
 
+        selected_berries = [choice.value for choice in result][:-1] #[:-1] removes the "Roll Again"
 
-        self.scorecard = ...
+        return selected_berries
