@@ -14,45 +14,41 @@ from InquirerPy.base.control import Choice
 # You can keep the Player class definition for potential future use or extensions.
 class Player:
     def __init__(self):
-        self.scorecard_categories = [
-            'Jumbleberry', 
-            'Sugarberry', 
-            'Pickleberry', 
-            'Moonberry',
-            'Basket of 3', 
-            'Basket of 4', 
-            'Basket of 5', 
-            'Mixed Basket',
-            'Free Roll'
-        ]
-
-        self.scorecard = {category: None for category in self.scorecard_categories}
+        self.scorecard_categories = {
+            'Jumbleberry': None,
+            'Sugarberry': None,
+            'Pickleberry': None,
+            'Moonberry': None,
+            'Basket of 3': None,
+            'Basket of 4': None,
+            'Basket of 5': None,
+            'Mixed Basket': None,
+            'Free Roll': None
+        }
+        self.scorecard = self.scorecard_categories
         self.scorecard['Score'] = 0
 
 
-    def select_category(self):
-        # Create a list of scorecard elements that are None
-        avaliable_categories = [key for key, value in self.scorecard.items() if value is None]
+    def update_scorecard(self, selected_category, selected_category_score):
+        self.scorecard[selected_category] = selected_category_score
 
-        selected_category = inquirer.select(
+
+    def select_category(self, remaining_potential_categories_scores):
+        category_scores_list = [f"{key}: {value}" for key, value in remaining_potential_categories_scores.items()]
+        selected_category_and_score = inquirer.select(
             message="Select a category:",
-            choices=avaliable_categories,
+            choices=category_scores_list,
             multiselect=False
         ).execute()
-
-        # Perform actions based on selected categories if needed
-        return selected_category
+        selected_category, selected_category_score = selected_category_and_score.split(": ")
+        return selected_category, selected_category_score
 
 
     def select_berries(self, berries):
-        choices = berries.berries_list.append("Roll Again")
-
-        result = inquirer.select(
-            message="Select berries to lock-in (SPACE) and roll again (ENTER):",
+        choices = berries.berries_list
+        selected_berries = inquirer.select(
+            message="Press SPACE to select berries to lock-in and then press ENTER to roll again:",
             choices=choices,
             multiselect=True
         ).execute()
-
-        selected_berries = [choice.value for choice in result][:-1] #[:-1] removes the "Roll Again"
-
         return selected_berries
