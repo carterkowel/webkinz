@@ -50,8 +50,6 @@ class Game:
             print(f"Round {round_number}\n")
             time.sleep(0.5)
 
-
-
             print(f"Roll 1\n")
             time.sleep(0.5)
 
@@ -128,7 +126,15 @@ class Game:
             time.sleep(1.5)
 
 
-        with open('game_results.json', 'a') as file:
-            json.dump(self.player.scorecard, file)
-            file.write('\n')  # Add a newline to separate each game's data in the file
-        pass
+        existing_data = []
+        path = 'jumbleberry_fields/game_results.json'
+        try:
+            with open(path, 'r') as file:
+                existing_data = json.load(file)
+        except FileNotFoundError:
+            pass
+
+        existing_data.append(self.player.scorecard)
+
+        with open(path, 'w') as file:
+            json.dump(existing_data, file, indent=2)
