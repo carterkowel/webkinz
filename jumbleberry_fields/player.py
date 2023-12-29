@@ -1,17 +1,8 @@
 from berries import Berries
 
-
-from InquirerPy import prompt
 from InquirerPy import inquirer
-from InquirerPy.base.control import Choice
-from InquirerPy.separator import Separator
 
 
-from InquirerPy import inquirer
-from InquirerPy.base.control import Choice
-
-
-# You can keep the Player class definition for potential future use or extensions.
 class Player:
     def __init__(self):
         self.scorecard_categories = {
@@ -45,6 +36,7 @@ class Player:
         return selected_category, selected_category_score
 
 
+    # NOT BEING USED
     def select_berries(self, berries):
         choices = list(berries.berries_list)
         choices.append("Roll Em All ;)")
@@ -55,3 +47,38 @@ class Player:
             multiselect=True
         ).execute()
         return selected_berries
+    
+
+    def select_choice(self, berries, remaining_potential_categories_scores):
+        choices = []
+        choices.extend(berries.berries_list)
+        choices.append("Roll Em All ;)")
+        choices.extend([f"{key}: {value}" for key, value in remaining_potential_categories_scores.items()])
+
+        valid_selection = False
+
+        while not valid_selection:
+            selected_choice = inquirer.select(
+                message="Press SPACE to select berries to lock-in OR pick ONE category, press ENTER to submit:",
+                choices=choices,
+                multiselect=True
+            ).execute()
+
+            if "Roll Em All ;)" in selected_choice and len(selected_choice) == 1:
+                selected_berries = selected_choice
+                selected_category = 'NA'
+                selected_category_score = 0
+                valid_selection = True
+            elif all(berry in berries.berries_list for berry in selected_choice):
+                selected_berries = selected_choice
+                selected_category = 'NA'
+                selected_category_score = 0
+                valid_selection = True
+            elif len(selected_choice) == 1:
+                selected_category, selected_category_score = selected_choice[0].split(": ")
+                selected_berries = []
+                valid_selection = True
+            else:
+                print("Please make a valid selection")
+
+        return selected_berries, selected_category, selected_category_score

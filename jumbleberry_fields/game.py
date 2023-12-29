@@ -8,6 +8,7 @@ class Game:
         self.player = Player()
         self.berries = Berries()
         self.num_of_rounds = len(self.player.scorecard_categories)
+        self.num_of_rolls = 3
 
     def calculate_remaining_category_scores(self):
         remaining_potential_categories_scores = {key: None for key, value in self.player.scorecard.items() if value is None}
@@ -50,12 +51,34 @@ class Game:
             time.sleep(0.5)
 
 
+
+            print(f"Roll 1\n")
+            time.sleep(0.5)
+
             self.berries.roll_all()
             time.sleep(1.5)
             self.berries.print_berries_in_color()
             time.sleep(1)
 
-            selected_berries = self.player.select_berries(self.berries)
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            selected_berries, selected_category, selected_category_score = self.player.select_choice(self.berries, remaining_potential_categories_scores)
+
+            if len(selected_berries) == 0:
+                self.player.update_scorecard(selected_category, selected_category_score)
+
+                print(" ")
+                for category, score in self.player.scorecard.items():
+                    print(f"{category}: {score}")  
+
+                print(" ")
+                time.sleep(1.5)
+                continue
+
+            
+
+            print(f"Roll 2\n")
+            time.sleep(0.5)
+
             if 'Roll Em All ;)' in selected_berries:
                 self.berries.roll_all()
             else:
@@ -64,7 +87,26 @@ class Game:
             self.berries.print_berries_in_color()
             time.sleep(1)
 
-            selected_berries = self.player.select_berries(self.berries)
+            
+
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            selected_berries, selected_category, selected_category_score = self.player.select_choice(self.berries, remaining_potential_categories_scores)
+
+            if len(selected_berries) == 0:
+                self.player.update_scorecard(selected_category, selected_category_score)
+
+                print(" ")
+                for category, score in self.player.scorecard.items():
+                    print(f"{category}: {score}")  
+
+                print(" ")
+                time.sleep(1.5)
+                continue
+
+
+            print(f"Roll 3\n")
+            time.sleep(0.5)
+
             if 'Roll Em All ;)' in selected_berries:
                 self.berries.roll_all()
             else:
@@ -72,6 +114,7 @@ class Game:
             time.sleep(1.5)
             self.berries.print_berries_in_color()
             time.sleep(1)
+
 
             remaining_potential_categories_scores = self.calculate_remaining_category_scores()
             selected_category, selected_category_score = self.player.select_category(remaining_potential_categories_scores)
