@@ -31,7 +31,86 @@ class Game:
 
         return remaining_potential_categories_scores
 
-    
+
+    def simulate_random_play_highest_cat(self):
+        for round_number in range (1,self.num_of_rounds):
+            # print(f"Round {round_number}\n")
+
+            # print(f"Roll 1\n")
+            self.berries.roll_all()
+            # self.berries.print_berries_in_color()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
+
+            # print(f"Roll 2\n")
+            self.berries.roll_unselected(randomly_selected_berries)
+            # self.berries.print_berries_in_color()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
+            
+            # print(f"Roll 3\n")
+            self.berries.roll_unselected(randomly_selected_berries)
+            # self.berries.print_berries_in_color()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            highest_selected_category, highest_selected_category_score = self.player.select_highest_category(remaining_potential_categories_scores)
+            self.player.update_scorecard(highest_selected_category, highest_selected_category_score)
+
+            # print(" ")
+            # for category, score in self.player.scorecard.items():
+            #     print(f"{category}: {score}")  
+
+        existing_data = []
+        path = 'jumbleberry_fields/random_game_with_highest_cat_results.json'
+        try:
+            with open(path, 'r') as file:
+                existing_data = json.load(file)
+        except FileNotFoundError:
+            pass
+
+        existing_data.append(self.player.scorecard)
+
+        with open(path, 'w') as file:
+            json.dump(existing_data, file, indent=2)
+
+    def simulate_random_play(self):
+        for round_number in range (1,self.num_of_rounds):
+            # print(f"Round {round_number}\n")
+
+            # print(f"Roll 1\n")
+            self.berries.roll_all()
+            # self.berries.print_berries_in_color()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
+
+            # print(f"Roll 2\n")
+            self.berries.roll_unselected(randomly_selected_berries)
+            # self.berries.print_berries_in_color()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
+            
+            # print(f"Roll 3\n")
+            self.berries.roll_unselected(randomly_selected_berries)
+            # self.berries.print_berries_in_color()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            randomly_selected_category, randomly_selected_category_score = self.player.randomly_select_category(remaining_potential_categories_scores)
+            self.player.update_scorecard(randomly_selected_category, randomly_selected_category_score)
+
+            # print(" ")
+            # for category, score in self.player.scorecard.items():
+            #     print(f"{category}: {score}")  
+
+        existing_data = []
+        path = 'jumbleberry_fields/random_game_results.json'
+        try:
+            with open(path, 'r') as file:
+                existing_data = json.load(file)
+        except FileNotFoundError:
+            pass
+
+        existing_data.append(self.player.scorecard)
+
+        with open(path, 'w') as file:
+            json.dump(existing_data, file, indent=2)
 
     def start(self):
         print('''
@@ -53,6 +132,7 @@ class Game:
             print(f"Roll 1\n")
             time.sleep(0.5)
 
+            print("Rolling Berries!\n")
             self.berries.roll_all()
             time.sleep(1.5)
             self.berries.print_berries_in_color()
@@ -77,6 +157,7 @@ class Game:
             print(f"Roll 2\n")
             time.sleep(0.5)
 
+            print("Rolling Berries!\n")
             if 'Roll Em All ;)' in selected_berries:
                 self.berries.roll_all()
             else:
@@ -105,6 +186,7 @@ class Game:
             print(f"Roll 3\n")
             time.sleep(0.5)
 
+            print("Rolling Berries!\n")
             if 'Roll Em All ;)' in selected_berries:
                 self.berries.roll_all()
             else:
