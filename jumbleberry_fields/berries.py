@@ -20,7 +20,7 @@ class Berries:
             color = berry_info['color']
             print(f"{color}{berry_name}{Color.ENDC}")
         print("\n")
-
+    
 
     def calculate_total_berry_score(self):
         total_score = 0

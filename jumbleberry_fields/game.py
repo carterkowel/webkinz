@@ -10,6 +10,23 @@ class Game:
         self.num_of_rounds = len(self.player.scorecard_categories)
         self.num_of_rolls = 3
 
+    def calculate_category_score(self, category):
+        score_methods = {
+            'Jumbleberry': self.berries.calculate_berry_score('Jumbleberry'),
+            'Sugarberry': self.berries.calculate_berry_score('Sugarberry'),
+            'Pickleberry': self.berries.calculate_berry_score('Pickleberry'),
+            'Moonberry': self.berries.calculate_berry_score('Moonberry'),
+            'Basket of 3': self.berries.calculate_basket_of_3_score(),
+            'Basket of 4': self.berries.calculate_basket_of_4_score(),
+            'Basket of 5': self.berries.calculate_basket_of_5_score(),
+            'Mixed Basket': self.berries.calculate_mixed_basket_score(),
+            'Free Roll': self.berries.calculate_total_berry_score()
+        }
+
+        return score_methods[category]
+
+
+
     def calculate_remaining_category_scores(self):
         remaining_potential_categories_scores = {key: None for key, value in self.player.scorecard.items() if value is None}
 
