@@ -8,19 +8,20 @@ class Game:
         self.player = Player()
         self.berries = Berries()
         self.num_of_rounds = len(self.player.scorecard_categories)
+        self.round_number = 0
         self.num_of_rolls = 3
 
-    def calculate_category_score(self, category):
+    def calculate_category_score(self, berries, category):
         score_methods = {
-            'Jumbleberry': self.berries.calculate_berry_score('Jumbleberry'),
-            'Sugarberry': self.berries.calculate_berry_score('Sugarberry'),
-            'Pickleberry': self.berries.calculate_berry_score('Pickleberry'),
-            'Moonberry': self.berries.calculate_berry_score('Moonberry'),
-            'Basket of 3': self.berries.calculate_basket_of_3_score(),
-            'Basket of 4': self.berries.calculate_basket_of_4_score(),
-            'Basket of 5': self.berries.calculate_basket_of_5_score(),
-            'Mixed Basket': self.berries.calculate_mixed_basket_score(),
-            'Free Roll': self.berries.calculate_total_berry_score()
+            'Jumbleberry': berries.calculate_berry_score('Jumbleberry'),
+            'Sugarberry': berries.calculate_berry_score('Sugarberry'),
+            'Pickleberry': berries.calculate_berry_score('Pickleberry'),
+            'Moonberry': berries.calculate_berry_score('Moonberry'),
+            'Basket3': berries.calculate_basket_of_3_score(),
+            'Basket4': berries.calculate_basket_of_4_score(),
+            'Basket5': berries.calculate_basket_of_5_score(),
+            'MixedBasket': berries.calculate_mixed_basket_score(),
+            'FreeRoll': berries.calculate_total_berry_score()
         }
 
         return score_methods[category]
@@ -35,11 +36,11 @@ class Game:
             'Sugarberry': self.berries.calculate_berry_score('Sugarberry'),
             'Pickleberry': self.berries.calculate_berry_score('Pickleberry'),
             'Moonberry': self.berries.calculate_berry_score('Moonberry'),
-            'Basket of 3': self.berries.calculate_basket_of_3_score(),
-            'Basket of 4': self.berries.calculate_basket_of_4_score(),
-            'Basket of 5': self.berries.calculate_basket_of_5_score(),
-            'Mixed Basket': self.berries.calculate_mixed_basket_score(),
-            'Free Roll': self.berries.calculate_total_berry_score()
+            'Basket3': self.berries.calculate_basket_of_3_score(),
+            'Basket4': self.berries.calculate_basket_of_4_score(),
+            'Basket5': self.berries.calculate_basket_of_5_score(),
+            'MixedBasket': self.berries.calculate_mixed_basket_score(),
+            'FreeRoll': self.berries.calculate_total_berry_score()
         }
 
         for category, method in score_methods.items():

@@ -12,11 +12,11 @@ class Player:
             'Sugarberry': None,
             'Pickleberry': None,
             'Moonberry': None,
-            'Basket of 3': None,
-            'Basket of 4': None,
-            'Basket of 5': None,
-            'Mixed Basket': None,
-            'Free Roll': None
+            'Basket3': None,
+            'Basket4': None,
+            'Basket5': None,
+            'MixedBasket': None,
+            'FreeRoll': None
         }
         self.scorecard = self.scorecard_categories
         self.scorecard['Score'] = 0
