@@ -8,7 +8,7 @@ class Game:
         self.player = Player()
         self.berries = Berries()
         self.num_of_rounds = len(self.player.scorecard_categories)
-        self.round_number = 0
+        self.round_number = 1
         self.num_of_rolls = 3
 
     def calculate_category_score(self, berries, category):
@@ -28,8 +28,8 @@ class Game:
 
 
 
-    def calculate_remaining_category_scores(self):
-        remaining_potential_categories_scores = {key: None for key, value in self.player.scorecard.items() if value is None}
+    def calculate_remaining_category_scores(self, scorecard):
+        remaining_potential_categories_scores = {key: None for key, value in scorecard.items() if value is None}
 
         score_methods = {
             'Jumbleberry': self.berries.calculate_berry_score('Jumbleberry'),
@@ -50,26 +50,26 @@ class Game:
         return remaining_potential_categories_scores
 
 
-    def simulate_random_play_highest_cat(self):
+    def simulate_semi_random_play(self):
         for round_number in range (1,self.num_of_rounds):
             # print(f"Round {round_number}\n")
 
             # print(f"Roll 1\n")
             self.berries.roll_all()
             # self.berries.print_berries_in_color()
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
 
             # print(f"Roll 2\n")
             self.berries.roll_unselected(randomly_selected_berries)
             # self.berries.print_berries_in_color()
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
             
             # print(f"Roll 3\n")
             self.berries.roll_unselected(randomly_selected_berries)
             # self.berries.print_berries_in_color()
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             highest_selected_category, highest_selected_category_score = self.player.select_highest_category(remaining_potential_categories_scores)
             self.player.update_scorecard(highest_selected_category, highest_selected_category_score)
 
@@ -78,7 +78,7 @@ class Game:
             #     print(f"{category}: {score}")  
 
         existing_data = []
-        path = 'jumbleberry_fields/random_game_with_highest_cat_results.json'
+        path = 'jumbleberry_fields/semi_random_game_results.json'
         try:
             with open(path, 'r') as file:
                 existing_data = json.load(file)
@@ -97,19 +97,19 @@ class Game:
             # print(f"Roll 1\n")
             self.berries.roll_all()
             # self.berries.print_berries_in_color()
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
 
             # print(f"Roll 2\n")
             self.berries.roll_unselected(randomly_selected_berries)
             # self.berries.print_berries_in_color()
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             randomly_selected_berries = self.player.randomly_select_berries(self.berries) # Note: not inlcuding roll them all as an option, instead allowing random select to give 0 as option
             
             # print(f"Roll 3\n")
             self.berries.roll_unselected(randomly_selected_berries)
             # self.berries.print_berries_in_color()
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             randomly_selected_category, randomly_selected_category_score = self.player.randomly_select_category(remaining_potential_categories_scores)
             self.player.update_scorecard(randomly_selected_category, randomly_selected_category_score)
 
@@ -156,7 +156,7 @@ class Game:
             self.berries.print_berries_in_color()
             time.sleep(1)
 
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             selected_berries, selected_category, selected_category_score = self.player.select_choice(self.berries, remaining_potential_categories_scores)
 
             if len(selected_berries) == 0:
@@ -186,7 +186,7 @@ class Game:
 
             
 
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             selected_berries, selected_category, selected_category_score = self.player.select_choice(self.berries, remaining_potential_categories_scores)
 
             if len(selected_berries) == 0:
@@ -214,7 +214,7 @@ class Game:
             time.sleep(1)
 
 
-            remaining_potential_categories_scores = self.calculate_remaining_category_scores()
+            remaining_potential_categories_scores = self.calculate_remaining_category_scores(self.player.scorecard)
             selected_category, selected_category_score = self.player.select_category(remaining_potential_categories_scores)
             self.player.update_scorecard(selected_category, selected_category_score)
 
