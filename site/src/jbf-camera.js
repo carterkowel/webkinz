@@ -2,13 +2,16 @@
  * Reads the five jars from a photo of the Jumbleberry Fields game screen.
  *
  *   const r = await JBFCamera.read(fileOrImage);
- *   r.status: 'ok' | 'empty' (dice not rolled yet) | 'nojars' (couldn't find five still jars)
+ *   r.status: 'ok' | 'empty' (dice not rolled yet) | 'partial' | 'nojars' (couldn't find five still jars)
  *   r.jars:   ['J','S','P','M','F' or null] left to right, r.locked: [bool x5]
  *   r.boxes:  where each jar is, as fractions of the image ({x, y, w, h})
  *   r.board:  the rest of the screen, or null if the scorecard isn't in view:
  *             { cells: [true/false/null x9] (box shows a number), rollActive (false = ROLL greyed out),
+ *               counter: { left: 3|2|1|0 } rolls left this round from the x3 sign, or null if it isn't in view,
  *               score: { value, conf } the SCORE number, or null if it couldn't be read for sure,
  *               quads: { roll, score, cells[9] } corner points as fractions of the image }
+ *   r.view:   { size (jar spacing in camera pixels), out: { top, bottom, left, right } (edges that cut off the game) }
+ *   r.cut:    with 'nojars', the frame edge that cuts through the jars, if any ('top', 'bottom', 'left', 'right')
  *   JBFCamera.readFrame(video) does the same for the current frame of a live camera <video>.
  *
  * How it works: the dice faces are a distinctive light cyan. We find cyan blobs, keep the
@@ -16,14 +19,13 @@
  * coloured pixels inside (red / yellow / green / purple berry, or a grey-black Fly in the middle).
  * A red lid just above a jar means it is locked. Dice that are mid-roll are tilted and blurred,
  * so they fail the shape test and the photo is rejected rather than misread.
- * From the jar row it then finds the scorecard, the ROLL button and the SCORE field, and reads the
- * SCORE number with a small built-in digit matcher (no OCR library to download).
- * Tuned and checked on 16 phone photos of a laptop screen (13 readable, all read correctly; the
- * SCORE is read correctly on all 14 where it is in view).
+ * From the jar row it then finds the scorecard, the ROLL button, the roll counter and the SCORE field,
+ * and reads the SCORE and the counter with a small built-in shape matcher (no OCR library to download).
+ * Tuned and checked on 16 phone photos and 18 phone screenshots of a laptop screen.
  */
 (function (root) {
   'use strict';
-  const WIDTH = 720;
+  const SIDE = 720;
 
   function toHsv(data, n) {
     const H = new Float32Array(n), S = new Float32Array(n), V = new Float32Array(n);
@@ -65,8 +67,8 @@
   let canvas = null;
   function readPixels(img) {   // an <img>, a playing <video>, or a <canvas>
     const sw = img.videoWidth || img.naturalWidth || img.width, sh = img.videoHeight || img.naturalHeight || img.height;
-    const scale = WIDTH / sw;
-    const w = WIDTH, h = Math.round(sh * scale);
+    const scale = SIDE / Math.min(sw, sh);           // the short side becomes SIDE pixels, held either way up
+    const w = Math.round(sw * scale), h = Math.round(sh * scale);
     const c = canvas || (canvas = document.createElement('canvas'));
     if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
     const ctx = c.getContext('2d', { willReadFrequently: true });
@@ -77,7 +79,7 @@
   // ---- the SCORE number ------------------------------------------------------------------------
   // SCORE is dark digits on a white field. We cut that field out of the full-size frame, straighten
   // it, split it into digits and match each digit's shape against digit shapes taken from bold fonts
-  // and from the game's own 0 and 7. No OCR library to download: a few milliseconds a frame.
+  // and from the game's own digits. No OCR library to download: a few milliseconds a frame.
   const SCORE_AREA = [0.28, 0.8, 1.28, 1.32];        // the white SCORE field plus a margin, in jar spacings
   const OW = 200, OH = Math.round(OW * (SCORE_AREA[3] - SCORE_AREA[1]) / (SCORE_AREA[2] - SCORE_AREA[0]));
   const GW = 8, GH = 12;                              // grid a digit's shape is sampled on
@@ -85,8 +87,10 @@
   const MIN_AREA_PX = 90;                             // the SCORE area must be at least this wide in the camera frame
   let PAD = 0, INK_T = 0.5, DESKEW = true;            // digit box: extra columns, the ink level that counts, straighten slant
   // One template per entry: the digit, then GW*GH ink levels (hex), rendered from each font at 72 px
-  // and put through shape() below. Checked on all 14 photos where the SCORE is visible, and on
-  // synthetic SCORE fields with each font left out in turn (no wrong reads at camera-like resolution).
+  // and put through shape() below, plus the game's own digits cut from photos. Checked on the 27
+  // photos where the SCORE is visible, leaving each photo out of the game digits in turn: 22 read
+  // right, 5 too blurry to be sure, none wrong. The game's 4 and 8 haven't been seen yet; the fonts
+  // stand in for them.
   let TEMPLATES = [
     '00002200006effe605ffddff5afe11efbefc00bfeffb00affffb00affdfb00bfdafe11efa4ffddff506effe6000022000 100005ff80004eff7029ffff54ffffff37fe8fff26822fff00004ffe00005ffc00007ffb00008ff90000aff80000bff60 20000000006cdca307fffffe3dfd13ff845402ff80001cff3003dff6004efd4002eff75549ffffffebddddddd00000000 30002200007effe906ffddff66bb03ff80006cfe2000dffa100067ffb00000bffacb01dfd9ffddff709effe7000022000 4000000000002bb40000cff60008fff7004fdbf802ef49fa0bf707fb0fffffffddfffffff12225ff200002bb000000000 5000000000cfffffb1efffffa2ff644435ff9bb608ffffff759923efe00000bffcdc11efc8ffeeff507dffc5000000000 60001210002afffb11dffcffa7ff50887bff26730efeefff5eff96efddfd008ffafe10afe4ffecff806dffe8000022000 700000000cddddddbdffffffe46668ff80000bfb00004ff30000afc00001ef800003ff500005ff400005dd30000000000 80012200008effe807ffddff7afd00efa6ff9aff61cffffc1aff88ff9efb00cfeefd11dfe9ffddff91affff9100122100 90002200008effe607ffdeff4efb01efbff900dfddfe69ffe5fffeefe03772ffc68905ff7affcffd11bfffb2000121000',   // Arial Black
     '001aefa200bffffd14ff43ef57fc00af9afa008fbaf9007fbaf9007fbafa008fb8fc00af94ff42ef50bffffd1019efa20 100004fb00003efa0018eff8009fedf700ba2cf500100df400001ef300002ff100003ff000004fe000006fc000007fb00 205ceea205fffffd1cfb24ef7bd500af800000bf800006ff20005ff60005ff70004ff60001efb55557ffffffeaeeeeeee 303bfea202effffd18fb13ff524201ef40006bfb0000dfe4000057ef5000008fb8b4007fcafc23df93effffd203bfea20 4000057100003ff30000cff40007fef5002ecaf600bf39f705f808f80dfa9cfd8dfffffff44448fc400004fc000001760 507eeeee80afffff80df755531fe110004fedfd507ffffff56c812cfc000006fead6007fdafd34df93effffd103bed910 6006cfd6007fffff52ff71afb7fd00252afa37510bfdfffc1cffb9ef9bfc006fcafa004fc6fe41afa1cffffe302aefb30 7cddddddacffffffd57777df800004fd10000bf600003fe100008f900000cf600000ef300001ff100002fe100001dd100 804bffb302efddfe27fc00cf67fa00bf62ef99fd106ffff504fe67ef4bf7008facf6007fbbfb01cf94ffddfe204bffb30 903bfea202effffd19fb13ef7df5009facf700bfc8fe9bffd1cfffdfc005739fb24200cf8afa16ff35fffff8006dfd600',   // Arial Bold
@@ -105,7 +109,7 @@
     '00025510007fffe504ffcdfe2bf901cf8ef3006fcff1004feff1004fdef3006fcbf900cf84ffccfe206effe4000255100 100cfff2002efff100029ff100009fe00000bfd00000bfc00000cfb00000dfa00000ef900001ef800002ff700002ff600 2006ab8201bffffe38ff65efbdfa008fe78400afd00002ef80000cfd10009ff50006ff90003efe5431dfffffc7bbbbbb9 302aefb401dfffff47fe32cfb696008fb00015ef60009ffb00009efe500001cfd795007fe9fd32cfc2efffff503bffc50 4000035300002efa0000cffa0008fcfb004f97fc01dd17fd0af417fd1fffffffebcccdffc00004fe100003ff100001551 50afffff30bfffff30cfa11100dfd84000effff801b88dff500002efb00000bfc72001dfbbe85bff6cfffffa019efc600 600026620001dfb0000afe20006ff40001effdb507ffffff5cfb21cfcef5007fedf800bfc8ffcdff51afffe7000365100 744444444dffffffc5888aff700006ff20000bfc00001ef700006ff20000bfb00002ff600006ff200002bb00000001000 803bffb302effffe27fe43ef88fd00bf84ff54ef509ffffa01bfeefb18fd11cf9cf9008fcbfe32dfc5ffffff604bffc50 90015630007efffa16ffdcff7cfb008fcef7005fecfc22cfc5ffffff705cdffe10004ff60002efa0001cfd10002663000',   // Tw Cen Bold
     '003bffb201dfeefd16ff23ff5afd00ef9cfc00dfbcfc00cfccfc00cfccfc00dfbafd00ef96ff33ff51dfeefd103bffb20 10007fe10019ffd000bfffd000c9dfc00030dfb00001efa00001ff900002ff800003ff700004ff6003ffffff44ffffff3 205dfe9105fffffc0bfc4aff4ef604ff714205ff60000bfe20007ff80006ffa0006ff80006ff83333affffffd9ffffffd 303bffb302effffe18fc37ff513302ff600138fe2006fff50004befd200002ef97a500dfbafc36ffa3efffff403bffb40 40005eea0000cffb0006fefb001dd9fb008f59fb02ec08fc09f508fc0efaadffddfffffff3444cfd40000bfd00000aec0 509fffff90bfffff70df533311ef111001fe9fe913ffffff829b34efd000009fd58500afcdfc46ef96fffffe206cfea20 6007dfd5007ffeff42ef50afa6fd003519fb26500afceffc1aff99ff7afc00cf98fa00cf95fd12ef71cfeefe202bfea20 79ffffff89ffffff924444df500005fc00001df600005ff20000afd00001dfa00002ff900004ff800004ff800004ff800 804bffc402efccfe38fd00cf79fd10bf76ffd7fe20bffff701afffff49fb17ffbcf5009fccf800afb7ffbcff406dffb40 903bffb202efeefc18fe22ef4afa00bf7afc01df97ffcdff91cffeef801562cf712201ef49fb06fd14ffeff6006dfd600',   // Franklin Gothic Demi Cond
     '001aee9101cffffb06ff46ff4bfb00df9df900cfbdf900bfcdf900bfcdf900cfbbfc00ef96ff46ff41cffffb002afe910 1003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300 206cfea208fffffe18b43bff630004ff700004ff400009fc00002ff50000cfa00007fd10004ff96651dfffffdbffffffd 32cffd8103fdeffb01201bff200007ff10002df90001ffc10001dffa000009ff400004ff64301aff46fdeffc03befd810 400002a700001cfb00009ffc0005fffc002edbfd01bf48fe08f707fe1dffefffcbeeeeffc00005ff300004ff400002bb3 509fffff709fffff70afc66630afa00000bfc63000bffff800679eff400004ff800003ff75734cff57fffffc03befd810 60009ff40003ffa0000cfe20006ff70001effb8207fffffe2bff99ff9dfb00bfccfa00afcafe44ef93effffe203bffa20 7cffffffcbffffff822227ff40000afe10000dfb00003ff700007ff30000bfd00001efa00004ff600008ff2000028b000 804bfeb203efccfe18fe11ef69fd01ef74ff45ff309ffff704efbbfe3cfc01dfadfa00bfccfc01efa5ffccfe305cffb30 902aefb302dffffe38fe54efacfb00bfdcfc00cfd9ff9affb2dfffff7028affe10006ff70002efc1000aff40004ff9000',   // Gill Sans Bold
-    '0039bb8201afffe915efddfe59fc34df8afa01bfabe901afabf801afaafa01bf99fc33df86efccfe51afffe91029cc820 75bbbbbb57fffffd54bbcef921224cd500006da20001ae810003de600005ed500006ed400007ee500007fe610005ca500',   // the game's own 0 and 7, from 14 phone photos
+    '0038ba8302aeffe926eecced59fc44ce8af912aeaae8119eaae8119faaf912afa9ec44df86eecced529efee92038aa830 100688631019cc84102add94115bffb6235aefc63348dfc63236cfb53225beb52125ad9310149b7100138a60000268400 2369a842059ceea6248befd832589dd9313569a7212457852135676311588741029dc85103bfeb8422aeecb83159aa973 30599a96106aceb51036bd710016cc510038cb7310257ab8201126cc401115de514338ee44a89dfd34bcdfd81269a9730 5036bdb71158dfc711568863015553100169a85300358996100125771000146710224798117adeea11aeffe81169cb730 6001356520159a85104bda41019ed83203cfda7526efcaba58fe86bd79fc439e99fc43ae97dd78de64adbcea314677741 75bbbbbb47effffd54abbef921224cd500005da200019e810003ce600005ee500006ed400006ee500007ee610005ba500 91589a8524adddea46ccaadc68b9559b88b9559b87bb99cd74accdfd6258befc40137bc8301369951247a952036875200',   // the game's own 0, 1, 2, 3, 5, 6, 7 and 9, averaged from 27 phone photos and screenshots
   ].join(' ');
   let TPL = null, lastField = null;
   const unit = (v) => {
@@ -315,6 +319,70 @@
     return [u0, v0, u0 + COL_W, v0 + ROW_H];
   };
 
+  // ---- the roll counter ------------------------------------------------------------------------
+  // A tilted green sign right of ROLL shows yellow "x3", "x2" or "x1": the rolls left this round.
+  // It is blank once the last roll is used. x3 with berries in the jars means a box was just scored.
+  const SIGN_AREA = [4.25, 0.55, 5.6, 1.85], SIGN_PX = 60;   // where to look (jar spacings), samples per spacing
+  // the counter's 1, 2 and 3, averaged from 16 photos (checked leaving each photo out: no wrong reads)
+  let COUNTER_TPL = '101369d5006efff5004ffff3001aefe30001cfd10000bfc10001dfa00002efa00002ef800003ef900005ff8000049c700 206cca6004efffe504ccbefd204209fe40001afe40019efb203bed9301bfc40005ef821003efedca21cfffff30359bcd3 305da742006ffffd2014aff70002bf91000bff800003aef8000008fe300002ff73b626ff98ffefff73cffffc2027cea30', CTPL = null;
+  function counterTemplates() {
+    if (CTPL) return CTPL;
+    CTPL = [];
+    for (const t of COUNTER_TPL.split(' ')) {
+      if (t.length !== 1 + GW * GH) continue;
+      const v = new Float32Array(GW * GH);
+      for (let i = 0; i < GW * GH; i++) v[i] = parseInt(t[i + 1], 16) / 15;
+      const u = unit(v); if (u) CTPL.push({ d: +t[0], v: u });
+    }
+    return CTPL;
+  }
+  let lastCounter = null;
+  function readCounter(H, S, V, w, h, P) {
+    const A = SIGN_AREA, gw = Math.round((A[2] - A[0]) * SIGN_PX), gh = Math.round((A[3] - A[1]) * SIGN_PX), n = gw * gh;
+    const yel = new Uint8Array(n), grn = new Uint8Array(n), seen = new Uint8Array(n);
+    let inside = 0, ng = 0;
+    lastCounter = null;
+    for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+      const [x, y] = P(A[0] + (i + 0.5) / SIGN_PX, A[1] + (j + 0.5) / SIGN_PX), xi = Math.round(x), yi = Math.round(y), o = j * gw + i;
+      if (xi < 0 || yi < 0 || xi >= w || yi >= h) continue;
+      seen[o] = 1; inside++;
+      const p = yi * w + xi, hh = H[p], ss = S[p], vv = V[p];
+      if (hh > 42 && hh < 70 && ss > 0.45 && vv > 0.6) yel[o] = 1;
+      else if (hh >= 70 && hh < 135 && ss > 0.4 && vv > 0.35) { grn[o] = 1; ng++; }
+    }
+    if (inside < 0.3 * n || ng < 0.12 * SIGN_PX * SIGN_PX) return null;   // the sign isn't in view
+    // the digit: a yellow piece about half a jar spacing tall, with the green sign all round it
+    const ringGreen = (c) => {
+      let g = 0, t = 0; const m = Math.round(0.08 * SIGN_PX);
+      for (let j = c.y0 - m; j <= c.y1 + m; j++) for (let i = c.x0 - m; i <= c.x1 + m; i++) {
+        if (i < 0 || j < 0 || i >= gw || j >= gh) { t++; continue; }
+        if (j >= c.y0 && j <= c.y1 && i >= c.x0 && i <= c.x1) continue;
+        t++; if (grn[j * gw + i] || yel[j * gw + i]) g++;
+      }
+      return t ? g / t : 0;
+    };
+    const parts = components(yel, gw, gh).filter((c) => c.n >= 8);
+    const onSign = parts.filter((c) => ringGreen(c) > 0.45);
+    const digs = onSign.filter((c) => c.h >= 0.3 * SIGN_PX && c.h <= 0.7 * SIGN_PX && c.w <= 0.55 * SIGN_PX && c.fill < 0.75);
+    lastCounter = { yel, grn, seen, gw, gh, parts, digs };
+    // a blank sign (no rolls left): a big green sign with nothing yellow on it
+    if (!digs.length) return !onSign.length && ng >= 0.3 * SIGN_PX * SIGN_PX ? { left: 0 } : null;
+    const d = digs.reduce((a, c) => (c.h * c.n > a.h * a.n ? c : a));
+    if (d.x1 >= gw - 1 || d.y1 >= gh - 1 || d.x0 <= 0 || d.y0 <= 0) return null;   // cut off by the region edge
+    for (let j = d.y0; j <= d.y1; j++) for (let i = d.x0; i <= d.x1; i++) if (!seen[j * gw + i]) return null;   // cut off by the frame edge
+    const ink = new Float32Array(n);
+    for (let j = d.y0; j <= d.y1; j++) for (let i = d.x0; i <= d.x1; i++) ink[j * gw + i] = yel[j * gw + i];
+    const u = unit(shape(ink, gw, d.x0, d.y0, d.x1 + 1, d.y1 + 1));
+    lastCounter.shape = u ? shape(ink, gw, d.x0, d.y0, d.x1 + 1, d.y1 + 1) : null;
+    if (!u) return null;
+    const per = [-1, -1, -1, -1];
+    for (const t of counterTemplates()) { let s = 0; for (let i = 0; i < u.length; i++) s += u[i] * t.v[i]; if (s > per[t.d]) per[t.d] = s; }
+    const order = [1, 2, 3].map((k) => [per[k], k]).sort((a, b) => b[0] - a[0]);
+    lastCounter.sims = order;
+    if (order[0][0] < 0.6 || order[0][0] - order[1][0] < 0.1) return null;
+    return { left: order[0][1] };
+  }
+
   function board(grp, H, S, V, w, h) {
     const xs = grp.map((d) => d.cx), ys = grp.map((d) => d.cy);
     const g = Math.hypot(xs[4] - xs[0], ys[4] - ys[0]) / 4, ang = Math.atan2(ys[4] - ys[0], xs[4] - xs[0]);
@@ -362,10 +430,13 @@
       raw.push([+num.toFixed(3), +side.toFixed(3)]);
     }
     const green = frac(P, ROLL_BTN, 10, 3, (hh, ss, vv) => hh > 65 && hh < 115 && ss > 0.45 && vv > 0.45);
+    let counter = null;
+    try { counter = readCounter(H, S, V, w, h, P); } catch (e) { counter = null; }
     return {
       P, fit: +best.s.toFixed(2), raw, prm: [best.sy, best.a, best.k].map((x) => +x.toFixed(2)),
       cells,                                            // true = shows a number, false = blank, null = can't tell (glare)
       rollActive: green > 0.4 ? true : green < 0.1 ? false : null,   // greyed out = no rolls left
+      counter,                                          // { left: 3|2|1|0 } rolls left this round, or null if not in view
       quads: { roll: quad(ROLL_BTN), score: quad(SCORE_BOX), cells: [0, 1, 2, 3, 4, 5, 6, 7, 8].map((b) => quad(cellBox(b, 'cell'))) },
     };
   }
@@ -375,7 +446,8 @@
     const isCyan = (i, vmin) => H[i] > 172 && H[i] < 208 && S[i] > 0.12 && V[i] > vmin;
     const mask = new Uint8Array(n);
     for (let i = 0; i < n; i++) mask[i] = isCyan(i, 0.62) && S[i] < 0.55 ? 1 : 0;
-    let cand = components(mask, w, h).filter((c) => c.n > 60 && c.w / c.h > 0.6 && c.w / c.h < 1.6 && c.fill > 0.38 && c.fill < 0.68);
+    const blobs = components(mask, w, h);
+    let cand = blobs.filter((c) => c.n > 60 && c.w / c.h > 0.6 && c.w / c.h < 1.6 && c.fill > 0.38 && c.fill < 0.68);
     cand = cand.sort((a, b) => b.n - a.n).slice(0, 14);
     let best = null;
     for (let grp of combos(cand, 5)) {
@@ -389,7 +461,16 @@
       const score = std(gaps) / mean(gaps) + 0.5 * std(ns) / mean(ns);
       if (!best || score < best.score) best = { score, grp };
     }
-    if (!best) return { status: 'nojars' };
+    if (!best) {
+      // dice cut off by an edge of the frame: say which edge, so the player can aim the camera
+      const edge = { top: 0, bottom: 0, left: 0, right: 0 };
+      for (const c of blobs) {
+        if (c.n < 150) continue;
+        if (c.y0 === 0) edge.top++; if (c.y1 === h - 1) edge.bottom++; if (c.x0 === 0) edge.left++; if (c.x1 === w - 1) edge.right++;
+      }
+      const cut = Object.keys(edge).find((k) => edge[k] >= 3) || null;
+      return { status: 'nojars', cut };
+    }
 
     const jars = [], locked = [], detail = [];
     // where each jar is, as fractions of the frame (for drawing on top of a live camera view)
@@ -431,12 +512,35 @@
     }
     let brd = null;
     try { brd = board(best.grp, H, S, V, w, h); } catch (e) { brd = null; }
+    const view = framing(best.grp, brd && brd.P, w, h, scale);
     if (brd) {
       try { brd.score = src ? readScore(src, brd.P, scale) : null; } catch (e) { brd.score = null; }
+      lastP = { P: brd.P, scale, w, h };
       delete brd.P;
     }
-    if (jars.every((j) => j === null)) return { status: 'empty', jars, locked, boxes, board: brd, detail };
-    return { status: jars.includes(null) ? 'partial' : 'ok', jars, locked, boxes, board: brd, detail };
+    if (jars.every((j) => j === null)) return { status: 'empty', jars, locked, boxes, board: brd, view, detail };
+    return { status: jars.includes(null) ? 'partial' : 'ok', jars, locked, boxes, board: brd, view, detail };
+  }
+
+  // How big the game looks and which edges of the frame cut it off, for "move closer / move back"
+  // hints. The whole game runs from the jars' lids to the scorecard's bottom edge, and from the
+  // scorecard's left edge to the roll counter (in jar spacings from the first jar).
+  const GAME_AREA = [-0.55, -0.95, 5.15, 2.4];
+  let lastP = null;
+  function framing(grp, P, w, h, scale) {
+    const xs = grp.map((d) => d.cx), ys = grp.map((d) => d.cy);
+    const g = Math.hypot(xs[4] - xs[0], ys[4] - ys[0]) / 4, ang = Math.atan2(ys[4] - ys[0], xs[4] - xs[0]);
+    const c = Math.cos(ang), sn = Math.sin(ang);
+    const at = P || ((u, v) => [xs[0] + g * (u * c - v * sn), ys[0] + g * (u * sn + v * c)]);   // no scorecard yet: assume straight on
+    const A = GAME_AREA, out = { top: false, bottom: false, left: false, right: false }, m = 0.01;
+    for (const t of [0, 0.5, 1]) {
+      for (const [u, v] of [[A[0] + t * (A[2] - A[0]), A[1]], [A[0] + t * (A[2] - A[0]), A[3]], [A[0], A[1] + t * (A[3] - A[1])], [A[2], A[1] + t * (A[3] - A[1])]]) {
+        const [x, y] = at(u, v);
+        if (y < -m * h) out.top = true; if (y > (1 + m) * h) out.bottom = true;
+        if (x < -m * w) out.left = true; if (x > (1 + m) * w) out.right = true;
+      }
+    }
+    return { size: +(g / scale).toFixed(1), out };    // size: jar spacing in camera pixels
   }
 
   // onload rather than img.decode(): works in every browser, including older phone browsers
@@ -457,7 +561,8 @@
     // one frame of a live <video>, synchronously (about 30 ms)
     readFrame: (video) => analyse(readPixels(video)),
     // internals of the SCORE reader, for the tests and the template maker
-    _ocr: { readField, shape, classify, GW, GH, OW, OH, last: () => lastField,
+    _ocr: { readField, shape, classify, GW, GH, OW, OH, last: () => lastField, lastP: () => lastP,
       setTemplates: (t) => { TEMPLATES = t; TPL = null; }, setSure: (s, m) => { MIN_SIM = s; MIN_MARGIN = m; }, setBox: (p, t, ds) => { PAD = p; INK_T = t; DESKEW = ds !== 0; } },
+    _counter: { last: () => lastCounter, setTemplates: (t) => { COUNTER_TPL = t; CTPL = null; } },
   };
 })(typeof window !== 'undefined' ? window : globalThis);

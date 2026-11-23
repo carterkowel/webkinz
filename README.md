@@ -2,7 +2,7 @@
 
 An exact solver for the Webkinz dice game *Jumbleberry Fields*, plus tools that help players use it: a strategy report, a live helper for real games, a practice game with a coach and trainer, and a one-page cheat sheet.
 
-**Use it:** <https://carterkowel.github.io/webkinz/>. On a computer, scan the QR code with your phone, then point the phone at your game: it shows which jars to lock and which box to click.
+**Use it:** <https://carterkowel.github.io/webkinz/>. On a computer, scan the QR code with your phone, then prop the phone sideways facing your game: it shows which jars to lock and which box to click, and keeps score by itself.
 
 ![Cheat sheet](site/dist/cheatsheet.png)
 
@@ -26,7 +26,7 @@ Everything in `site/dist/` runs in the browser with no server. It is published t
 | `index.html` | **Jumbleberry Fields, Solved**: the report, with charts, the par sheet, worked examples, and the helper and practice game embedded |
 | `helper.html` | **Helper** for real games: tap in your berries, snap a photo of the game screen, or point your phone's live camera at it, and it tells you which jars to lock or which box to fill, with live odds of 121+ and 141+ |
 | `play.html` | **Bramble Dice**: an original practice game with the same odds and scoring math, a coach, a trainer mode, an end-of-game review and an optional shared leaderboard |
-| `method.html` | **How we solved it**, step by step, with a live "ask the solver" panel |
+| `method.html` | **How I solved it**, step by step, with a live "ask the solver" panel |
 | `cheatsheet.html` / `.png` | **One-page cheat sheet**, printable or as an image |
 
 See [`site/README.md`](site/README.md) for hosting, embedding the game or helper in your own page, and setting up the leaderboard.

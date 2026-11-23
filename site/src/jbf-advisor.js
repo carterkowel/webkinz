@@ -77,8 +77,12 @@
   .camlabel { display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--accent); color:var(--accent); border-radius:10px; padding:7px 12px; cursor:pointer; font-weight:800; font-size:.9rem; }
   .camlabel:focus-within { outline:3px solid var(--accent); outline-offset:2px; }
   .cammsg { font-size:.82rem; color:var(--ink2); flex:1 1 12rem; min-width:0; } .cammsg.err { color:#c0392b; }
+  .camtools { border-top:1px solid var(--line); padding-top:10px; }
+  .camtools summary { font-weight:700; color:var(--ink2); }
+  .camtools .cam { margin-top:10px; }
   .live { position:fixed; inset:0; z-index:2147483000; background:#000; color:#fff; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; }
   .live[hidden] { display:none; }
+  .live .stage { position:absolute; inset:0; overflow:hidden; }
   .live video { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
   .live .ov { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
   .live .mk { fill:none; stroke:rgba(255,255,255,.7); stroke-width:2; }
@@ -89,20 +93,31 @@
   @keyframes pulse { from { stroke-opacity:1; fill-opacity:1; } to { stroke-opacity:.35; fill-opacity:.3; } }
   @media (prefers-reduced-motion: reduce) { .live .go { animation:none; } }
   .live .okl { fill:#3ddc84; } .live .badl { fill:#ff5a5a; } .live .gol { fill:#fff; font-size:24px; stroke-width:5px; }
-  .live .ask { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:.9rem; flex-basis:100%; }
-  .live .ask input { width:5.5em; padding:7px 8px; border-radius:8px; border:0; font:inherit; color:#15131c; }
-  .live .lb.on { outline:3px solid #ffd23f; }
   .total { font-size:.88rem; color:var(--ink2); } .total input { width:5em; margin-left:4px; border:1px solid var(--line); border-radius:6px; padding:2px 4px; background:var(--bg); }
   .live .lbl { fill:#fff; font:800 17px system-ui,sans-serif; text-anchor:middle; paint-order:stroke; stroke:#000; stroke-width:4px; }
   .live .lk { fill:#ffd23f; }
-  .ltop { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; gap:8px;
-    padding:max(10px, env(safe-area-inset-top)) 12px 18px; background:linear-gradient(rgba(0,0,0,.75), transparent); font-size:.85rem; }
-  .lclose, .lb { background:rgba(255,255,255,.95); color:#15131c; border:0; border-radius:10px; padding:9px 14px; font-weight:800; cursor:pointer; }
-  .lbot { position:absolute; left:0; right:0; bottom:0; padding:28px 16px max(16px, env(safe-area-inset-bottom)); display:grid; gap:6px;
+  .ltop { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-start; gap:8px;
+    padding:max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 18px max(12px, env(safe-area-inset-left));
+    background:linear-gradient(rgba(0,0,0,.75), transparent); font-size:.85rem; }
+  .lstat { line-height:1.6; padding-top:4px; }
+  .lstat button { background:none; border:0; padding:0; color:inherit; font:inherit; cursor:pointer; text-decoration:underline dotted; text-underline-offset:3px; }
+  .lclose { background:rgba(255,255,255,.95); color:#15131c; border:0; border-radius:10px; padding:9px 14px; font-weight:800; cursor:pointer; flex:none; }
+  .lbot { position:absolute; left:0; right:0; bottom:0; display:grid; gap:6px;
+    padding:28px max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
     background:linear-gradient(transparent, rgba(0,0,0,.85) 30%); }
   .lwhat { font-size:1.45rem; font-weight:800; line-height:1.25; }
-  .lwhy { font-size:.9rem; opacity:.85; }
-  .lbtns { display:flex; gap:8px; flex-wrap:wrap; }
+  .lwhy { font-size:.9rem; opacity:.85; } .lwhy:empty { display:none; }
+  /* sideways: the camera picture on the left, what to do in a panel on the right, so nothing covers the game */
+  @media (orientation: landscape) {
+    .live { display:grid; grid-template-columns:minmax(0,1fr) clamp(190px, 30vw, 360px); grid-template-rows:auto minmax(0,1fr); }
+    .live .stage { position:relative; inset:auto; grid-column:1; grid-row:1 / span 2; }
+    .ltop { position:static; grid-column:2; grid-row:1; background:none; flex-wrap:wrap-reverse; justify-content:flex-end;
+      padding:max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 4px 12px; }
+    .lstat { flex:1 1 100%; }
+    .lbot { position:static; grid-column:2; grid-row:2; background:none; align-content:start; overflow-y:auto;
+      padding:8px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) 12px; }
+    .lwhat { font-size:1.25rem; }
+  }
   .meter { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; }
   .meter div { background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:6px 8px; display:grid; gap:0; }
   .meter b { font-size:1.15rem; font-variant-numeric:tabular-nums; } .meter span { font-size:.7rem; color:var(--ink2); line-height:1.25; }
@@ -125,8 +140,21 @@
     }
     return MAXP;
   };
-  const liveState = () => ({ last: null, count: 0, cur: null, stable: null, note: '', startup: true, adoptPending: true, sawEmpty: false, prov: [], askRoll: false, lockedOK: null,
-    frame: 0, sc: { v: null, n: 0 }, needN: 0, typeTotal: false, autoTotal: null, autoAt: -99, misN: 0 });
+  // what the live camera has seen so far (times are performance.now() milliseconds)
+  const liveState = () => ({
+    frame: 0, cur: null,                       // the latest frame read
+    good: null, goodAt: -1e9, lost: 0,         // the latest frame showing the game, and since when it's been out of view (0 = in view)
+    key: null, keyN: 0, keyAt: 0, st: null,    // the jars must read the same twice in a row; st = that steady reading
+    win: [], B: null, ctrAt: 0,                // recent scorecard / ROLL / roll counter readings, their vote, when the counter last changed
+    sc: { v: null, n: 0, at: -99 }, drift: { v: null, n: 0 },   // the SCORE number, and how long it has disagreed with the helper
+    hint: '', hintN: 0, hintShown: '',         // camera-position tip, shown once it holds for a few frames
+    stale: null,                               // berries left in the jars after a box was clicked, until the next roll
+    startup: true, adoptPending: true, prov: [], unsure: false, rollOff: false, lockSeen: false,
+    guess: null, ended: null, note: '', noteAt: -1e9, pend: 0,   // pend: when a click was first noticed, while working out which box
+    firstAt: 0, extraKey: '', extraAt: 0,      // when the game was first seen; boxes the game shows filled that we have open, and since when
+  });
+  const same = (a, b) => !!a && !!b && a.length === b.length && a.every((x, i) => x === b[i]);
+  const NINE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
   class JbfAdvisor extends HTMLElement {
     constructor() {
@@ -260,6 +288,10 @@
     render() {
       const s = this.s, adv = this.advice(), done = this.mask === 511;
       const liveOK = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+      // the camera tools are for a phone pointed at the game; on a computer they sit folded away at the bottom
+      const phone = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+      const camRow = window.JBFCamera ? `<div class="cam">${liveOK ? '<button class="camlabel" data-act="live">Live camera</button>' : ''}<label class="camlabel">Read jars from a photo<input type="file" accept="image/*" capture="environment" data-photo hidden></label>
+          <span class="cammsg ${this.cam && this.cam.err ? 'err' : ''}" aria-live="polite">${this.cam ? this.cam.msg : phone ? 'Point your phone at the game once the dice stop. The photo stays on your device.' : 'These read the game through a phone camera. On a computer, scan the QR code to open the helper on your phone.'}</span></div>` : '';
       const next = s.sel !== null ? s.sel : s.jars.findIndex((j) => j === null);
       const jar = (j, i) => {
         const lock = adv && adv.lockMap && adv.lockMap[i];
@@ -304,8 +336,7 @@
           <span class="rolls" role="group" aria-label="Which roll">${[1, 2, 3].map((r) => `<button data-roll="${r}" aria-pressed="${s.roll === r}">Roll ${r}</button>`).join('')}</span></div>
         ${this.meter()}
         <div class="jars">${s.jars.map(jar).join('')}</div>
-        ${window.JBFCamera ? `<div class="cam">${liveOK ? '<button class="camlabel" data-act="live">Live camera</button>' : ''}<label class="camlabel">Read jars from a photo<input type="file" accept="image/*" capture="environment" data-photo hidden></label>
-          <span class="cammsg ${this.cam && this.cam.err ? 'err' : ''}" aria-live="polite">${this.cam ? this.cam.msg : 'Point your phone at the game once the dice stop. The photo stays on your device.'}</span></div>` : ''}
+        ${phone ? camRow : ''}
         <div class="palette" role="group" aria-label="Add a berry">${BERRY.map((b, i) => `<button class="pal" data-berry="${i}" aria-label="Add ${b.name}"><span class="chip c-${b.tok}">${b.k}</span><small>${b.name}</small></button>`).join('')}</div>
         ${adviceHtml}
         <div class="stack" style="gap:6px"><div class="row" style="justify-content:space-between"><span class="lab">Scorecard</span>
@@ -314,6 +345,7 @@
           <div class="card9">${[0, 1, 2, 3, 4, 5, 6, 7, 8].map(bx).join('')}</div>
           <div class="note">Joining mid-game? Use “Edit scores” to fill in the boxes you've used. Unofficial fan tool, not affiliated with Webkinz or Ganz.</div>
         </div>
+        ${!phone && camRow ? `<details class="camtools" ${this.cam ? 'open' : ''}><summary>Camera options (for phones)</summary>${camRow}</details>` : ''}
       </div>`;
       this.renderProgress();
       const q = (sel) => this.root.querySelectorAll(sel);
@@ -338,18 +370,34 @@
       if (this.liveOn) this.renderLive();
     }
 
-    // ---- live camera: watch the game screen and show what to do next, right on top of it
+    // ---- live camera: watch the game screen and show what to do next, right on top of it.
+    // Nothing needs confirming: the camera reads the jars, the lids, the ROLL button, the roll
+    // counter (x3, x2, x1), the scorecard and the SCORE, and the helper follows the game from those.
     async startLive() {
       if (!window.isSecureContext) {
         this.cam = { msg: 'The live camera only works when the helper is opened from an https:// address. Use "Read jars from a photo" for now.', err: true };
         this.render(); return;
       }
       const live = this.root.querySelector('.live');
-      live.innerHTML = `<video playsinline muted autoplay></video><svg class="ov" aria-hidden="true"></svg>
+      live.innerHTML = `<div class="stage"><video playsinline muted autoplay></video><svg class="ov" aria-hidden="true"></svg></div>
         <div class="ltop"><span class="lstat">Starting the camera…</span><button class="lclose">Close</button></div>
-        <div class="lbot"><div class="lwhat">Starting the camera…</div></div>`;
+        <div class="lbot" aria-live="polite"><div class="lwhat">Starting the camera…</div><div class="lwhy"></div></div>`;
       live.hidden = false; this.liveOn = true; this.L = null;
+      // full screen where the browser allows it (Android); iPhones keep the browser bars
+      try { if (live.requestFullscreen && !document.fullscreenElement) live.requestFullscreen().catch(() => {}); } catch (e) { /* optional */ }
       live.querySelector('.lclose').addEventListener('click', () => this.stopLive());
+      // the status line's roll and score can be tapped, for the rare time the camera can't tell
+      live.querySelector('.ltop').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-l]');
+        if (!b || !this.L) return;
+        if (b.dataset.l === 'roll') { this.s.roll = this.s.roll % 3 + 1; this.L.unsure = false; this.liveCommit(); }
+        if (b.dataset.l === 'score') {
+          const t = window.prompt('Type the SCORE shown in the game');
+          if (t !== null && t.trim() !== '' && +t >= 0) this.setTotal(+t);
+        }
+      });
+      this.onResize = () => this.renderLive();
+      addEventListener('resize', this.onResize);
       const video = live.querySelector('video');
       try {
         this.stream = await navigator.mediaDevices.getUserMedia({ audio: false,
@@ -363,146 +411,348 @@
       video.srcObject = this.stream;
       try { await video.play(); } catch (e) { /* muted autoplay is allowed */ }
       try { this.wake = await navigator.wakeLock.request('screen'); } catch (e) { /* optional: keeps the phone screen on */ }
-      // startup: nothing about this game has been seen through the camera yet
-      this.L = liveState();
+      this.liveReset();
       const tick = () => {
         if (!this.liveOn) return;
+        const t0 = performance.now();
         if (video.readyState >= 2 && video.videoWidth) {
-          try { this.liveFrame(JBFCamera.readFrame(video)); } catch (e) { /* skip a bad frame */ }
+          try { this.liveFrame(JBFCamera.readFrame(video), video.videoHeight > video.videoWidth); } catch (e) { /* skip a bad frame */ }
         }
-        this.timer = setTimeout(tick, 250);
+        this.timer = setTimeout(tick, Math.max(40, 150 - (performance.now() - t0)));   // about 4 to 6 frames a second on a phone
       };
       tick();
     }
     stopLive() {
       this.liveOn = false; clearTimeout(this.timer);
+      if (this.onResize) { removeEventListener('resize', this.onResize); this.onResize = null; }
       if (this.stream) { this.stream.getTracks().forEach((t) => t.stop()); this.stream = null; }
       if (this.wake) { this.wake.release().catch(() => {}); this.wake = null; }
+      try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {}); } catch (e) { /* not full screen */ }
       const live = this.root && this.root.querySelector('.live');
       if (live) { live.hidden = true; live.innerHTML = ''; }
     }
-    liveFrame(r) {
-      const L = this.L, b = r.board;
-      // everything we read must hold for 3 frames in a row (about 3/4 of a second) before we act on it
-      const key = [r.status, (r.jars || []).join(''), (r.locked || []).map(Number).join(''),
-        b ? b.cells.map((c) => (c === null ? '?' : c ? 1 : 0)).join('') + (b.rollActive === false ? 'g' : '') : 'nb'].join('|');
-      if (key === L.last) L.count++; else { L.last = key; L.count = 1; }
-      L.cur = r; L.frame++;
-      if (L.count === 3) { L.stable = r; this.liveStep(r); }
-      // the SCORE number counts once the same reading holds for 4 frames (about a second)
-      const sv = b && b.score ? b.score.value : null;
+    liveReset() { this.L = liveState(); }       // startup: nothing about this game has been seen through the camera yet
+    liveCommit() { this.s.sel = null; this.save(); this.render(); }
+    // a new hand: forget scorecard / ROLL / counter readings from before it, so they can't be mistaken for news
+    liveFreshVotes() { this.L.win = []; this.L.B = null; }
+    // the SCORE once the same number has been read 3 frames running (null if not readable right now)
+    liveScoreNow() { const L = this.L; return L.sc.n >= 3 && L.frame - L.sc.at <= 4 ? L.sc.v : null; }
+    // open boxes that would add exactly what the SCORE went up by
+    fitsJump(v) {
+      const s = this.s, d = v - this.score, hand = this.hand();
+      return d > 0 && s.jars.every((j) => j !== null) ? NINE.filter((c) => s.boxes[c] === null && BerryEngine.scoreBox(hand, c) === d) : [];
+    }
+    // boxes that show a number on screen but are open in our scorecard
+    newOnScreen(screen) { return screen ? NINE.filter((c) => screen[c] === true && this.s.boxes[c] === null) : []; }
+    // vote the last few readings of the scorecard, ROLL button and roll counter, so one odd frame changes nothing
+    liveVote() {
+      const win = this.L.win;
+      if (!win.length) return null;
+      const pick = (vals, need) => {
+        const n = new Map(); let seen = 0;
+        vals.forEach((v) => { if (v !== null && v !== undefined) { seen++; n.set(v, (n.get(v) || 0) + 1); } });
+        let best = null, bn = 0;
+        n.forEach((cnt, v) => { if (cnt > bn) { bn = cnt; best = v; } });
+        return bn >= need && bn >= 0.6 * seen ? best : null;
+      };
+      return {
+        cells: NINE.map((c) => pick(win.map((f) => f.cells[c]), 2)),
+        roll: pick(win.map((f) => f.roll), 2),
+        ctr: pick(win.slice(-3).map((f) => f.ctr), 2),
+      };
+    }
+    // a tip for aiming the camera, from where the game sits in the frame
+    liveHint(r, portrait) {
+      if (!r) return '';
+      if (r.status === 'nojars') {
+        const aim = { top: 'Aim a little higher', bottom: 'Aim a little lower', left: 'Aim a little to the left', right: 'Aim a little to the right' }[r.cut];
+        return aim ? aim + ': the jars are cut off.' : '';
+      }
+      const v = r.view;
+      if (!v) return '';
+      const o = v.out;
+      // upright, the game only just fits across the frame: sideways gives it far more room
+      if (portrait && (o.left || o.right)) return 'Turn your phone sideways to fit the whole game.';
+      if ((o.left && o.right) || (o.top && o.bottom)) return 'Move back a little to fit the whole game.';
+      if (o.bottom) return 'Aim a little lower to fit the scorecard.';
+      if (o.top) return 'Aim a little higher.';
+      if (o.right) return 'Aim a little to the right.';
+      if (o.left) return 'Aim a little to the left.';
+      if (v.size < 80) return 'Move a little closer.';
+      return '';
+    }
+    liveFrame(r, portrait) {
+      const L = this.L, now = performance.now();
+      L.frame++; L.cur = r;
+      const seen = r.status === 'ok' || r.status === 'empty';
+      if (seen) { L.good = r; L.goodAt = now; L.lost = 0; if (!L.firstAt) L.firstAt = now; } else if (!L.lost) L.lost = now;
+      if (r.board) L.win.push({ t: now, cells: r.board.cells, roll: r.board.rollActive, ctr: r.board.counter ? r.board.counter.left : null });
+      L.win = L.win.filter((f) => now - f.t < 2500).slice(-5);
+      const ctr0 = L.B ? L.B.ctr : null;
+      L.B = this.liveVote();
+      if (L.B && L.B.ctr !== null && L.B.ctr !== ctr0) L.ctrAt = now;
+      const h = this.liveHint(r, portrait);
+      if (h === L.hint) L.hintN++; else { L.hint = h; L.hintN = 1; }
+      if (L.hintN >= 3) L.hintShown = h;
+      // the jars: act once the same reading holds for 2 frames in a row
+      if (seen) {
+        const key = r.status + r.jars.join('') + r.locked.map(Number).join('');
+        if (key === L.key && now - L.keyAt < 1500) L.keyN++; else { L.key = key; L.keyN = 1; }
+        L.keyAt = now;
+        if (L.keyN === 2) {
+          L.st = { status: r.status, jars: r.status === 'ok' ? r.jars.map((x) => 'JSPMF'.indexOf(x)) : null, locked: r.locked.slice(), at: now };
+          this.liveStep(now);
+        } else if (L.keyN > 2 && L.st) L.st.at = now;
+      }
+      // the SCORE: the same number a few frames running
+      const sv = r.board && r.board.score ? r.board.score.value : null;
       if (sv !== null) { if (sv === L.sc.v) L.sc.n++; else L.sc = { v: sv, n: 1 }; L.sc.at = L.frame; }
-      this.liveScore(L.sc.n >= 4 && L.frame - L.sc.at <= 4 ? L.sc.v : null);
+      this.liveWatch(now);
       this.renderLive();
     }
-    // the game's SCORE, read from the screen (null if not readable right now)
-    liveScore(v) {
-      const L = this.L, s = this.s, st = L.stable;
-      if (this.needTotal) {
-        // joined mid-game: the SCORE fills in the points of the boxes used before the camera started
-        L.needN++; L.misN = 0;
-        if (v === null || L.typeTotal) return;
-        const known = s.boxes.reduce((a, x) => a + (x || 0), 0), mx = maxPoints();
-        const room = s.unk.reduce((a, u, c) => a + (u && s.boxes[c] !== null ? mx[c] : 0), 0);
-        if (v >= known && v <= known + room) { this.setTotal(v); L.autoTotal = v; L.autoAt = L.frame; }
+    // joining mid-game: take the boxes already used from the scorecard on screen
+    liveAdopt(now) {
+      const L = this.L, B = L.B;
+      if (!B) return;                                  // scorecard not in view yet: try again when it is
+      // boxes we have filled show blank in the game: what we saved is probably an older game. The SCORE
+      // decides (a misaligned reading can make every box look blank); without it, wait up to 4 seconds
+      const blankOurs = NINE.filter((c) => this.s.boxes[c] !== null && B.cells[c] === false);
+      if (blankOurs.length) {
+        const sc = this.liveScoreNow(), ours = NINE.filter((c) => this.s.boxes[c] !== null).length;
+        if (sc === null && now - L.firstAt < 4000) return;
+        if (sc !== null ? sc !== this.score : 2 * blankOurs.length > ours) {
+          const { jars, locked, roll } = this.s;          // the berries on screen stay the same
+          this.s = Object.assign(fresh(this.s.goal), { jars, locked, roll });
+        }
+      }
+      const add = this.newOnScreen(B.cells);
+      // one of these might only be the mouse hovering over a box; if it goes blank later it's dropped again
+      if (add.length) { add.forEach((c) => { this.s.boxes[c] = 0; this.s.unk[c] = true; }); this.s.adj = null; L.prov = add.slice(); }
+      L.adoptPending = false;
+      this.liveCommit();
+    }
+    liveNewGame(now) {
+      const L = this.L;
+      this.s = fresh(this.s.goal);
+      Object.assign(L, { stale: null, ended: null, guess: null, prov: [], adoptPending: false, unsure: false, rollOff: false, lockSeen: false, note: 'New game: good luck!', noteAt: now });
+      this.liveCommit();
+    }
+    // A box was clicked. Which one: the box whose points match the SCORE's jump, or the one that now
+    // shows a number on screen, or else the one we recommended (a guess, checked against the scorecard later).
+    // mode 'need': only if the SCORE or the scorecard shows it; returns false otherwise.
+    // which box was clicked, from the SCORE's jump and the scorecard: { box, sure }, or null if neither shows it yet
+    liveWhich() {
+      const s = this.s, B = this.L.B, v = this.needTotal ? null : this.liveScoreNow();
+      const open = NINE.filter((c) => s.boxes[c] === null);
+      const onScreen = B ? open.filter((c) => B.cells[c] === true) : [];
+      const fits = v !== null ? this.fitsJump(v) : [];
+      const both = fits.filter((c) => onScreen.includes(c));
+      if (both.length === 1) return { box: both[0], sure: true };
+      if (fits.length === 1) return { box: fits[0], sure: true };
+      if (onScreen.length === 1 && !fits.length) return { box: onScreen[0], sure: true };
+      if (fits.length) {                               // several boxes give the same points: the total is right either way
+        const adv = this.advice(), rec = adv && adv.best.type === 'score' ? adv.best.box : null;
+        return { box: fits.includes(rec) ? rec : fits[0], sure: false };
+      }
+      return null;
+    }
+    liveScored(now, mode, forceBox) {
+      const L = this.L, s = this.s, hand = this.hand();
+      let box = forceBox !== undefined ? forceBox : null, sure = box !== null;
+      if (box === null) {
+        const w = this.liveWhich();
+        if (w) { box = w.box; sure = w.sure; }
+        else if (mode === 'need') return false;
+        else {
+          const adv = this.advice(), o = adv && (adv.best.type === 'score' ? adv.best : adv.opts.find((x) => x.type === 'score'));
+          box = o ? o.box : s.boxes.findIndex((x) => x === null);
+        }
+      }
+      const pts = BerryEngine.scoreBox(hand, box);
+      L.stale = s.jars.slice();                        // these berries stay in the jars until the next roll
+      L.guess = sure ? null : { box, hand: hand.slice(), at: now };
+      Object.assign(L, { rollOff: false, lockSeen: false, unsure: false, prov: [], pend: 0 });
+      this.liveFreshVotes();
+      this.scored(box);
+      L.note = this.mask === 511 ? '' : `Recorded ${pts} in ${BOX[box]}.`; L.noteAt = now;
+      return true;
+    }
+    // a new steady reading of the jars: bring the helper's game in line with the screen
+    liveStep(now) {
+      const L = this.L, st = L.st, B = L.B;
+      const sc = this.liveScoreNow();
+      const blank = !!B && B.cells.filter((c) => c === false).length >= 8 && !B.cells.includes(true);
+      const newGame = blank && (st.status === 'empty' || sc === 0);   // a blank scorecard alone could be a bad reading
+      if (this.mask === 511) {
+        // game over: wait for the next game, or carry on if the game wasn't actually over
+        if (newGame) this.liveNewGame(now);
+        else if (L.ended && st.status === 'ok' && B && B.cells[L.ended.box] === false && same(st.jars, L.ended.s.jars)) { this.s = L.ended.s; L.ended = null; this.liveCommit(); }
+        if (!newGame || st.status === 'empty') return;
+      } else if (newGame && this.mask !== 0) {
+        this.liveNewGame(now);
+        if (st.status === 'empty') return;
+      }
+      const s = this.s, hasHand = s.jars.every((j) => j !== null);
+      if (st.status === 'empty') {                     // the jars are empty at the start of a game
+        if (L.startup) { L.startup = false; this.liveAdopt(now); }
+        else if (hasHand) this.liveScored(now, 'guess');
+        const s2 = this.s;
+        L.stale = null; s2.jars = [null, null, null, null, null]; s2.locked = [false, false, false, false, false]; s2.roll = 1;
+        this.liveCommit(); return;
+      }
+      const J = st.jars, ctr = B ? B.ctr : null, rollNo = ctr !== null && ctr < 3 ? 3 - ctr : null;
+      if (L.startup) {
+        // joined mid-game. x3 on the counter means these are last round's berries: ROLL comes next
+        L.startup = false; this.liveAdopt(now);
+        const s2 = this.s;
+        if (ctr === 3) L.stale = J;
+        else {
+          s2.jars = J; s2.locked = st.locked.slice(); s2.roll = rollNo || (B && B.roll === false ? 3 : 1);
+          L.unsure = rollNo === null && !(B && B.roll === false);    // no counter in view: the roll is a guess
+          L.lockSeen = st.locked.some(Boolean);
+        }
+        this.liveCommit(); return;
+      }
+      if (!hasHand) {
+        if (L.stale && same(J, L.stale)) return;       // still last round's berries
+        Object.assign(L, { stale: null, rollOff: false, lockSeen: st.locked.some(Boolean) });
+        s.jars = J; s.locked = st.locked.slice(); s.roll = rollNo || 1;
+        this.liveFreshVotes(); this.liveCommit(); return;
+      }
+      if (same(J, s.jars)) {
+        if (!same(st.locked, s.locked)) { s.locked = st.locked.slice(); this.save(); }
+        if (st.locked.some(Boolean)) L.lockSeen = true;
         return;
       }
-      L.needN = 0;
-      // the jars cleared but the scorecard hasn't shown which box was clicked (glare, or out of view):
-      // if only one open box scores exactly what the SCORE went up by, it was that one
-      const pending = st && st.status === 'empty' && s.jars.every((j) => j !== null);
-      if (v !== null && pending && v > this.score) {
-        const hand = this.hand(), fits = [0, 1, 2, 3, 4, 5, 6, 7, 8].filter((c) => s.boxes[c] === null && BerryEngine.scoreBox(hand, c) === v - this.score);
-        if (fits.length === 1) { L.note = this.recordScore(fits[0]); L.misN = 0; return; }
-      }
-      // otherwise a SCORE that stays different from the helper's total means the two have drifted apart
-      L.misN = v !== null && !pending && v !== this.score && v <= 300 ? L.misN + 1 : 0;
-    }
-    // boxes that show a number on screen but not in our scorecard
-    newOnScreen(screen) { return screen ? [0, 1, 2, 3, 4, 5, 6, 7, 8].filter((c) => screen[c] === true && this.s.boxes[c] === null) : []; }
-    adopt(cells) {
-      const s = this.s;
-      cells.forEach((c) => { s.boxes[c] = 0; s.unk[c] = true; });
-      s.adj = null;   // ask for the game's SCORE so the total is right
-    }
-    recordScore(c) {
-      const pts = BerryEngine.scoreBox(this.hand(), c);
-      this.scored(c);
-      return `Recorded ${pts} in ${BOX[c]}.`;
-    }
-    autoScore(adv) {
-      const box = adv.best.box, pts = adv.best.points;
-      this.scored(box);
-      return `Recorded ${pts} in ${BOX[box]}. Scored a different box? Fix it in Edit scores.`;
-    }
-    // a new steady reading: bring the helper's game in line with the screen
-    liveStep(r) {
-      const L = this.L, b = r.board, screen = b ? b.cells : null;
-      if (r.status !== 'ok' && r.status !== 'empty') return;
-      const hasHand = this.s.jars.every((j) => j !== null), wasStartup = L.startup;
-      if (r.status === 'empty') {
-        L.sawEmpty = true; L.askRoll = false;
-        const fresh_ = this.newOnScreen(screen);
-        if (screen && !screen.includes(null) && screen.every((c) => c === false) && this.mask !== 0) {
-          // the scorecard is blank again: a new game
-          this.s = fresh(this.s.goal); L.note = 'New game.';
-        } else if (hasHand && fresh_.length === 1) {
-          L.note = this.recordScore(fresh_[0]);          // the box they clicked now shows its points
-        } else if (fresh_.length) {
-          this.adopt(fresh_);
-        } else if (hasHand && !screen) {
-          const adv = this.advice();                     // scorecard out of view: assume the recommended box
-          if (adv && adv.best.type === 'score') L.note = this.autoScore(adv);
-        }
-        L.prov = []; L.adoptPending = !screen && L.adoptPending;
-        const s = this.s;
-        // keep the hand for a moment if the scorecard hasn't shown the scored box yet
-        if (s.jars.some((j) => j !== null) && !(hasHand && fresh_.length === 0 && screen && !wasStartup)) {
-          s.jars = [null, null, null, null, null]; s.locked = [false, false, false, false, false]; s.roll = 1;
-        }
+      // the berries changed. A locked jar can't change, so that means an earlier misread: just fix it
+      if (st.locked.some((k, i) => k && s.locked[i] && J[i] !== s.jars[i])) { s.jars = J; s.locked = st.locked.slice(); this.liveCommit(); return; }
+      const adv = this.advice();
+      let sameRound, mode = 'guess';
+      if (rollNo !== null) {
+        if (rollNo > s.roll) sameRound = true;
+        else if (rollNo === 1) { sameRound = false; if (s.roll === 1) mode = 'need'; }   // roll 1 again: a new round, if a box was scored
+        else sameRound = null;                          // the counter says no roll happened
       } else {
-        const jars = r.jars.map((x) => 'JSPMF'.indexOf(x));
-        if (screen) {
-          if (L.adoptPending) {
-            // joining mid-game: take the used boxes from the screen. One might only be the mouse hovering
-            // over a box; if it goes blank later we drop it again.
-            const add = this.newOnScreen(screen);
-            if (add.length) { this.adopt(add); L.prov = add; }
-            L.adoptPending = false;
-          } else if (L.prov.length) {
-            const gone = L.prov.filter((c) => screen[c] === false);
-            gone.forEach((c) => { this.s.boxes[c] = null; this.s.unk[c] = false; });
-            L.prov = L.prov.filter((c) => !gone.includes(c));
-          }
-        }
-        const s = this.s, same = hasHand && jars.every((j, i) => j === s.jars[i]);
-        if (!hasHand || (wasStartup && !same)) {
-          s.jars = jars; L.lockedOK = null;
-          if (!L.sawEmpty && !(b && b.rollActive === false)) L.askRoll = true;   // joined mid-round: which roll is it?
-        } else if (!same) {
-          const adv = this.advice();
-          if (adv && adv.best.type === 'keep' && s.roll < 3) {
-            s.locked = adv.lockMap.slice(); s.roll += 1; s.jars = jars;
-          } else {
-            // they scored and rolled again before the camera saw the empty jars
-            const fresh_ = this.newOnScreen(screen);
-            if (fresh_.length === 1) L.note = this.recordScore(fresh_[0]);
-            else if (adv && adv.best.type === 'score') L.note = this.autoScore(adv);
-            this.s.jars = jars; this.s.roll = 1;
-          }
-          L.lockedOK = null; L.askRoll = false;
-        }
-        if (b && b.rollActive === false && this.s.roll !== 3) { this.s.roll = 3; L.askRoll = false; }   // ROLL greyed out: no rolls left
+        sameRound = !!(adv && adv.best.type === 'keep' && s.roll < 3);
+        if (L.unsure) mode = 'need';
       }
-      L.startup = false;
-      this.s.sel = null; this.save(); this.render();
+      if (sameRound === null) { s.jars = J; s.locked = st.locked.slice(); this.liveCommit(); return; }
+      if (sameRound) {
+        s.jars = J; s.locked = st.locked.slice(); s.roll = rollNo || s.roll + 1;
+        Object.assign(L, { rollOff: false, unsure: false }); if (st.locked.some(Boolean)) L.lockSeen = true;
+        this.liveFreshVotes(); this.liveCommit(); return;
+      }
+      // a box was clicked and the next round rolled before the camera saw the click
+      this.liveScored(now, mode);
+      const s2 = this.s;
+      s2.jars = J; s2.locked = st.locked.slice(); s2.roll = rollNo || 1;
+      Object.assign(L, { stale: null, unsure: false, rollOff: false, lockSeen: st.locked.some(Boolean) });
+      this.liveFreshVotes(); this.liveCommit();
+    }
+    // every frame: what the scorecard, ROLL button, roll counter and SCORE show while the berries stay put
+    liveWatch(now) {
+      const L = this.L, st = L.st, B = L.B, s = this.s;
+      if (!st || L.startup) return;
+      if (L.adoptPending && B) this.liveAdopt(now);
+      if (L.prov.length && B) {
+        const gone = L.prov.filter((c) => B.cells[c] === false);   // it was only the mouse hovering over it
+        if (gone.length) { gone.forEach((c) => { s.boxes[c] = null; s.unk[c] = false; }); L.prov = L.prov.filter((c) => !gone.includes(c)); this.liveCommit(); }
+      }
+      this.liveReconcile(now);
+      const sc = this.liveScoreNow();
+      // the camera missed some rounds: boxes show points in the game that are open here, for 3 seconds,
+      // and the game's SCORE is ahead of ours by more than this hand could add. Take them as used, points from the SCORE
+      const extra = B && !L.adoptPending ? this.newOnScreen(B.cells) : [];
+      if (extra.join() !== L.extraKey) { L.extraKey = extra.join(); L.extraAt = now; }
+      if (extra.length && now - L.extraAt > 3000 && !this.needTotal && sc !== null && sc > this.score && !this.fitsJump(sc).length) {
+        extra.forEach((c) => { s.boxes[c] = 0; s.unk[c] = true; });
+        s.adj = null; L.extraKey = ''; this.liveCommit();
+      }
+      if (this.needTotal && sc !== null) {
+        // joined mid-game: the SCORE fills in the points of the boxes used before the camera started
+        const known = s.boxes.reduce((a, x) => a + (x || 0), 0), mx = maxPoints();
+        const room = s.unk.reduce((a, u, c) => a + (u && s.boxes[c] !== null ? mx[c] : 0), 0);
+        if (sc >= known && sc <= known + room) this.setTotal(sc);
+      }
+      const v = this.needTotal ? null : sc;
+      if (this.mask === 511) return;
+      const hasHand = s.jars.every((j) => j !== null);
+      // game over: in round 9 the end screen replaces the board as soon as the last box is clicked
+      if (hasHand && this.round === 9 && L.lost && now - L.lost > 2000 && st.status === 'ok' && same(st.jars, s.jars)) {
+        const adv = this.advice();
+        if (adv && (adv.best.type === 'score' || s.roll === 3)) {
+          const box = s.boxes.findIndex((x) => x === null);
+          L.ended = { s: JSON.parse(JSON.stringify(s)), box };
+          this.liveScored(now, 'guess', box);
+        }
+        return;
+      }
+      if (!B || st.status !== 'ok') return;
+      if (!hasHand) {
+        // last round's berries came up again on the first roll (rare): the counter shows the roll
+        if (L.stale && same(st.jars, L.stale) && B.ctr !== null && B.ctr < 3 && now - L.ctrAt > 1500 && st.at > L.ctrAt) {
+          s.jars = L.stale; L.stale = null; s.locked = st.locked.slice(); s.roll = 3 - B.ctr; this.liveCommit();
+        }
+        this.liveDrift(v, now); return;
+      }
+      if (!same(st.jars, s.jars)) return;             // a new roll is being read; liveStep deals with it
+      if (B.roll === false) L.rollOff = true;
+      if (st.locked.some(Boolean)) L.lockSeen = true;
+      const adv = this.advice();
+      // a box was clicked: the berries stay in the jars, but the counter goes back to x3, a greyed-out
+      // ROLL lights up again, the lids unlock and the SCORE goes up
+      const fits = v !== null ? this.fitsJump(v) : [];
+      if (B.ctr === 3 || (L.rollOff && B.roll === true) || fits.length ||
+          (adv && adv.best.type === 'score' && L.lockSeen && st.locked.every((k) => !k))) {
+        // give the SCORE and the scorecard a moment to show which box it was
+        if (!L.pend) L.pend = now;
+        const w = this.liveWhich();
+        if (!(w && w.sure) && now - L.pend < 1500) return;
+        L.pend = 0;
+        if (!this.liveScored(now, L.unsure ? 'need' : 'guess')) {
+          s.jars = [null, null, null, null, null]; s.locked = [false, false, false, false, false]; s.roll = 1;   // they were last round's berries
+          L.stale = st.jars.slice(); L.unsure = false; this.liveCommit();
+        }
+        return;
+      }
+      L.pend = 0;
+      // a re-roll that came up with the same berries: the counter (or a greyed-out ROLL) shows it
+      const rollNo = B.ctr !== null && B.ctr < 3 ? 3 - B.ctr : null;
+      if (rollNo !== null && rollNo > s.roll && now - L.ctrAt > 1500 && st.at > L.ctrAt) { s.roll = rollNo; s.locked = st.locked.slice(); L.unsure = false; this.liveCommit(); }
+      else if (B.roll === false && s.roll < 3) { s.roll = 3; L.unsure = false; this.liveCommit(); }
+      else if (rollNo === null && B.roll === true && s.roll === 3 && L.unsure) { s.roll = 2; this.liveCommit(); }   // ROLL still lit: not the last roll
+      this.liveDrift(v, now);
+    }
+    // the game's SCORE has shown a different total for about 5 seconds: use the game's
+    liveDrift(v, now) {
+      const L = this.L;
+      if (v === null || v === this.score) { L.drift = { v: null, n: 0 }; return; }
+      if (v === L.drift.v) L.drift.n++; else L.drift = { v, n: 1 };
+      if (L.drift.n >= 24) {
+        this.s.adj = (this.s.adj || 0) + (v - this.score); L.drift = { v: null, n: 0 };
+        L.note = `Matched the game's SCORE: ${v}.`; L.noteAt = now; this.liveCommit();
+      }
+    }
+    // a box we had to guess: if the scorecard shows it blank and exactly one other box newly filled, move it there
+    liveReconcile(now) {
+      const L = this.L, B = L.B, s = this.s, g = L.guess;
+      if (!g || !B) return;
+      if (now - g.at > 30000 || B.cells[g.box] === true || s.boxes[g.box] === null) { L.guess = null; return; }
+      if (B.cells[g.box] !== false) return;
+      const other = NINE.filter((c) => s.boxes[c] === null && B.cells[c] === true);
+      if (other.length !== 1) return;
+      const c = other[0];
+      s.boxes[c] = BerryEngine.scoreBox(g.hand, c); s.boxes[g.box] = null; s.unk[c] = false;
+      L.guess = null; L.note = `Moved that score to ${BOX[c]}: ${s.boxes[c]}.`; L.noteAt = now;
+      this.liveCommit();
     }
     renderLive() {
       const live = this.root.querySelector('.live'), L = this.L;
       if (!live || live.hidden || !L) return;
-      const video = live.querySelector('video'), svg = live.querySelector('.ov');
-      const W = live.clientWidth, H = live.clientHeight, vw = video.videoWidth || 1, vh = video.videoHeight || 1;
-      const s = this.s, adv = this.advice(), r = L.cur, st = L.stable, done = this.mask === 511;
+      const stage = live.querySelector('.stage'), video = live.querySelector('video'), svg = live.querySelector('.ov');
+      if (!stage) return;
+      const W = stage.clientWidth, H = stage.clientHeight, vw = video.videoWidth || 1, vh = video.videoHeight || 1;
+      const now = performance.now(), s = this.s, adv = this.advice(), done = this.mask === 511;
       // the whole camera frame is shown (object-fit: contain), so nothing the reader sees is cut off
       const k = Math.min(W / vw, H / vh), ox = (W - vw * k) / 2, oy = (H - vh * k) / 2;
       const pt = (fx, fy) => [ox + fx * vw * k, oy + fy * vh * k];
@@ -517,97 +767,69 @@
         return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" class="lbl ${cls}">${text}</text>`;
       };
       const boxQ = (bx) => [[bx.x, bx.y], [bx.x + bx.w, bx.y], [bx.x + bx.w, bx.y + bx.h], [bx.x, bx.y + bx.h]];
-      const view = r && (r.status === 'ok' || r.status === 'empty') ? r : null;   // this frame, if the jars are still
-      const steady = view && L.count >= 3;
-      const hasHand = s.jars.every((j) => j !== null);
-      let marks = '', what = 'Point the camera at your game', why = 'Fit the jars, the SCORE and the scorecard on screen.', btns = '';
-      if (r && r.status === 'partial') { what = 'Waiting for the dice to stop…'; why = ''; }
+      // the game was seen a moment ago: keep showing what to do while the camera wobbles or blurs
+      const view = L.good && now - L.goodAt < 2500 ? L.good : null;
+      const portrait = vh > vw, hasHand = s.jars.every((j) => j !== null);
+      const note = now - L.noteAt < 6000 ? L.note : '';
+      const fix = note.startsWith('Recorded') ? '' : note;   // "Recorded 21 in Moonberry" belongs under Press ROLL only
+      let marks = '', what = 'Point the camera at your game';
+      let why = L.hintShown || (portrait ? 'Turn your phone sideways, then fit the jars, the SCORE and the scorecard on screen.' : 'Fit the jars, the SCORE and the scorecard on screen.');
       if (view) view.boxes.forEach((bx) => { marks += poly(boxQ(bx), 'mk'); });
+      const prize = this.score >= 141 ? ': 2 Moonberries!' : this.score >= 121 ? ': 1 Moonberry!' : '.';
       if (done) {
-        what = `Game over: ${this.score} points${this.score >= 141 ? ' — 2 Moonberries!' : this.score >= 121 ? ' — 1 Moonberry!' : ''}`; why = '';
-      } else if (steady && st.status === 'empty') {
-        what = 'Press ROLL';
-        why = hasHand ? 'Checking which box you scored…' : L.note || (this.mask ? `Round ${this.round} of 9.` : 'New game: good luck!');
-        if (view.board) marks += poly(view.board.quads.roll, 'go') + label(view.board.quads.roll, 'PRESS', 'gol');
-      } else if (steady && hasHand && adv) {
-        const best = adv.best;
-        if (best.type === 'keep' && s.roll < 3) {
-          const lockedNow = st.locked || [false, false, false, false, false];
-          const need = [], extra = [];
-          adv.lockMap.forEach((want, i) => { if (want && !lockedNow[i]) need.push(i); if (!want && lockedNow[i]) extra.push(i); });
-          const ready = (need.length === 0 && extra.length === 0) || L.lockedOK === s.jars.join('');
-          view.boxes.forEach((bx, i) => {
-            const q = boxQ(bx), want = adv.lockMap[i];
-            if (ready) { if (want) marks += poly(q, 'mk ok') + label(q, 'KEEP', 'okl', true); }
-            else if (want && lockedNow[i]) marks += poly(q, 'mk ok') + label(q, 'LOCKED ✓', 'okl', true);
-            else if (want) marks += poly(q, 'mk lockmk') + label(q, 'LOCK', 'lk', true);
-            else if (lockedNow[i]) marks += poly(q, 'mk bad') + label(q, 'UNLOCK', 'badl', true);
-          });
-          const PLURAL = ['Jumbleberries', 'Sugarberries', 'Pickleberries', 'Moonberries', 'Flies'];
-          const keepNames = best.keep.map((n, i) => (n === 0 ? '' : n === 1 ? BERRY[i].name : `${n} ${PLURAL[i]}`)).filter(Boolean).join(', ');
-          if (ready) {
-            what = best.keep.some((n) => n > 0) ? 'Jars locked. Now press ROLL' : 'Press ROLL to re-roll all five';
-            why = best.keep.some((n) => n > 0) ? `Keeping ${keepNames}. ${this.metric(adv.goal, best)}` : this.metric(adv.goal, best);
-            if (view.board) marks += poly(view.board.quads.roll, 'go') + label(view.board.quads.roll, 'PRESS', 'gol');
+        what = `Game over: ${this.score} points${prize}`;
+        why = 'Start another game in Webkinz whenever you like. The helper will pick it up.';
+      } else if (view && L.st) {
+        if (!hasHand) {
+          what = 'Press ROLL';
+          why = note || (this.mask ? `Round ${this.round} of 9.` : 'New game: good luck!');
+          if (view.board) marks += poly(view.board.quads.roll, 'go') + label(view.board.quads.roll, 'PRESS', 'gol');
+        } else if (adv) {
+          const best = adv.best;
+          if (best.type === 'keep' && s.roll < 3) {
+            const lockedNow = view.locked || [false, false, false, false, false];
+            const need = [], extra = [];
+            adv.lockMap.forEach((want, i) => { if (want && !lockedNow[i]) need.push(i); if (!want && lockedNow[i]) extra.push(i); });
+            const ready = need.length === 0 && extra.length === 0;
+            view.boxes.forEach((bx, i) => {
+              const q = boxQ(bx), want = adv.lockMap[i];
+              if (ready) { if (want) marks += poly(q, 'mk ok') + label(q, 'KEEP', 'okl', true); }
+              else if (want && lockedNow[i]) marks += poly(q, 'mk ok') + label(q, 'LOCKED ✓', 'okl', true);
+              else if (want) marks += poly(q, 'mk lockmk') + label(q, 'LOCK', 'lk', true);
+              else if (lockedNow[i]) marks += poly(q, 'mk bad') + label(q, 'UNLOCK', 'badl', true);
+            });
+            const PLURAL = ['Jumbleberries', 'Sugarberries', 'Pickleberries', 'Moonberries', 'Flies'];
+            const keepNames = best.keep.map((n, i) => (n === 0 ? '' : n === 1 ? BERRY[i].name : `${n} ${PLURAL[i]}`)).filter(Boolean).join(', ');
+            if (ready) {
+              what = best.keep.some((n) => n > 0) ? 'Jars locked. Now press ROLL' : 'Press ROLL to re-roll all five';
+              why = best.keep.some((n) => n > 0) ? `Keeping ${keepNames}. ${this.metric(adv.goal, best)}` : this.metric(adv.goal, best);
+              if (view.board) marks += poly(view.board.quads.roll, 'go') + label(view.board.quads.roll, 'PRESS', 'gol');
+            } else {
+              const parts = [];
+              if (need.length) parts.push(`Lock the ${need.length === 1 ? 'jar' : need.length + ' jars'} marked LOCK`);
+              if (extra.length) parts.push(`${parts.length ? 'unlock' : 'Unlock'} the ${extra.length === 1 ? 'jar' : extra.length + ' jars'} marked UNLOCK`);
+              what = parts.join(' and ');
+              why = `Keep ${keepNames}, then press ROLL.`;
+            }
           } else {
-            const parts = [];
-            if (need.length) parts.push(`Lock the ${need.length === 1 ? 'jar' : need.length + ' jars'} marked LOCK`);
-            if (extra.length) parts.push(`${parts.length ? 'unlock' : 'Unlock'} the ${extra.length === 1 ? 'jar' : extra.length + ' jars'} marked UNLOCK`);
-            what = parts.join(' and ');
-            why = `Keep ${keepNames}, then press ROLL. Don't roll yet.`;
-            btns += '<button class="lb" data-l="locked">They are locked</button>';
+            const box = best.box, pts = best.points;
+            what = `Click ${BOX[box]} for ${pts} point${pts === 1 ? '' : 's'}`;
+            why = fix || this.metric(adv.goal, best);
+            const q = view.board && view.board.quads.cells[box];
+            if (q) marks += poly(q, 'go') + label(q, `+${pts}`, 'gol', false, true);
           }
-          btns += '<button class="lb" data-l="same">Same berries came up again</button>';
-        } else {
-          const box = best.box, pts = best.points;
-          what = `Click ${BOX[box]} for ${pts} point${pts === 1 ? '' : 's'}`;
-          why = L.note && L.note.startsWith('Recorded') ? L.note : this.metric(adv.goal, best);
-          const q = view.board && view.board.quads.cells[box];
-          if (q) marks += poly(q, 'go') + label(q, `+${pts}`, 'gol', false, true);
-          btns += '<button class="lb" data-l="scored">I scored it</button>';
-        }
-      } else if (steady && hasHand && !adv) {
-        what = 'Reading your game…'; why = '';
-      }
-      // questions go above the buttons, one line each
-      let asks = '';
-      if (this.needTotal && !done) {
-        // read it from the screen; if that hasn't worked after about 4 seconds, ask
-        asks += L.typeTotal || L.needN > 16
-          ? '<form class="ask" data-t>Joined mid-game: type the SCORE shown in the game <input type="number" min="0" max="300" inputmode="numeric" required aria-label="SCORE"><button class="lb">Set</button></form>'
-          : '<div class="ask">Joined mid-game: reading your SCORE… <button class="lb" data-l="type">Type it</button></div>';
-      } else if (L.autoTotal !== null && L.frame - L.autoAt < 40) {
-        asks += `<div class="ask">Read your SCORE from the game: ${L.autoTotal}. <button class="lb" data-l="retype">Not ${L.autoTotal}?</button></div>`;
-      } else if (L.misN >= 12) {
-        asks += `<div class="ask">The game shows SCORE ${L.sc.v}, the helper has ${this.score}. <button class="lb" data-l="usescore">Use ${L.sc.v}</button></div>`;
-      }
-      if (L.askRoll && !done) {
-        asks += `<div class="ask">Which roll is this? ${[1, 2, 3].map((n) => `<button class="lb ${s.roll === n ? 'on' : ''}" data-r="${n}">Roll ${n}</button>`).join('')}</div>`;
-      }
-      btns = asks + btns;
+        } else { what = 'Reading your game…'; why = ''; }
+      } else if (L.cur && L.cur.status === 'partial') { what = 'Waiting for the dice to stop…'; why = ''; }
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = marks;
-      const stat = !r ? 'Starting…' : view ? (steady ? 'Reading' : 'Hold steady…') : 'Looking for the game…';
-      live.querySelector('.lstat').textContent = `Round ${this.round} · Roll ${s.roll} · Score ${this.score}${this.needTotal ? '+?' : ''} · ${stat}`;
+      // status line: the roll and the score can be tapped to correct them
+      const tail = !L.cur ? ' · Starting…' : view ? (L.hintShown && (L.st || done) ? ' · ' + L.hintShown : '') : ' · Looking for the game…';
+      const stat = `Round ${this.round} · <button data-l="roll" aria-label="Roll ${s.roll}. Tap to change">Roll ${s.roll}</button> · `
+        + `<button data-l="score" aria-label="Score ${this.score}. Tap to type the game's SCORE">Score ${this.score}${this.needTotal ? '+?' : ''}</button>${tail}`;
+      const st = live.querySelector('.lstat');
+      if (st.dataset.h !== stat) { st.dataset.h = stat; st.innerHTML = stat; }
       const bot = live.querySelector('.lbot');
-      const html = `<div class="lwhat">${what}</div><div class="lwhy">${why}</div><div class="lbtns">${btns}</div>`;
-      if (bot.dataset.h === html) return;
-      if (bot.contains(this.root.activeElement) && this.root.activeElement.tagName === 'INPUT') return;   // don't wipe what they're typing
-      bot.dataset.h = html; bot.innerHTML = html;
-      bot.querySelectorAll('[data-l]').forEach((el) => el.addEventListener('click', () => {
-        const a = el.dataset.l, s2 = this.s;
-        if (a === 'type') { L.typeTotal = true; this.renderLive(); return; }
-        if (a === 'retype') { s2.adj = null; L.typeTotal = true; L.autoTotal = null; this.save(); this.render(); return; }
-        if (a === 'usescore') { s2.adj = (s2.adj || 0) + (L.sc.v - this.score); L.misN = 0; this.save(); this.render(); return; }
-        const adv2 = this.advice();
-        if (!adv2) return;
-        if (a === 'same') { const keep = this.s.jars.slice(); this.rolled(adv2.lockMap); this.s.jars = keep; this.save(); this.render(); }
-        else if (a === 'locked') { L.lockedOK = this.s.jars.join(''); this.renderLive(); }
-        else if (a === 'scored') { L.note = this.autoScore(adv2); this.render(); }
-      }));
-      bot.querySelectorAll('[data-r]').forEach((el) => el.addEventListener('click', () => {
-        this.s.roll = +el.dataset.r; L.askRoll = false; this.save(); this.render();
-      }));
-      bot.querySelectorAll('[data-t]').forEach((f) => f.addEventListener('submit', (e) => { e.preventDefault(); this.setTotal(+f.querySelector('input').value); }));
+      const html = `<div class="lwhat">${what}</div><div class="lwhy">${why}</div>`;
+      if (bot.dataset.h !== html) { bot.dataset.h = html; bot.innerHTML = html; }
     }
   }
   if (!customElements.get('jbf-advisor')) customElements.define('jbf-advisor', JbfAdvisor);

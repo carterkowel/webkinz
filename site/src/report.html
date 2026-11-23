@@ -192,7 +192,7 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
   <header class="hero col">
     <div class="hero-chips" aria-hidden="true"><span class="berry b-M">M</span><span class="berry b-M">M</span><span class="berry b-P">P</span><span class="berry b-J">J</span><span class="berry b-S">S</span></div>
     <h1>Jumbleberry Fields, <span>solved</span></h1>
-    <p class="lede">We computed the best possible move for every situation in the game, then played millions of games to see how different strategies score. Here is what perfect play looks like, how close you can get with a few simple habits, a <a href="#helper">helper</a> to use while you play, and a <a href="#play">practice game</a> you can play as often as you like. Curious how it's done? Read <a href="{{METHOD_URL}}">how we solved the game</a>. Want it all on one page? Grab the <a href="{{CHEAT_URL}}">cheat sheet</a>.</p>
+    <p class="lede">I computed the best possible move for every situation in the game, then played millions of games to see how different strategies score. Here is what perfect play looks like, how close you can get with a few simple habits, a <a href="#helper">helper</a> to use while you play, and a <a href="#play">practice game</a> you can play as often as you like. Curious how it's done? Read <a href="{{METHOD_URL}}">how I solved the game</a>. Want it all on one page? Grab the <a href="{{CHEAT_URL}}">cheat sheet</a>.</p>
     <div class="stats">
       <div class="stat"><b id="h-avg">121.8</b><span>average score with perfect play</span></div>
       <div class="stat"><b id="h-121">58%</b><span>best possible chance of 121+ (one Moonberry)</span></div>
@@ -240,7 +240,7 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
     <div class="col" style="display:grid;gap:1.1rem;margin-inline:auto;width:100%">
       <p class="eyebrow">What perfect play does</p>
       <h2>Habits of a perfect player</h2>
-      <p>These patterns come from watching the solver play millions of rounds. Each one held up across every situation we checked.</p>
+      <p>These patterns come from watching the solver play millions of rounds. Each one held up across every situation I checked.</p>
     </div>
     <div class="habits">
       <div class="habit-group">
@@ -298,7 +298,7 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
       <tbody id="chase-body"></tbody></table></div>
     <p>A box left open doesn't keep its value. The charts show what each box ends up scoring, on average, if it's still open at the start of each round. Jumbleberry, Sugarberry and Free Roll hold their value to the end, so they're safe to leave for later. The baskets, Mixed Basket and Moonberry need luck, and the fewer rounds left to find it, the less they're worth. Basket of 5 starts lowest and ends near 2, which is why it's the box to sacrifice.</p>
     <div class="mults" id="mults" role="list"></div>
-    <p class="note">Each chart runs from round 1 to round 9 on the same 0–22 point scale. Want the details of how these numbers are computed? Read <a href="{{METHOD_URL}}">how we solved the game</a>.</p>
+    <p class="note">Each chart runs from round 1 to round 9 on the same 0–22 point scale. Want the details of how these numbers are computed? Read <a href="{{METHOD_URL}}">how I solved the game</a>.</p>
   </section>
 
   <section class="col" id="opening">
@@ -316,7 +316,7 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
   <section class="col" id="prize">
     <p class="eyebrow">Playing for prizes</p>
     <h2>Which goal wins the most Moonberries?</h2>
-    <p>Scoring 121 to 140 wins one Moonberry and 141 or more wins two. If you play every day, what counts is the <b>total number of Moonberries</b> you collect. We solved for that directly: a strategy that maximises Moonberries won per game, counting the second one at 141.</p>
+    <p>Scoring 121 to 140 wins one Moonberry and 141 or more wins two. If you play every day, what counts is the <b>total number of Moonberries</b> you collect. I solved for that directly: a strategy that maximises Moonberries won per game, counting the second one at 141.</p>
     <div class="tablewrap">
       <table>
         <thead><tr><th>What you play for</th><th class="r">Moonberries per 100 games</th><th class="r">121+</th><th class="r">141+</th><th class="r">Average</th></tr></thead>
@@ -345,18 +345,18 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
     <p class="eyebrow">Play perfectly in Webkinz</p>
     <h2>A helper for your next game</h2>
     <p>Open the helper on your phone next to the game. Point its live camera at your screen, or tap in the five berries you rolled, and it tells you exactly which jars to lock or which box to fill, using the same perfect-play math as this page. It keeps your scorecard as you go. You can switch between playing for the most Moonberries, for 1, for 2, or for the highest score.</p>
+    <phone-link href="{{HELPER_URL}}#live" label="Use your phone as a live guide" note="Point your phone's camera at the code. It opens the helper ready to start the live camera. No app or sign-in needed."></phone-link>
     <div class="tool">
       <jbf-advisor></jbf-advisor>
     </div>
     <a class="cta" href="{{HELPER_URL}}">Open the helper on its own page</a>
-    <phone-link href="{{HELPER_URL}}#live" label="Use your phone as a live guide" note="Point your phone's camera at the code. It opens the helper ready to start the live camera. No app or sign-in needed." style="margin-top:1rem"></phone-link>
   </section>
 
   <section class="wide" id="play">
     <div class="col" style="display:grid;gap:1.1rem;margin-inline:auto;width:100%">
       <p class="eyebrow">Practice as much as you like</p>
       <h2>Bramble Dice</h2>
-      <p>Bramble Dice is our own berry dice game with the same odds and scoring math, so the skills carry over. Play as many games as you like. Turn on the coach to see the best move, read the review at the end to see how many points your choices cost, and switch to <b>Trainer</b> to drill tricky situations one at a time.</p>
+      <p>Bramble Dice is my own berry dice game with the same odds and scoring math, so the skills carry over. Play as many games as you like. Turn on the coach to see the best move, read the review at the end to see how many points your choices cost, and switch to <b>Trainer</b> to drill tricky situations one at a time.</p>
       <div class="map"><span>How the fruit line up (same colours, same odds):</span><span><b style="color:var(--jumble)">●</b> Redcurrant ↔ Jumbleberry</span><span><b style="color:var(--sugar)">●</b> Cloudberry ↔ Sugarberry</span><span><b style="color:var(--pickle)">●</b> Gooseberry ↔ Pickleberry</span><span><b style="color:var(--moon)">●</b> Mulberry ↔ Moonberry</span><span><b style="color:var(--fly)">●</b> Beetle ↔ Fly</span></div>
     </div>
     <bramble-dice></bramble-dice>
@@ -366,7 +366,7 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
   <section class="col" id="ai">
     <p class="eyebrow">Can an AI learn it?</p>
     <h2>Teaching machines to play, and grading them</h2>
-    <p>Because perfect play is known exactly, every player can be graded move by move. We trained two learning AIs that start knowing nothing about the odds and improve by playing. We also asked Claude Opus 5.5, Anthropic's AI model, to play using only the rules: no solver, no code, just its own reasoning.</p>
+    <p>Because perfect play is known exactly, every player can be graded move by move. I trained two learning AIs that start knowing nothing about the odds and improve by playing. I also asked Claude Opus 5.5, Anthropic's AI model, to play using only the rules: no solver, no code, just its own reasoning.</p>
     <p id="claude-note"></p>
     <p>Its costliest habit is one many players share: <b>spending Basket of 3 on modest hands</b>. Examples: 17 points from <span class="hand"><i class="berry b-P">P</i><i class="berry b-J">J</i><i class="berry b-J">J</i><i class="berry b-M">M</i><i class="berry b-J">J</i></span> on a first roll, or 12 from four Jumbleberries. Perfect play saves Basket of 3 for big totals (it averages about 21 there) and often puts three or four Jumbleberries or Sugarberries in their own box.</p>
     <div class="ai-grid" id="ai-grid"></div>
@@ -381,11 +381,11 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
     <p class="eyebrow">Watch next</p>
     <h2>Solving the game it's built on</h2>
     <p>Jumbleberry Fields is a berry-themed cousin of Yahtzee, and Yahtzee has been solved with the same technique. For a video on that, watch <a href="https://www.youtube.com/watch?v=DOgb5wrb7mM" target="_blank" rel="noopener"><b>I Solved Yahtzee*</b> by Ballpark Figures</a>.</p>
-    <p>Yahtzee is the bigger puzzle. It has 13 boxes instead of 9, a 35-point bonus for the top section and extra Yahtzee bonuses, so a solver has to track running totals as well as which boxes are open. Jumbleberry Fields has no bonuses, which is why it can be solved in under a second. <a href="{{METHOD_URL}}">See how we did it, step by step.</a></p>
+    <p>Yahtzee is the bigger puzzle. It has 13 boxes instead of 9, a 35-point bonus for the top section and extra Yahtzee bonuses, so a solver has to track running totals as well as which boxes are open. Jumbleberry Fields has no bonuses, which is why it can be solved in under a second. <a href="{{METHOD_URL}}">See how I did it, step by step.</a></p>
   </section>
 
   <footer class="col">
-    <p><a href="{{METHOD_URL}}"><b>How we solved the game →</b></a> · <a href="{{CHEAT_URL}}"><b>One-page cheat sheet →</b></a></p>
+    <p><a href="{{METHOD_URL}}"><b>How I solved the game →</b></a> · <a href="{{CHEAT_URL}}"><b>One-page cheat sheet →</b></a></p>
     <p><b>How this was worked out.</b> Each jar is treated as a 10-sided die: 3 Jumbleberry faces, 3 Sugarberry, 2 Pickleberry, 1 Moonberry, 1 Fly, as documented on the <a href="https://webkinzguide.com/wiki/Jumbleberry_Fields" target="_blank" rel="noopener">Webkinz Guide wiki</a>. Prize lines (121 and 141) come from the same page. The game has only 512 scorecard states and 126 distinct hands, so dynamic programming finds the exact best move everywhere. Strategy results come from 200,000 simulated games each.</p>
     <p>The helper and Bramble Dice run entirely in your browser: the same exact solver is built into the page, and your stats never leave your device.</p>
     <p class="note">A fan-made analysis. Not affiliated with or endorsed by Webkinz or Ganz. Bramble Dice is an original game.</p>
