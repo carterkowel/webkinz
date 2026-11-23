@@ -1,0 +1,175 @@
+<title>Jumbleberry Fields Cheat Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,700;6..12,800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one landscape sheet, three dense columns of cards; stacks to one column on phones. Prints on one page. */
+:root {
+  --bg: #f4f6ef; --surface: #ffffff; --ink: #231d33; --ink-2: #57516a; --muted: #8a8598; --line: #dcdfd2; --grid: #ebede4;
+  --accent: #5b3aa8; --accent-soft: #ece6f8;
+  --jumble: #d8433b; --sugar: #e2a60f; --pickle: #4b9a39; --moon: #6f45c6; --fly: #46434f; --chip-ink: #ffffff;
+  --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e; --line: #322e3f; --grid: #2a2735;
+    --accent: #b39af0; --accent-soft: #2a2340;
+    --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e; --line: #322e3f; --grid: #2a2735;
+  --accent: #b39af0; --accent-soft: #2a2340;
+  --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 13.5px; line-height: 1.4; }
+.sheet { max-width: 1180px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 18px 24px; display: grid; gap: 12px; }
+.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 6px 16px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 28px; line-height: 1.05; margin: 0; }
+h1 span { color: var(--accent); }
+.head p { margin: 0; color: var(--ink-2); font-size: 12.5px; }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.col { display: grid; gap: 12px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 6px; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 16px; margin: 0; color: var(--accent); }
+p { margin: 0; }
+ul { margin: 0; padding-left: 16px; display: grid; gap: 3px; }
+li b { font-weight: 800; }
+.small { font-size: 11.5px; color: var(--ink-2); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.berry { display: inline-grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; color: var(--chip-ink); font-family: var(--font-display);
+  font-weight: 600; font-size: 10px; line-height: 1; font-style: normal; vertical-align: -3px; }
+.b-J { background: var(--jumble); } .b-S { background: var(--sugar); color: #231d33; } .b-P { background: var(--pickle); }
+.b-M { background: var(--moon); } .b-F { background: var(--fly); }
+.hand { display: inline-flex; gap: 2px; }
+.goals { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; }
+.goals .best { font-weight: 800; color: var(--accent); }
+.par { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.par div { border: 1px solid var(--line); border-radius: 8px; padding: 3px 6px; display: flex; justify-content: space-between; gap: 4px; align-items: baseline; }
+.par span { font-size: 11.5px; } .par b { font-family: var(--font-display); font-size: 17px; color: var(--accent); }
+.par .lo b { color: var(--jumble); }
+.drop { display: flex; flex-wrap: wrap; gap: 3px 4px; align-items: center; font-size: 12px; }
+.drop span.z { border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; }
+.drop span.z:first-child { border-color: var(--accent); font-weight: 800; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+td, th { padding: 2px 4px; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: top; }
+th { font-family: var(--font-data); font-weight: 500; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+td.r, th.r { text-align: right; }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; font-size: 11.5px; color: var(--muted); }
+.foot a { color: var(--accent); }
+.printbtn { font: inherit; font-size: 12px; border: 1.5px solid var(--line); background: transparent; color: var(--ink-2); border-radius: 8px; padding: 3px 10px; cursor: pointer; }
+@media (max-width: 900px) { .cols { grid-template-columns: 1fr; } body { font-size: 14.5px; } }
+@media print {
+  @page { size: letter landscape; margin: 8mm; }
+  :root { --bg: #ffffff; --surface: #ffffff; --ink: #000; --ink-2: #333; --muted: #555; --line: #bbb; --grid: #ddd; --accent: #4a2c94; color-scheme: light; }
+  body { font-size: 11px; } .sheet { padding: 0; max-width: none; gap: 8px; } .cols { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .card { padding: 6px 8px; break-inside: avoid; } .printbtn { display: none; } h1 { font-size: 22px; }
+}
+</style>
+
+<div class="sheet">
+  <div class="head">
+    <div><h1>Jumbleberry Fields <span>cheat sheet</span></h1>
+      <p>Every rule here comes from the exact solver and matches perfect play.</p></div>
+    <p>Perfect play averages <b class="num" id="avg">121.8</b> · best odds of 121+ <b class="num" id="p121">58%</b> · 141+ <b class="num" id="p141">11%</b>
+      <button class="printbtn" type="button" id="print">Print</button></p>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="card">
+        <h2>1 · Pick your goal</h2>
+        <div class="goals" id="goals"></div>
+        <p class="small">Most Moonberries plays for 121 first, then takes risks for 141 once 121 looks safe. If you pick one fixed goal, pick 121.</p>
+      </div>
+      <div class="card">
+        <h2>2 · The par sheet</h2>
+        <div class="par" id="par"></div>
+        <ul>
+          <li><b>Each roll,</b> chase the box you can most likely beat par in.</li>
+          <li><b>After the last roll,</b> score where <b>points − par</b> is highest.</li>
+          <li>A bad round goes where it's least below par.</li>
+        </ul>
+        <p class="small">Played this way: <b class="num" id="paravg">119.8</b> average, 98% of perfect.</p>
+      </div>
+      <div class="card">
+        <h2>3 · If you must take a zero</h2>
+        <div class="drop" id="drop"></div>
+        <p class="small">Points a round-1 zero costs you, cheapest first. Basket of 5 is the throw-away box; never waste Free Roll.</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h2>4 · Locking</h2>
+        <ul>
+          <li><b>Lock Moonberries</b> (96% of the time while their box is open).</li>
+          <li><b>Lock Pickleberries</b>, especially while their box is open.</li>
+          <li><b>Never lock a Fly.</b></li>
+          <li><b>Re-roll pairs</b> of Jumble or Sugar; keep three (62%) or four (91%).</li>
+          <li><b>Round 1:</b> don't chase a Mixed Basket. With <span class="hand"><i class="berry b-J">J</i><i class="berry b-S">S</i><i class="berry b-P">P</i><i class="berry b-M">M</i><i class="berry b-F">F</i></span> lock just <span class="hand"><i class="berry b-P">P</i><i class="berry b-M">M</i></span>.</li>
+          <li><b>One Moonberry beats three cheap berries early:</b> <span class="hand"><i class="berry b-J">J</i><i class="berry b-J">J</i><i class="berry b-J">J</i><i class="berry b-S">S</i><i class="berry b-M">M</i></span> → lock just <span class="hand"><i class="berry b-M">M</i></span>.</li>
+          <li><b>Use all three rolls</b>; perfect play stops early in only 11% of rounds.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>5 · Scoring</h2>
+        <ul>
+          <li><b>Three Moonberries go in Moonberry:</b> <span class="hand"><i class="berry b-M">M</i><i class="berry b-M">M</i><i class="berry b-M">M</i><i class="berry b-J">J</i><i class="berry b-J">J</i></span> is 21 there, beating 25 in Basket of 3.</li>
+          <li><b>Five Jumble or Sugar go in Basket of 5</b>: the only time it pays.</li>
+          <li><b>Don't spend Basket of 3 on a small hand.</b> Save it for a big total (it averages about 21).</li>
+          <li><b>Take Mixed Basket and Basket of 3</b> when a good one comes; they're usually filled first.</li>
+          <li><b>Jumbleberry and Sugarberry aren't dump boxes.</b> Perfect play zeroes them 0.4% of the time.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h2>6 · First roll of the game</h2>
+        <table><thead><tr><th>You roll</th><th>Lock</th></tr></thead><tbody id="open"></tbody></table>
+      </div>
+      <div class="card">
+        <h2>7 · Chasing one box</h2>
+        <table><thead><tr><th>Box</th><th>Keep</th><th class="r">Avg</th></tr></thead><tbody id="chase"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Full guide, live helper and practice game: <a href="{{REPORT_URL}}">Jumbleberry Fields, Solved</a> · <a href="{{HELPER_URL}}">helper</a></span>
+    <span>Fan-made. Not affiliated with or endorsed by Webkinz or Ganz.</span>
+  </div>
+</div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const $ = (id) => document.getElementById(id);
+  const pct = (x, d = 0) => (100 * x).toFixed(d) + '%';
+  const chip = (b) => `<i class="berry b-${b}">${b}</i>`;
+  $('avg').textContent = D.mean_opt.toFixed(1); $('p121').textContent = pct(D.p121_best); $('p141').textContent = pct(D.p141_best);
+  $('goals').innerHTML = D.moon.filter((r) => !r.name.startsWith('Par')).map((r) =>
+    `<span class="${r.recommended ? 'best' : ''}">${r.recommended ? '★ ' : ''}${r.name}</span><span class="num ${r.recommended ? 'best' : ''}">${(100 * r.per_game).toFixed(0)} per 100 games</span>`).join('');
+  const short = { 'Basket of 3': 'Basket 3', 'Basket of 4': 'Basket 4', 'Basket of 5': 'Basket 5', 'Mixed Basket': 'Mixed' };
+  $('par').innerHTML = D.boxes.map((b) => `<div class="${b.par <= 6 ? 'lo' : ''}"><span>${short[b.box] || b.box}</span><b>${b.par}</b></div>`).join('');
+  $('paravg').textContent = D.ladder.find((r) => r.name.startsWith('Par')).mean.toFixed(1);
+  $('drop').innerHTML = [...D.zero_cost].sort((a, b) => a.cost - b.cost)
+    .map((z) => `<span class="z">${short[z.box] || z.box} <span class="num">${z.cost.toFixed(0)}</span></span>`).join('<span>›</span>');
+  $('open').innerHTML = D.opening.slice(0, 11).map((o) => `<tr><td><span class="hand">${o.roll.map(chip).join('')}</span></td>
+    <td>${o.lock.length ? `<span class="hand">${o.lock.map(chip).join('')}</span>` : 're-roll all'}</td></tr>`).join('');
+  const KEEP = {
+    'Jumbleberry': 'all Jumbleberries', 'Sugarberry': 'all Sugarberries', 'Pickleberry': 'all Pickleberries', 'Moonberry': 'all Moonberries',
+    'Basket of 3': 'biggest group + Moonberries', 'Basket of 4': 'biggest group only', 'Basket of 5': 'biggest group only',
+    'Mixed Basket': 'one of each (no Moon yet: just a Pickle)', 'Free Roll': 'Pickles and Moons',
+  };
+  $('chase').innerHTML = D.chase_table.map((r) => `<tr><td>${short[r.box] || r.box}</td><td>${KEEP[r.box]}</td><td class="r num">${r.avg.toFixed(1)}</td></tr>`).join('');
+  const pb = $('print');
+  if (pb) { if (/png/.test(location.search)) pb.remove(); else pb.addEventListener('click', () => window.print()); }
+})();
+</script>

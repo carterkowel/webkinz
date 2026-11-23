@@ -1,0 +1,31 @@
+rules_version = '2';
+
+// Bramble Dice leaderboard. Paste into Firebase console > Firestore Database > Rules > Publish.
+// Anyone can read the board and add one well-formed entry; nobody can edit or delete
+// entries from the page (remove bad ones yourself in the Firebase console).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /scores/{entry} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name', 'score', 'lost', 'ts', 'v'])
+        && request.resource.data.keys().hasAll(['name', 'score', 'lost', 'ts', 'v'])
+        && request.resource.data.name is string
+        && request.resource.data.name.matches('^[A-Za-z0-9 _.-]{1,20}$')
+        // rude names (same list as BLOCKED in bramble-dice.js)
+        && !request.resource.data.name.lower().matches('.*(fuck|fuk|fck|shit|bitch|cunt|dick|pussy|penis|vagina|porn|slut|whore|nigg|fag|retard|nazi|hitler|kkk|twat|wank|bastard|tits|sexy).*')
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0 && request.resource.data.score <= 237
+        && request.resource.data.lost is number
+        && request.resource.data.lost >= 0 && request.resource.data.lost <= 150
+        && request.resource.data.ts is timestamp
+        && request.resource.data.ts > request.time - duration.value(24, 'h')
+        && request.resource.data.ts < request.time + duration.value(24, 'h')
+        && request.resource.data.v == 1;
+      allow update, delete: if false;
+    }
+    // everything else is closed
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

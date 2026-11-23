@@ -1,0 +1,8 @@
+numpy>=2.0
+pandas>=2.2
+matplotlib>=3.9
+InquirerPy>=0.3.4          # interactive CLI game (main.py)
+gymnasium>=1.0             # optional: standard RL env wrapper
+torch>=2.5                 # DQN only; CPU build: pip install torch --index-url https://download.pytorch.org/whl/cpu
+nbconvert>=7               # run the notebook headless
+ipykernel>=6               # run the notebook in VS Code / Jupyter

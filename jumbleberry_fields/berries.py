@@ -74,6 +74,11 @@ class Berries:
 
  
     def roll_unselected(self, selected):
-        unselected_indices = [index for index in range(len(self.berries_list)) if self.berries_list[index] not in selected]
-        for index in unselected_indices:
-            self.berries_list[index] = random.choices(list(self.berry_attributes.keys()), weights=[v['probability'] for v in self.berry_attributes.values()])[0]
+        # Lock jars by count, not by type: selecting one of two Jumbleberries locks exactly
+        # one jar and re-rolls the other (like clicking a single jar in the real game).
+        locked = list(selected)
+        for index, berry in enumerate(self.berries_list):
+            if berry in locked:
+                locked.remove(berry)
+            else:
+                self.berries_list[index] = random.choices(list(self.berry_attributes.keys()), weights=[v['probability'] for v in self.berry_attributes.values()])[0]

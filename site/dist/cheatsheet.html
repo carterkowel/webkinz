@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Jumbleberry Fields Cheat Sheet</title>
+<meta name="description" content="A one-page cheat sheet for playing Jumbleberry Fields well.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jumbleberry Fields, Solved">
+<meta property="og:title" content="Jumbleberry Fields Cheat Sheet">
+<meta property="og:description" content="A one-page cheat sheet for playing Jumbleberry Fields well.">
+<meta property="og:url" content="https://carterkowel.github.io/webkinz/cheatsheet.html">
+<meta property="og:image" content="https://carterkowel.github.io/webkinz/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Jumbleberry Fields, solved: perfect play averages 121.8 points">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,700;6..12,800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one landscape sheet, three dense columns of cards; stacks to one column on phones. Prints on one page. */
+:root {
+  --bg: #f4f6ef; --surface: #ffffff; --ink: #231d33; --ink-2: #57516a; --muted: #8a8598; --line: #dcdfd2; --grid: #ebede4;
+  --accent: #5b3aa8; --accent-soft: #ece6f8;
+  --jumble: #d8433b; --sugar: #e2a60f; --pickle: #4b9a39; --moon: #6f45c6; --fly: #46434f; --chip-ink: #ffffff;
+  --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e; --line: #322e3f; --grid: #2a2735;
+    --accent: #b39af0; --accent-soft: #2a2340;
+    --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e; --line: #322e3f; --grid: #2a2735;
+  --accent: #b39af0; --accent-soft: #2a2340;
+  --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 13.5px; line-height: 1.4; }
+.sheet { max-width: 1180px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 18px 24px; display: grid; gap: 12px; }
+.head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 6px 16px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 28px; line-height: 1.05; margin: 0; }
+h1 span { color: var(--accent); }
+.head p { margin: 0; color: var(--ink-2); font-size: 12.5px; }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.col { display: grid; gap: 12px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 6px; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 16px; margin: 0; color: var(--accent); }
+p { margin: 0; }
+ul { margin: 0; padding-left: 16px; display: grid; gap: 3px; }
+li b { font-weight: 800; }
+.small { font-size: 11.5px; color: var(--ink-2); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.berry { display: inline-grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; color: var(--chip-ink); font-family: var(--font-display);
+  font-weight: 600; font-size: 10px; line-height: 1; font-style: normal; vertical-align: -3px; }
+.b-J { background: var(--jumble); } .b-S { background: var(--sugar); color: #231d33; } .b-P { background: var(--pickle); }
+.b-M { background: var(--moon); } .b-F { background: var(--fly); }
+.hand { display: inline-flex; gap: 2px; }
+.goals { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; }
+.goals .best { font-weight: 800; color: var(--accent); }
+.par { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.par div { border: 1px solid var(--line); border-radius: 8px; padding: 3px 6px; display: flex; justify-content: space-between; gap: 4px; align-items: baseline; }
+.par span { font-size: 11.5px; } .par b { font-family: var(--font-display); font-size: 17px; color: var(--accent); }
+.par .lo b { color: var(--jumble); }
+.drop { display: flex; flex-wrap: wrap; gap: 3px 4px; align-items: center; font-size: 12px; }
+.drop span.z { border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; }
+.drop span.z:first-child { border-color: var(--accent); font-weight: 800; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+td, th { padding: 2px 4px; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: top; }
+th { font-family: var(--font-data); font-weight: 500; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+td.r, th.r { text-align: right; }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; font-size: 11.5px; color: var(--muted); }
+.foot a { color: var(--accent); }
+.printbtn { font: inherit; font-size: 12px; border: 1.5px solid var(--line); background: transparent; color: var(--ink-2); border-radius: 8px; padding: 3px 10px; cursor: pointer; }
+@media (max-width: 900px) { .cols { grid-template-columns: 1fr; } body { font-size: 14.5px; } }
+@media print {
+  @page { size: letter landscape; margin: 8mm; }
+  :root { --bg: #ffffff; --surface: #ffffff; --ink: #000; --ink-2: #333; --muted: #555; --line: #bbb; --grid: #ddd; --accent: #4a2c94; color-scheme: light; }
+  body { font-size: 11px; } .sheet { padding: 0; max-width: none; gap: 8px; } .cols { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .card { padding: 6px 8px; break-inside: avoid; } .printbtn { display: none; } h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="head">
+    <div><h1>Jumbleberry Fields <span>cheat sheet</span></h1>
+      <p>Every rule here comes from the exact solver and matches perfect play.</p></div>
+    <p>Perfect play averages <b class="num" id="avg">121.8</b> · best odds of 121+ <b class="num" id="p121">58%</b> · 141+ <b class="num" id="p141">11%</b>
+      <button class="printbtn" type="button" id="print">Print</button></p>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="card">
+        <h2>1 · Pick your goal</h2>
+        <div class="goals" id="goals"></div>
+        <p class="small">Most Moonberries plays for 121 first, then takes risks for 141 once 121 looks safe. If you pick one fixed goal, pick 121.</p>
+      </div>
+      <div class="card">
+        <h2>2 · The par sheet</h2>
+        <div class="par" id="par"></div>
+        <ul>
+          <li><b>Each roll,</b> chase the box you can most likely beat par in.</li>
+          <li><b>After the last roll,</b> score where <b>points − par</b> is highest.</li>
+          <li>A bad round goes where it's least below par.</li>
+        </ul>
+        <p class="small">Played this way: <b class="num" id="paravg">119.8</b> average, 98% of perfect.</p>
+      </div>
+      <div class="card">
+        <h2>3 · If you must take a zero</h2>
+        <div class="drop" id="drop"></div>
+        <p class="small">Points a round-1 zero costs you, cheapest first. Basket of 5 is the throw-away box; never waste Free Roll.</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h2>4 · Locking</h2>
+        <ul>
+          <li><b>Lock Moonberries</b> (96% of the time while their box is open).</li>
+          <li><b>Lock Pickleberries</b>, especially while their box is open.</li>
+          <li><b>Never lock a Fly.</b></li>
+          <li><b>Re-roll pairs</b> of Jumble or Sugar; keep three (62%) or four (91%).</li>
+          <li><b>Round 1:</b> don't chase a Mixed Basket. With <span class="hand"><i class="berry b-J">J</i><i class="berry b-S">S</i><i class="berry b-P">P</i><i class="berry b-M">M</i><i class="berry b-F">F</i></span> lock just <span class="hand"><i class="berry b-P">P</i><i class="berry b-M">M</i></span>.</li>
+          <li><b>One Moonberry beats three cheap berries early:</b> <span class="hand"><i class="berry b-J">J</i><i class="berry b-J">J</i><i class="berry b-J">J</i><i class="berry b-S">S</i><i class="berry b-M">M</i></span> → lock just <span class="hand"><i class="berry b-M">M</i></span>.</li>
+          <li><b>Use all three rolls</b>; perfect play stops early in only 11% of rounds.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>5 · Scoring</h2>
+        <ul>
+          <li><b>Three Moonberries go in Moonberry:</b> <span class="hand"><i class="berry b-M">M</i><i class="berry b-M">M</i><i class="berry b-M">M</i><i class="berry b-J">J</i><i class="berry b-J">J</i></span> is 21 there, beating 25 in Basket of 3.</li>
+          <li><b>Five Jumble or Sugar go in Basket of 5</b>: the only time it pays.</li>
+          <li><b>Don't spend Basket of 3 on a small hand.</b> Save it for a big total (it averages about 21).</li>
+          <li><b>Take Mixed Basket and Basket of 3</b> when a good one comes; they're usually filled first.</li>
+          <li><b>Jumbleberry and Sugarberry aren't dump boxes.</b> Perfect play zeroes them 0.4% of the time.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h2>6 · First roll of the game</h2>
+        <table><thead><tr><th>You roll</th><th>Lock</th></tr></thead><tbody id="open"></tbody></table>
+      </div>
+      <div class="card">
+        <h2>7 · Chasing one box</h2>
+        <table><thead><tr><th>Box</th><th>Keep</th><th class="r">Avg</th></tr></thead><tbody id="chase"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Full guide, live helper and practice game: <a href="index.html">Jumbleberry Fields, Solved</a> · <a href="helper.html">helper</a></span>
+    <span>Fan-made. Not affiliated with or endorsed by Webkinz or Ganz.</span>
+  </div>
+</div>
+
+<script id="data" type="application/json">{"p_opt":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0001,0.0002,0.0002,0.0002,0.0003,0.0003,0.0004,0.0005,0.0006,0.0007,0.0008,0.0009,0.0011,0.0013,0.0016,0.0019,0.0021,0.0025,0.0028,0.0033,0.0037,0.0043,0.0049,0.0054,0.0062,0.0069,0.0078,0.0088,0.0095,0.011,0.0116,0.0133,0.0142,0.0156,0.0171,0.018,0.02,0.0207,0.0226,0.0235,0.0247,0.0262,0.0265,0.028,0.0283,0.029,0.0298,0.0292,0.0302,0.0293,0.0295,0.029,0.028,0.0279,0.0263,0.0259,0.0245,0.0233,0.0223,0.0206,0.0197,0.018,0.0168,0.0156,0.0141,0.0131,0.0116,0.0107,0.0095,0.0085,0.0076,0.0067,0.006,0.0052,0.0045,0.004,0.0034,0.003,0.0025,0.0022,0.0019,0.0016,0.0013,0.0011,0.001,0.0008,0.0007,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"p_par":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0002,0.0001,0.0001,0.0002,0.0003,0.0004,0.0004,0.0005,0.0005,0.0008,0.0007,0.0011,0.0011,0.0014,0.0016,0.0021,0.0023,0.0025,0.0036,0.0036,0.0039,0.0047,0.0055,0.0064,0.0074,0.0082,0.0092,0.0099,0.0117,0.0125,0.0141,0.0152,0.0159,0.0183,0.0187,0.0201,0.0219,0.023,0.0241,0.0256,0.0259,0.0265,0.0278,0.0281,0.0283,0.0288,0.029,0.0291,0.0286,0.0287,0.0283,0.0279,0.0266,0.026,0.0255,0.0239,0.0224,0.0219,0.0194,0.019,0.0176,0.0163,0.0152,0.0146,0.0131,0.012,0.0109,0.0096,0.0085,0.0079,0.0068,0.0063,0.0054,0.0049,0.0044,0.0035,0.0032,0.0025,0.0024,0.0021,0.0017,0.0016,0.0011,0.0011,0.0009,0.0007,0.0006,0.0005,0.0004,0.0004,0.0003,0.0003,0.0002,0.0002,0.0001,0.0001,0.0,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"p_greedy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0002,0.0003,0.0002,0.0003,0.0004,0.0004,0.0006,0.0008,0.0009,0.001,0.0011,0.0014,0.0015,0.0019,0.0022,0.0025,0.0031,0.0037,0.0041,0.0047,0.0054,0.006,0.0073,0.008,0.0088,0.0098,0.0112,0.0122,0.0143,0.0153,0.017,0.0183,0.0193,0.0219,0.0215,0.0235,0.0248,0.0264,0.0276,0.028,0.0288,0.0291,0.0303,0.0304,0.0301,0.0302,0.0295,0.0291,0.0291,0.0274,0.0272,0.026,0.0252,0.0236,0.0228,0.0208,0.0201,0.0181,0.0167,0.0156,0.0143,0.0128,0.0119,0.0108,0.0097,0.009,0.008,0.0072,0.0064,0.0054,0.0048,0.0042,0.0037,0.0034,0.0029,0.0024,0.0021,0.002,0.0015,0.0013,0.0011,0.001,0.0008,0.0007,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002,0.0002,0.0002,0.0001,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mean_opt":121.8025,"p121_ev":0.5402,"p141_ev":0.0851,"p121_best":0.5795,"p141_best":0.1098,"ladder":[{"name":"Random clicking","mean":35.0414,"p121":0.0,"p141":0.0,"lost":86.7655,"games":200000,"group":"sim"},{"name":"Random locks, biggest box","mean":63.3726,"p121":0.0,"p141":0.0,"lost":58.4079,"games":200000,"group":"sim"},{"name":"Never re-roll, biggest box","mean":63.3826,"p121":0.0,"p141":0.0,"lost":58.4079,"games":200000,"group":"sim"},{"name":"Lock the biggest group","mean":78.9939,"p121":0.0096,"p141":0.0005,"lost":42.7929,"games":200000,"group":"sim"},{"name":"High-roller (Jumble/Sugar as throw-aways)","mean":105.6681,"p121":0.1719,"p141":0.0141,"lost":16.116,"games":200000,"group":"sim"},{"name":"Best single round, no planning","mean":109.4107,"p121":0.2011,"p141":0.0137,"lost":12.3853,"games":200000,"group":"sim"},{"name":"Par sheet (this guide)","mean":119.7826,"p121":0.476,"p141":0.0685,"lost":2.0293,"games":200000,"group":"sim"},{"name":"Perfect play","mean":121.8064,"p121":0.5406,"p141":0.0843,"lost":0.0,"games":200000,"group":"solver"},{"name":"Perfect play for 121+","mean":119.3292,"p121":0.5789,"p141":0.0591,"lost":2.4766,"games":200000,"group":"solver"},{"name":"Perfect play for 141+","mean":116.1921,"p121":0.3535,"p141":0.1093,"lost":5.6021,"games":200000,"group":"solver"},{"name":"A real player's 21 games","mean":114.8571,"p121":0.2857,"p141":0.0476,"lost":null,"games":21,"group":"real"},{"name":"Claude Opus 5.5, 25 games","mean":119.88,"p121":0.6,"p141":0.04,"lost":4.9597,"games":25,"group":"real"}],"frontier":{"t":[60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180],"best":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.9999,0.9999,0.9999,0.9999,0.9998,0.9997,0.9997,0.9996,0.9994,0.9993,0.9991,0.9988,0.9985,0.9982,0.9977,0.9971,0.9964,0.9955,0.9944,0.9931,0.9915,0.9896,0.9872,0.9844,0.981,0.9772,0.9726,0.9672,0.9611,0.9539,0.946,0.9365,0.9263,0.9143,0.9014,0.8869,0.8709,0.8538,0.8346,0.8145,0.7927,0.7697,0.7456,0.7198,0.6937,0.666,0.6379,0.6092,0.5795,0.5504,0.5202,0.4908,0.4614,0.4319,0.4039,0.3754,0.3487,0.3223,0.2969,0.273,0.2496,0.2281,0.2073,0.1879,0.17,0.1529,0.1375,0.123,0.1098,0.0978,0.0868,0.0769,0.0679,0.0598,0.0525,0.0459,0.0401,0.0349,0.0303,0.0263,0.0227,0.0196,0.0169,0.0145,0.0125,0.0107,0.0091,0.0078,0.0066,0.0056,0.0047,0.004,0.0033,0.0028,0.0023,0.002,0.0016,0.0013,0.0011,0.0009,0.0008,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002],"ev":[1.0,1.0,1.0,1.0,1.0,0.9999,0.9999,0.9999,0.9999,0.9998,0.9998,0.9997,0.9997,0.9996,0.9995,0.9994,0.9992,0.999,0.9988,0.9985,0.9982,0.9978,0.9973,0.9968,0.9961,0.9953,0.9943,0.9932,0.9918,0.9903,0.9884,0.9864,0.9838,0.9811,0.9777,0.9741,0.9698,0.9649,0.9595,0.9533,0.9464,0.9386,0.9298,0.9203,0.9093,0.8977,0.8844,0.8702,0.8546,0.8375,0.8195,0.7994,0.7788,0.7562,0.7327,0.708,0.6818,0.6553,0.6272,0.5989,0.5699,0.5402,0.5109,0.4807,0.4514,0.4219,0.393,0.3649,0.337,0.3107,0.2848,0.2603,0.237,0.2147,0.1941,0.1744,0.1563,0.1395,0.1239,0.1098,0.0967,0.0851,0.0744,0.0649,0.0564,0.0487,0.0421,0.0361,0.031,0.0264,0.0224,0.019,0.0161,0.0135,0.0114,0.0095,0.0079,0.0066,0.0055,0.0045,0.0037,0.0031,0.0025,0.002,0.0017,0.0014,0.0011,0.0009,0.0007,0.0006,0.0005,0.0004,0.0003,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0],"par":[1.0,1.0,1.0,1.0,0.9999,0.9999,0.9999,0.9999,0.9998,0.9998,0.9997,0.9996,0.9996,0.9994,0.9993,0.9992,0.999,0.9988,0.9985,0.9982,0.9978,0.9973,0.9968,0.996,0.9953,0.9941,0.993,0.9916,0.9899,0.9878,0.9855,0.983,0.9794,0.9758,0.9719,0.9671,0.9616,0.9553,0.9479,0.9397,0.9304,0.9205,0.9088,0.8963,0.8822,0.8671,0.8512,0.8329,0.8142,0.7941,0.7722,0.7492,0.7251,0.6995,0.6736,0.6471,0.6193,0.5912,0.5629,0.5341,0.5051,0.476,0.4474,0.4186,0.3904,0.3625,0.3359,0.3099,0.2844,0.2605,0.2382,0.2162,0.1968,0.1778,0.1602,0.1439,0.1287,0.1141,0.101,0.0891,0.0782,0.0685,0.0601,0.0521,0.0453,0.039,0.0337,0.0288,0.0244,0.0208,0.0176,0.0151,0.0127,0.0107,0.0089,0.0074,0.0062,0.0051,0.0042,0.0035,0.0029,0.0023,0.0019,0.0016,0.0012,0.001,0.0008,0.0006,0.0005,0.0004,0.0004,0.0003,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0,0.0]},"opening":[{"roll":["J","J","S","S","P"],"p":0.0486,"lock":["P"]},{"roll":["J","S","S","P","P"],"p":0.0324,"lock":["P","P"]},{"roll":["J","J","S","P","P"],"p":0.0324,"lock":["P","P"]},{"roll":["J","S","S","P","F"],"p":0.0324,"lock":["P"]},{"roll":["J","J","S","P","F"],"p":0.0324,"lock":["P"]},{"roll":["J","S","S","P","M"],"p":0.0324,"lock":["P","M"]},{"roll":["J","J","S","P","M"],"p":0.0324,"lock":["P","M"]},{"roll":["J","S","S","S","P"],"p":0.0324,"lock":["S","S","S"]},{"roll":["J","J","J","S","P"],"p":0.0324,"lock":["J","J","J"]},{"roll":["J","J","S","S","M"],"p":0.0243,"lock":["M"]},{"roll":["J","J","S","S","F"],"p":0.0243,"lock":[]},{"roll":["J","J","S","S","S"],"p":0.0243,"lock":["S","S","S"]},{"roll":["J","J","J","S","S"],"p":0.0243,"lock":["J","J","J"]},{"roll":["J","S","P","P","M"],"p":0.0216,"lock":["P","P","M"]}],"boxes":[{"box":"Jumbleberry","par":10,"avg":6.6779,"zero":0.0041,"round":5.2201,"human":5.5238},{"box":"Sugarberry","par":10,"avg":6.6882,"zero":0.0043,"round":5.1548,"human":4.9524},{"box":"Pickleberry","par":13,"avg":11.4768,"zero":0.0045,"round":5.3918,"human":12.0},{"box":"Moonberry","par":13,"avg":14.7851,"zero":0.0356,"round":5.4444,"human":15.3333},{"box":"Basket of 3","par":18,"avg":20.8742,"zero":0.0095,"round":4.3212,"human":21.5238},{"box":"Basket of 4","par":14,"avg":15.8349,"zero":0.055,"round":4.7346,"human":11.9048},{"box":"Basket of 5","par":6,"avg":6.4267,"zero":0.449,"round":5.4879,"human":7.1429},{"box":"Mixed Basket","par":14,"avg":18.1666,"zero":0.0347,"round":4.0011,"human":16.5714},{"box":"Free Roll","par":21,"avg":20.8761,"zero":0.0,"round":5.2439,"human":19.9048}],"human_scores":[117,96,119,118,127,114,112,122,127,117,144,93,116,124,90,120,82,110,108,119,137],"claude_scores":[135,115,124,128,79,130,118,106,121,82,123,131,106,130,127,162,124,135,110,122,130,123,112,120,104],"claude_lost":4.9597,"claude":{"n":25,"mean":119.88,"lo":113.2969,"hi":126.4631,"p121":0.6,"p141":0.04,"lost":4.9597,"opt_rate":0.7868,"scores":[135,115,124,128,79,130,118,106,121,82,123,131,106,130,127,162,124,135,110,122,130,123,112,120,104],"model":"Claude Opus 5.5"},"moon":[{"name":"Most Moonberries","per_game":0.6676,"p121":0.5741,"p141":0.0927,"mean":119.4647,"recommended":true},{"name":"1 Moonberry (121+)","per_game":0.638,"p121":0.5789,"p141":0.0591,"mean":119.3292,"recommended":false},{"name":"Highest score","per_game":0.6249,"p121":0.5406,"p141":0.0843,"mean":121.8064,"recommended":false},{"name":"2 Moonberries (141+)","per_game":0.4628,"p121":0.3535,"p141":0.1093,"mean":116.1921,"recommended":false},{"name":"Par sheet (this guide)","per_game":0.5446,"p121":0.476,"p141":0.0685,"mean":119.7826,"recommended":false}],"p_moon":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0001,0.0002,0.0002,0.0002,0.0003,0.0003,0.0004,0.0005,0.0005,0.0006,0.0007,0.0007,0.0008,0.0009,0.001,0.0011,0.0014,0.0014,0.0019,0.0017,0.0038,0.0042,0.0046,0.0061,0.0061,0.0079,0.008,0.0092,0.0097,0.0097,0.01,0.0103,0.0115,0.0117,0.0135,0.0135,0.0142,0.0146,0.0145,0.0142,0.0123,0.0144,0.0117,0.0127,0.011,0.013,0.0121,0.0115,0.0166,0.0133,0.0164,0.0168,0.0159,0.0188,0.016,0.0567,0.049,0.0435,0.0388,0.0376,0.0321,0.0285,0.0273,0.0249,0.021,0.0186,0.016,0.0139,0.0131,0.0117,0.0115,0.0105,0.0093,0.0097,0.0076,0.0146,0.0121,0.01,0.0083,0.0079,0.0066,0.0054,0.0049,0.0043,0.0033,0.0029,0.0022,0.0019,0.0015,0.0014,0.0011,0.0009,0.0007,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"moon_per_game":0.6676,"par_examples":[{"id":"obvious","kind":"score","hand":["P","P","P","P","M"],"used":["Jumbleberry","Sugarberry","Basket of 5"],"round":4,"options":[{"box":"Basket of 4","pts":23,"par":14,"diff":9},{"box":"Basket of 3","pts":23,"par":18,"diff":5},{"box":"Pickleberry","pts":16,"par":13,"diff":3},{"box":"Free Roll","pts":23,"par":21,"diff":2},{"box":"Moonberry","pts":7,"par":13,"diff":-6},{"box":"Mixed Basket","pts":0,"par":14,"diff":-14}]},{"id":"threem","kind":"score","hand":["M","M","M","J","J"],"used":["Jumbleberry","Sugarberry","Pickleberry","Basket of 4"],"round":5,"options":[{"box":"Moonberry","pts":21,"par":13,"diff":8},{"box":"Basket of 3","pts":25,"par":18,"diff":7},{"box":"Free Roll","pts":25,"par":21,"diff":4},{"box":"Basket of 5","pts":0,"par":6,"diff":-6},{"box":"Mixed Basket","pts":0,"par":14,"diff":-14}]},{"id":"chase","kind":"chase","hand":["J","J","J","S","M"],"used":["Free Roll"],"round":2,"options":[{"box":"Moonberry","expect":12.3,"par":13,"diff":-0.7,"lock":["M"]},{"box":"Basket of 3","expect":16.4,"par":18,"diff":-1.6,"lock":["J","J","J","M"]},{"box":"Jumbleberry","expect":8.0,"par":10,"diff":-2.0,"lock":["J","J","J"]},{"box":"Basket of 5","expect":2.6,"par":6,"diff":-3.4,"lock":["J","J","J"]},{"box":"Mixed Basket","expect":10.6,"par":14,"diff":-3.4,"lock":["J","S","M"]},{"box":"Sugarberry","expect":6.1,"par":10,"diff":-3.9,"lock":["S"]},{"box":"Basket of 4","expect":8.6,"par":14,"diff":-5.4,"lock":["J","J","J"]},{"box":"Pickleberry","expect":7.2,"par":13,"diff":-5.8,"lock":[]}]},{"id":"dump","kind":"score","hand":["S","J","F","J","P"],"used":["Jumbleberry","Sugarberry","Basket of 3","Mixed Basket","Free Roll"],"round":6,"options":[{"box":"Basket of 5","pts":0,"par":6,"diff":-6},{"box":"Pickleberry","pts":4,"par":13,"diff":-9},{"box":"Moonberry","pts":0,"par":13,"diff":-13},{"box":"Basket of 4","pts":0,"par":14,"diff":-14}]}],"chase_table":[{"box":"Jumbleberry","avg":6.57,"qualify":0.9953},{"box":"Sugarberry","avg":6.57,"qualify":0.9953},{"box":"Pickleberry","avg":9.76,"qualify":0.9648},{"box":"Moonberry","avg":9.485,"qualify":0.7941},{"box":"Basket of 3","avg":13.7701,"qualify":0.9324},{"box":"Basket of 4","avg":7.2627,"qualify":0.6005},{"box":"Basket of 5","avg":1.9753,"qualify":0.1858},{"box":"Mixed Basket","avg":9.4202,"qualify":0.5167},{"box":"Free Roll","avg":19.365,"qualify":1.0}],"open_value":[{"box":"Jumbleberry","value":[6.6779,6.6814,6.6826,6.6914,6.6982,6.7063,6.69,6.6532,6.5771],"open":[1.0,0.9036,0.8038,0.7007,0.593,0.4819,0.3634,0.2476,0.1261]},{"box":"Sugarberry","value":[6.6882,6.6843,6.6965,6.7006,6.7031,6.7065,6.6833,6.6302,6.5615],"open":[1.0,0.9033,0.8007,0.6962,0.5859,0.4707,0.3508,0.2354,0.1119]},{"box":"Pickleberry","value":[11.4768,11.4346,11.4163,11.3685,11.2862,11.1439,10.9061,10.4793,9.7304],"open":[1.0,0.9248,0.8377,0.738,0.6292,0.5097,0.3829,0.2537,0.1158]},{"box":"Moonberry","value":[14.7851,14.6558,14.4396,14.1233,13.6861,13.0883,12.2878,11.2256,9.5028],"open":[1.0,0.9205,0.8297,0.7266,0.619,0.5102,0.3984,0.281,0.159]},{"box":"Basket of 3","value":[20.8742,20.5361,20.1707,19.7466,19.2325,18.6186,17.7687,16.3762,13.8108],"open":[1.0,0.8442,0.6985,0.5637,0.441,0.3316,0.2329,0.143,0.0664]},{"box":"Basket of 4","value":[15.8349,15.3001,14.6706,13.9817,13.2307,12.3116,11.0951,9.4946,7.3251],"open":[1.0,0.8773,0.7549,0.6323,0.5082,0.3921,0.2872,0.1862,0.0964]},{"box":"Basket of 5","value":[6.4267,5.9048,5.3382,4.7412,4.0815,3.4366,2.8419,2.3754,1.9863],"open":[1.0,0.9064,0.8196,0.7322,0.6397,0.5402,0.4233,0.2839,0.1427]},{"box":"Mixed Basket","value":[18.1666,17.9912,17.7593,17.4325,16.9751,16.2296,15.0353,12.886,9.4582],"open":[1.0,0.8098,0.6503,0.5113,0.3899,0.2769,0.1867,0.1158,0.0604]},{"box":"Free Roll","value":[20.8761,20.8274,20.7439,20.6557,20.5571,20.4207,20.2098,19.8586,19.3381],"open":[1.0,0.9101,0.8047,0.6992,0.5941,0.4866,0.3744,0.2534,0.1214]}],"zero_cost":[{"box":"Jumbleberry","cost":10.3781},{"box":"Sugarberry","cost":10.3781},{"box":"Pickleberry","cost":14.9063},{"box":"Moonberry","cost":15.3905},{"box":"Basket of 3","cost":21.1413},{"box":"Basket of 4","cost":15.025},{"box":"Basket of 5","cost":7.6101},{"box":"Mixed Basket","cost":19.4338},{"box":"Free Roll","cost":23.7778}],"counts":{"hands":126,"keeps":252,"masks":512,"situations":193536,"raw_outcomes":100000},"ai":{"q":{"curve":[[1000202,92.376],[2000086,100.0709],[3000100,104.0124],[4000073,105.725],[5000079,107.2088],[6000076,107.7653],[7000092,108.4934],[8000098,109.0446],[9000108,109.3441],[10000023,109.8168],[11000061,109.9997],[12000094,110.3781],[13000084,110.6208],[14000024,110.8251],[15000152,110.9909],[16000149,111.1135],[17000083,111.2963],[18000100,111.6038],[19000173,111.683],[20000001,111.6737],[21000033,111.8098],[22000016,111.8312],[23000030,111.9238],[24000111,111.9143],[25000139,111.9581]],"final":{"games":200000.0,"mean":111.8979,"sd":13.3821,"P(>=121)":0.2561,"P(>=141)":0.0156,"regret_per_game":9.8152,"optimal_decision_rate":0.7296},"minutes":21.8897,"games":25000139},"dqn":{"curve":[[128202,74.3659],[252334,83.7493],[357006,86.8231],[431055,92.2837],[562266,97.1829],[691821,97.3004],[831388,104.2268],[971758,107.9772],[1119681,108.5009],[1253900,108.6627],[1382419,114.0979],[1521319,115.0401],[1651850,114.6047],[1787894,116.3674],[1932026,117.7502],[2081977,116.8377],[2191397,117.6842],[2300928,117.7847],[2413349,118.0876],[2466843,118.1935],[2514363,117.8812],[2585395,118.7327],[2683233,117.8607],[2851855,118.7891],[3063686,119.4296],[3290409,119.0684],[3505303,118.7866],[3655981,117.7464],[3810519,120.0443],[3984323,120.2224],[4212612,119.6624],[4463216,119.6245],[4706894,119.1439],[4955587,120.2067],[5200820,119.6839],[5441448,120.6167],[5687769,120.8051],[5930613,121.0601],[6143452,121.1213],[6346268,120.9944]],"final":{"games":200000.0,"mean":121.044,"sd":13.5198,"P(>=121)":0.5163,"P(>=141)":0.0732,"regret_per_game":0.7298,"optimal_decision_rate":0.9207},"minutes":40.0004,"games":6346268}}}</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const $ = (id) => document.getElementById(id);
+  const pct = (x, d = 0) => (100 * x).toFixed(d) + '%';
+  const chip = (b) => `<i class="berry b-${b}">${b}</i>`;
+  $('avg').textContent = D.mean_opt.toFixed(1); $('p121').textContent = pct(D.p121_best); $('p141').textContent = pct(D.p141_best);
+  $('goals').innerHTML = D.moon.filter((r) => !r.name.startsWith('Par')).map((r) =>
+    `<span class="${r.recommended ? 'best' : ''}">${r.recommended ? '★ ' : ''}${r.name}</span><span class="num ${r.recommended ? 'best' : ''}">${(100 * r.per_game).toFixed(0)} per 100 games</span>`).join('');
+  const short = { 'Basket of 3': 'Basket 3', 'Basket of 4': 'Basket 4', 'Basket of 5': 'Basket 5', 'Mixed Basket': 'Mixed' };
+  $('par').innerHTML = D.boxes.map((b) => `<div class="${b.par <= 6 ? 'lo' : ''}"><span>${short[b.box] || b.box}</span><b>${b.par}</b></div>`).join('');
+  $('paravg').textContent = D.ladder.find((r) => r.name.startsWith('Par')).mean.toFixed(1);
+  $('drop').innerHTML = [...D.zero_cost].sort((a, b) => a.cost - b.cost)
+    .map((z) => `<span class="z">${short[z.box] || z.box} <span class="num">${z.cost.toFixed(0)}</span></span>`).join('<span>›</span>');
+  $('open').innerHTML = D.opening.slice(0, 11).map((o) => `<tr><td><span class="hand">${o.roll.map(chip).join('')}</span></td>
+    <td>${o.lock.length ? `<span class="hand">${o.lock.map(chip).join('')}</span>` : 're-roll all'}</td></tr>`).join('');
+  const KEEP = {
+    'Jumbleberry': 'all Jumbleberries', 'Sugarberry': 'all Sugarberries', 'Pickleberry': 'all Pickleberries', 'Moonberry': 'all Moonberries',
+    'Basket of 3': 'biggest group + Moonberries', 'Basket of 4': 'biggest group only', 'Basket of 5': 'biggest group only',
+    'Mixed Basket': 'one of each (no Moon yet: just a Pickle)', 'Free Roll': 'Pickles and Moons',
+  };
+  $('chase').innerHTML = D.chase_table.map((r) => `<tr><td>${short[r.box] || r.box}</td><td>${KEEP[r.box]}</td><td class="r num">${r.avg.toFixed(1)}</td></tr>`).join('');
+  const pb = $('print');
+  if (pb) { if (/png/.test(location.search)) pb.remove(); else pb.addEventListener('click', () => window.print()); }
+})();
+</script>
+</body>
+</html>

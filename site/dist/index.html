@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Jumbleberry Fields, Solved</title>
+<meta name="description" content="Perfect play for the Webkinz dice game Jumbleberry Fields: the real odds of 1 and 2 Moonberries, a 9-number par sheet, a live phone helper and a free practice game.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jumbleberry Fields, Solved">
+<meta property="og:title" content="Jumbleberry Fields, Solved">
+<meta property="og:description" content="Perfect play for the Webkinz dice game Jumbleberry Fields: the real odds of 1 and 2 Moonberries, a 9-number par sheet, a live phone helper and a free practice game.">
+<meta property="og:url" content="https://carterkowel.github.io/webkinz/">
+<meta property="og:image" content="https://carterkowel.github.io/webkinz/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Jumbleberry Fields, solved: perfect play averages 121.8 points">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; figures and the embedded tools break slightly wider.
+   Berry colours carry identity, Moonberry purple is the accent. */
+:root {
+  --bg: #f4f6ef; --surface: #ffffff; --ink: #231d33; --ink-2: #57516a; --muted: #8a8598;
+  --line: #dcdfd2; --grid: #e6e8de; --accent: #5b3aa8; --accent-soft: #ece6f8;
+  --jumble: #d8433b; --sugar: #e2a60f; --pickle: #4b9a39; --moon: #6f45c6; --fly: #46434f; --chip-ink: #ffffff;
+  --s-perfect: #6250d6; --s-real: #eb6834; --s-par: #1baf7a; --s-sim: #bdbbb3; --neg: #d0605a;
+  --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --col: 44rem; --wide: 58rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e;
+    --line: #322e3f; --grid: #2a2735; --accent: #b39af0; --accent-soft: #2a2340;
+    --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; --chip-ink: #ffffff;
+    --s-perfect: #9085e9; --s-real: #d95926; --s-par: #199e70; --s-sim: #5b5968; --neg: #e2827d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e;
+  --line: #322e3f; --grid: #2a2735; --accent: #b39af0; --accent-soft: #2a2340;
+  --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; --chip-ink: #ffffff;
+  --s-perfect: #9085e9; --s-real: #d95926; --s-par: #199e70; --s-sim: #5b5968; --neg: #e2827d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+.page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.col { max-width: var(--col); margin-inline: auto; }
+.wide { max-width: var(--wide); margin-inline: auto; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.1rem); }
+h3 { font-size: 1.2rem; }
+p { margin: 0; }
+a { color: var(--accent); }
+.eyebrow { font-family: var(--font-data); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+section { display: grid; gap: 1.1rem; padding-block: 3.2rem 0.5rem; }
+.lede { font-size: 1.15rem; color: var(--ink-2); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* hero */
+.hero { padding-block: 3.5rem 1rem; display: grid; gap: 1.4rem; }
+.hero h1 { font-size: clamp(2.6rem, 1.6rem + 4.5vw, 4.4rem); letter-spacing: -0.01em; }
+.hero h1 span { color: var(--accent); }
+.hero-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+.hero-chips .berry { width: 2.3rem; height: 2.3rem; font-size: 1rem; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 1rem; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; display: grid; gap: 0.2rem; }
+.stat b { font-family: var(--font-display); font-weight: 600; font-size: 2.4rem; line-height: 1; color: var(--accent); }
+.stat span { color: var(--ink-2); font-size: 0.95rem; }
+
+/* berry chips */
+.berry { display: inline-grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; color: var(--chip-ink);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.78rem; line-height: 1; flex: none; }
+.b-J { background: var(--jumble); } .b-S { background: var(--sugar); color: #231d33; } .b-P { background: var(--pickle); }
+.b-M { background: var(--moon); } .b-F { background: var(--fly); }
+.hand { display: inline-flex; gap: 0.25rem; flex-wrap: wrap; align-items: center; }
+
+/* figures */
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem 1.1rem 0.9rem; display: grid; gap: 0.6rem; min-width: 0; }
+figcaption { font-size: 0.9rem; color: var(--ink-2); }
+.fig-title { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+.fig-head { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem 1rem; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { font: inherit; font-size: 0.85rem; border: 0; background: transparent; color: var(--ink-2); padding: 0.35rem 0.7rem; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.chart { position: relative; width: 100%; min-width: 0; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font-data); font-size: 11px; fill: var(--ink-2); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 0.82rem; line-height: 1.35;
+  padding: 0.45rem 0.6rem; border-radius: 8px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); z-index: 2; }
+.tip[hidden] { display: none !important; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-size: 0.88rem; color: var(--ink-2); }
+.legend i { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 3px; margin-right: 0.4rem; vertical-align: -0.1rem; }
+
+/* score checker */
+.checker { display: grid; gap: 0.8rem; background: var(--accent-soft); border-radius: 16px; padding: 1.1rem 1.2rem; }
+.checker label { font-weight: 800; }
+.checker-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+.checker input { font: 600 1.4rem var(--font-display); width: 6.5rem; padding: 0.35rem 0.6rem; border-radius: 10px;
+  border: 2px solid var(--line); background: var(--surface); color: var(--ink); }
+.checker output { color: var(--ink-2); min-width: 0; flex: 1 1 16rem; }
+.checker output b { color: var(--ink); }
+
+/* ladder */
+.ladder { display: grid; gap: 0.35rem; }
+.lrow { display: grid; grid-template-columns: minmax(8rem, 15rem) 1fr; gap: 0.75rem; align-items: center; border-radius: 8px; padding: 0.15rem 0.3rem; }
+.lrow:hover, .lrow:focus-visible { background: var(--accent-soft); }
+.lname { font-size: 0.92rem; color: var(--ink-2); text-align: right; line-height: 1.25; }
+.ltrack { position: relative; height: 1.35rem; }
+.lbar { position: absolute; left: 0; top: 0.2rem; height: 0.95rem; border-radius: 0 4px 4px 0; }
+.lval { position: absolute; top: 0; font-family: var(--font-data); font-size: 0.82rem; color: var(--ink-2); white-space: nowrap; line-height: 1.35rem; }
+.lref { position: absolute; top: -0.2rem; bottom: -0.2rem; width: 1px; background: var(--muted); }
+.ladder-head { display: grid; grid-template-columns: minmax(8rem, 15rem) 1fr; gap: 0.75rem; padding-inline: 0.3rem; }
+.ladder-head .ltrack { height: 1.2rem; }
+.ladder-head .lref-label { position: absolute; font-family: var(--font-data); font-size: 0.75rem; color: var(--muted); transform: translateX(-50%); white-space: nowrap; }
+.ldetail { font-size: 0.9rem; color: var(--ink-2); min-height: 1.5rem; }
+
+/* habits */
+.habits { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+.habit-group { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem 1.2rem; display: grid; gap: 0.7rem; align-content: start; }
+.habit-group ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+.habit-group li { display: grid; gap: 0.15rem; }
+.habit-group li b { font-weight: 800; }
+.habit-group li span { color: var(--ink-2); font-size: 0.93rem; }
+
+/* par sheet grid */
+.card { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: var(--line); border-radius: 16px; padding: 6px; }
+.cell { background: var(--surface); border-radius: 11px; padding: 0.7rem 0.8rem; display: grid; gap: 0.1rem; align-content: start; min-width: 0; }
+.cell .bx { font-weight: 800; font-size: 0.95rem; display: flex; gap: 0.4rem; align-items: center; }
+.cell .bx .berry { width: 1.1rem; height: 1.1rem; font-size: 0.6rem; }
+.cell .par { font-family: var(--font-display); font-weight: 600; font-size: 2rem; line-height: 1.1; color: var(--accent); }
+.cell .why { font-size: 0.82rem; color: var(--ink-2); line-height: 1.35; }
+.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.5rem; }
+details.ex { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 0.8rem 1rem; }
+details.ex summary { cursor: pointer; font-weight: 800; }
+details.ex[open] summary { margin-bottom: 0.7rem; }
+.ex-list { display: grid; gap: 0.7rem; }
+.ex summary .tag { font-family: var(--font-data); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-left: 0.4rem; }
+.ex-body { display: grid; gap: 0.8rem; }
+.ex-setup { display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; align-items: center; font-size: 0.92rem; color: var(--ink-2); }
+.pill { display: inline-block; font-size: 0.78rem; padding: 0.1rem 0.5rem; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); text-decoration: line-through; }
+.barlist { display: grid; gap: 0.35rem; }
+.brow { display: grid; grid-template-columns: minmax(7rem, 11rem) 1fr 3.2rem; gap: 0.6rem; align-items: center; padding: 0.25rem 0.4rem; border-radius: 8px; }
+.brow.win { background: var(--accent-soft); }
+.bname { font-size: 0.9rem; line-height: 1.2; } .bname small { display: block; color: var(--muted); font-size: 0.75rem; }
+.brow.win .bname { font-weight: 800; }
+.btrack { position: relative; height: 0.9rem; }
+.btrack::before { content: ""; position: absolute; left: 50%; top: -0.2rem; bottom: -0.2rem; width: 1px; background: var(--muted); }
+.bfill { position: absolute; top: 0.1rem; height: 0.7rem; border-radius: 3px; }
+.bfill.pos { background: var(--accent); } .bfill.neg { background: var(--neg); }
+.bval { font-family: var(--font-data); font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; }
+.brow.win .bval { font-weight: 700; color: var(--accent); }
+.ex-lesson { font-size: 0.95rem; }
+@media (max-width: 34rem) { .brow { grid-template-columns: 1fr 3rem; } .brow .btrack { grid-column: 1 / -1; grid-row: 2; } }
+details.ex > p { margin-bottom: 0.4rem; }
+.ex-step { display: grid; gap: 0.35rem; padding-block: 0.6rem; border-top: 1px solid var(--grid); }
+.ex-step .lbl { font-family: var(--font-data); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.ex table { font-size: 0.9rem; } .ex td.win { font-weight: 800; color: var(--accent); }
+.tool { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 0.6rem; }
+.cta { display: inline-block; background: var(--accent); color: var(--surface); text-decoration: none; font-weight: 800; padding: 0.6rem 1.1rem; border-radius: 12px; justify-self: start; }
+.map { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.92rem; color: var(--ink-2); }
+.recommend { font-weight: 800; color: var(--accent); }
+
+/* opening table */
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th { text-align: left; font-family: var(--font-data); font-weight: 500; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); }
+td { padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--grid); vertical-align: middle; }
+td.r, th.r { text-align: right; }
+.reroll { color: var(--muted); font-style: italic; }
+
+.ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; }
+.ai { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; display: grid; gap: 0.3rem; align-content: start; }
+.ai b { font-family: var(--font-display); font-size: 1.9rem; font-weight: 600; line-height: 1.1; }
+.ai .who { font-weight: 800; }
+.ai span { color: var(--ink-2); font-size: 0.9rem; }
+.note { font-size: 0.9rem; color: var(--muted); }
+footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color: var(--ink-2); }
+
+/* box-by-box: endgame table + keep-it-open small multiples */
+.chase td:first-child { font-weight: 700; white-space: nowrap; }
+.chase td.rule { color: var(--ink-2); }
+.mults { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+.mult { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0.55rem 0.7rem 0.4rem; display: grid; gap: 0.1rem; min-width: 0; }
+.mult b { font-size: 0.88rem; } .mult .rng { font-family: var(--font-data); font-size: 0.75rem; color: var(--ink-2); }
+.mult svg { width: 100%; height: auto; display: block; }
+.mult.dump { border-color: var(--accent); }
+@media (max-width: 34rem) { .mults { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 34rem) {
+  .lrow, .ladder-head { grid-template-columns: 1fr; gap: 0.1rem; }
+  .lname { text-align: left; }
+  .ladder-head > div:first-child { display: none; }
+  .cell { padding: 0.55rem 0.55rem; }
+  .cell .par { font-size: 1.6rem; }
+  .cell .why { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lbar { transition: width 0.6s ease-out; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero col">
+    <div class="hero-chips" aria-hidden="true"><span class="berry b-M">M</span><span class="berry b-M">M</span><span class="berry b-P">P</span><span class="berry b-J">J</span><span class="berry b-S">S</span></div>
+    <h1>Jumbleberry Fields, <span>solved</span></h1>
+    <p class="lede">We computed the best possible move for every situation in the game, then played millions of games to see how different strategies score. Here is what perfect play looks like, how close you can get with a few simple habits, a <a href="#helper">helper</a> to use while you play, and a <a href="#play">practice game</a> you can play as often as you like. Curious how it's done? Read <a href="method.html">how we solved the game</a>. Want it all on one page? Grab the <a href="cheatsheet.html">cheat sheet</a>.</p>
+    <div class="stats">
+      <div class="stat"><b id="h-avg">121.8</b><span>average score with perfect play</span></div>
+      <div class="stat"><b id="h-121">58%</b><span>best possible chance of 121+ (one Moonberry)</span></div>
+      <div class="stat"><b id="h-141">11%</b><span>best possible chance of 141+ (two Moonberries)</span></div>
+      <div class="stat"><b id="h-moon">0.67</b><span>Moonberries a game playing for the most Moonberries</span></div>
+    </div>
+    <phone-link href="helper.html#live" label="Playing right now? Scan to use your phone as a live guide" note="Point your phone's camera at the code, then point the phone at your game. It shows which jars to lock and which box to click. No app or sign-in needed."></phone-link>
+  </header>
+
+  <section class="col" id="hard">
+    <p class="eyebrow">Why it feels hard</p>
+    <h2>The Moonberry line sits right on the perfect player's average</h2>
+    <p>The prize for one Moonberry starts at <b>121</b>. A flawless player averages <b class="num">121.8</b>. So even perfect play is close to a coin flip for the first Moonberry, and two Moonberries (141+) come in roughly one game in nine. If the top prize feels out of reach, that is mostly the dice.</p>
+    <figure>
+      <div class="fig-head"><div class="fig-title">How perfect play scores, game by game</div>
+        <div class="seg" role="group" aria-label="Strategy shown">
+          <button type="button" data-dist="opt" aria-pressed="true">Highest score</button>
+          <button type="button" data-dist="moon" aria-pressed="false">Most Moonberries</button></div></div>
+      <div class="chart" id="dist"></div>
+      <figcaption id="dist-cap"></figcaption>
+    </figure>
+    <div class="checker">
+      <label for="score-in">How good was your game?</label>
+      <div class="checker-row">
+        <input id="score-in" type="number" inputmode="numeric" min="0" max="237" value="115" aria-describedby="score-out">
+        <output id="score-out" for="score-in" aria-live="polite"></output>
+      </div>
+    </div>
+  </section>
+
+  <section class="col" id="ladder-sec">
+    <p class="eyebrow">How strategies stack up</p>
+    <h2>Which box you score matters as much as what you lock</h2>
+    <p>Each simulated strategy played the same 200,000 games. "Points lost" grades the decisions themselves: for every move it counts how many points, on average, it gives up compared with the best move. That separates skill from luck.</p>
+    <figure>
+      <div class="legend" aria-hidden="true"><span><i style="background:var(--s-sim)"></i>Simulated strategy</span><span><i style="background:var(--s-real)"></i>Real players</span><span><i style="background:var(--s-perfect)"></i>Perfect play (exact solver)</span></div>
+      <div class="ladder-head" aria-hidden="true"><div></div><div class="ltrack" id="ladder-ref"></div></div>
+      <div class="ladder" id="ladder" role="list"></div>
+      <div class="ldetail" id="ladder-detail" aria-live="polite">Hover or tap a row for its prize odds.</div>
+    </figure>
+    <p>Random locking scores no better than never re-rolling at all. Locking the biggest matching group, the usual Yahtzee instinct, only reaches 79. The jump from about 109 to about 120 comes from <b>which box</b> each hand gets scored in, which is what the par sheet below fixes.</p>
+  </section>
+
+  <section class="wide" id="habits">
+    <div class="col" style="display:grid;gap:1.1rem;margin-inline:auto;width:100%">
+      <p class="eyebrow">What perfect play does</p>
+      <h2>Habits of a perfect player</h2>
+      <p>These patterns come from watching the solver play millions of rounds. Each one held up across every situation we checked.</p>
+    </div>
+    <div class="habits">
+      <div class="habit-group">
+        <h3>Locking</h3>
+        <ul>
+          <li><b>Lock Moonberries.</b><span>Perfect play keeps them 84% of the time, and 96% while the Moonberry box is open.</span></li>
+          <li><b>Lock Pickleberries, especially early.</b><span>Kept 77% of the time while the Pickleberry box is open.</span></li>
+          <li><b>Never lock a Fly.</b><span>Not once, in any situation.</span></li>
+          <li><b>Throw back pairs of Jumble or Sugar.</b><span>A pair is kept only 13% of the time. Three of a kind is kept 62% of the time, four 91%.</span></li>
+        </ul>
+      </div>
+      <div class="habit-group">
+        <h3>Scoring</h3>
+        <ul>
+          <li><b>Basket of 5 is the throw-away box.</b><span>Perfect play leaves it at zero 45% of the time. Jumbleberry and Sugarberry almost never get a zero (0.4%).</span></li>
+          <li><b>Three Moonberries go in the Moonberry box.</b><span><span class="hand"><i class="berry b-M">M</i><i class="berry b-M">M</i><i class="berry b-M">M</i><i class="berry b-J">J</i><i class="berry b-J">J</i></span> scores 21 there and 25 in Basket of 3. Take the 21: Basket of 3 is easy to fill later, a 21 in Moonberry is not.</span></li>
+          <li><b>Five Jumble or Sugar go in Basket of 5.</b><span>It's the only time that box pays, so use it.</span></li>
+          <li><b>Take Mixed Basket and Basket of 3 when they come.</b><span>They're usually the first boxes filled, around round 4.</span></li>
+          <li><b>Don't waste Free Roll.</b><span>It has the highest par on the sheet. Spend it on a big total or to rescue a round, not on an ordinary hand.</span></li>
+        </ul>
+      </div>
+      <div class="habit-group">
+        <h3>Rolling</h3>
+        <ul>
+          <li><b>Use all three rolls.</b><span>Perfect play stops early in only about 11% of rounds.</span></li>
+          <li><b>Don't chase a Mixed Basket in round 1.</b><span>With <span class="hand"><i class="berry b-J">J</i><i class="berry b-S">S</i><i class="berry b-P">P</i><i class="berry b-M">M</i><i class="berry b-F">F</i></span> lock only the Pickleberry and Moonberry. It keeps more boxes in play.</span></li>
+          <li><b>Pick a box to chase, then lock for it.</b><span>The par sheet tells you which box is worth chasing.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="col" id="par">
+    <p class="eyebrow">The par sheet</p>
+    <h2>Nine numbers that get you within 2 points of perfect</h2>
+    <p>A <b>par</b> is what an open box is worth to you. When a round ends, score your hand in the box where <b>points minus par</b> is biggest. A bad round goes where it hurts least compared with par.</p>
+    <div class="card" id="parcard" role="table" aria-label="Par sheet"></div>
+    <ol class="steps">
+      <li><b>Each roll, choose one open box to chase:</b> the one where you can most likely beat its par from the berries you have.</li>
+      <li><b>Lock the berries that help that box,</b> and re-roll the rest.</li>
+      <li><b>After the last roll, score the hand where points minus par is highest.</b> Five Sugarberries are 10 points. That is 0 against par in the Sugarberry box but +4 in Basket of 5, so Basket of 5 wins.</li>
+    </ol>
+    <h3>Four examples</h3>
+    <p>The first is a clear call. The others are where instinct and the par sheet disagree. Every example matches what the exact solver does in that spot.</p>
+    <div class="ex-list" id="par-examples"></div>
+    <p>Played this way the par sheet averages <b class="num" id="par-avg">119.8</b>, <span id="par-pct">98%</span> of perfect play, and reaches 121 in <span id="par-121">48%</span> of games. Both habits that matter most are built in: Jumbleberry and Sugarberry are valued at their maximum, so they are never used as dumps, and Basket of 5 is cheap.</p>
+  </section>
+
+  <section class="col" id="boxes">
+    <p class="eyebrow">Box by box</p>
+    <h2>How to chase each box, and which ones fade</h2>
+    <p>Sometimes a round has one job: fill a particular box. Here's how perfect play chases each box on its own for a full round, starting from a fresh roll, and what it gets.</p>
+    <div class="tablewrap"><table class="chase">
+      <thead><tr><th>Box</th><th>How to chase it</th><th class="r">Average</th><th class="r">Scores anything</th></tr></thead>
+      <tbody id="chase-body"></tbody></table></div>
+    <p>A box left open doesn't keep its value. The charts show what each box ends up scoring, on average, if it's still open at the start of each round. Jumbleberry, Sugarberry and Free Roll hold their value to the end, so they're safe to leave for later. The baskets, Mixed Basket and Moonberry need luck, and the fewer rounds left to find it, the less they're worth. Basket of 5 starts lowest and ends near 2, which is why it's the box to sacrifice.</p>
+    <div class="mults" id="mults" role="list"></div>
+    <p class="note">Each chart runs from round 1 to round 9 on the same 0–22 point scale. Want the details of how these numbers are computed? Read <a href="method.html">how we solved the game</a>.</p>
+  </section>
+
+  <section class="col" id="opening">
+    <p class="eyebrow">Opening moves</p>
+    <h2>What to lock on your very first roll</h2>
+    <p>The most common first rolls of the game, and what perfect play keeps. Notice how often it keeps just one or two big berries and throws everything else back.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>First roll</th><th>Lock</th><th class="r">How often you'll see it</th></tr></thead>
+        <tbody id="open-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="col" id="prize">
+    <p class="eyebrow">Playing for prizes</p>
+    <h2>Which goal wins the most Moonberries?</h2>
+    <p>Scoring 121 to 140 wins one Moonberry and 141 or more wins two. If you play every day, what counts is the <b>total number of Moonberries</b> you collect. We solved for that directly: a strategy that maximises Moonberries won per game, counting the second one at 141.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>What you play for</th><th class="r">Moonberries per 100 games</th><th class="r">121+</th><th class="r">141+</th><th class="r">Average</th></tr></thead>
+        <tbody id="moon-body"></tbody>
+      </table>
+    </div>
+    <p><span class="recommend">Play for the most Moonberries.</span> In practice that means playing for 121 first. Once 121 looks likely with rounds to spare, it starts taking risks for 141. It gives up half a percentage point on the first Moonberry (57.4% instead of 57.9%) to lift the second from 5.9% to 9.3%. That adds about 3 Moonberries per 100 games over playing for 121 alone. The <a href="#helper">helper</a> plays this way by default.</p>
+    <p>If you have to pick one fixed goal, <b>pick 1 Moonberry</b>. Always chasing 141 wins about 38% fewer Moonberries over time. The extra two-Moonberry games don't make up for all the games that miss 121.</p>
+    <p>The chart shows the best possible chance of reaching any target score, re-optimised for each target.</p>
+    <figure>
+      <div class="fig-title">Chance of reaching a target score</div>
+      <div class="legend" aria-hidden="true"><span><i style="background:var(--s-perfect)"></i>Best possible</span><span><i style="background:var(--s-real)"></i>Perfect play (best average)</span><span><i style="background:var(--s-par)"></i>Par sheet</span></div>
+      <div class="chart" id="front"></div>
+      <figcaption>"Best possible" re-optimises for every target, so no strategy can beat it at any point on the chart.</figcaption>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Strategy</th><th class="r">Average</th><th class="r">121+</th><th class="r">141+</th></tr></thead>
+        <tbody id="prize-body"></tbody>
+      </table>
+    </div>
+    <p>Playing only for 141 lifts the two-Moonberry odds to 11% but costs nearly 6 points on average, and the one-Moonberry odds fall to 35%.</p>
+  </section>
+
+  <section class="col" id="helper">
+    <p class="eyebrow">Play perfectly in Webkinz</p>
+    <h2>A helper for your next game</h2>
+    <p>Open the helper on your phone next to the game. Point its live camera at your screen, or tap in the five berries you rolled, and it tells you exactly which jars to lock or which box to fill, using the same perfect-play math as this page. It keeps your scorecard as you go. You can switch between playing for the most Moonberries, for 1, for 2, or for the highest score.</p>
+    <div class="tool">
+      <jbf-advisor></jbf-advisor>
+    </div>
+    <a class="cta" href="helper.html">Open the helper on its own page</a>
+    <phone-link href="helper.html#live" label="Use your phone as a live guide" note="Point your phone's camera at the code. It opens the helper ready to start the live camera. No app or sign-in needed." style="margin-top:1rem"></phone-link>
+  </section>
+
+  <section class="wide" id="play">
+    <div class="col" style="display:grid;gap:1.1rem;margin-inline:auto;width:100%">
+      <p class="eyebrow">Practice as much as you like</p>
+      <h2>Bramble Dice</h2>
+      <p>Bramble Dice is our own berry dice game with the same odds and scoring math, so the skills carry over. Play as many games as you like. Turn on the coach to see the best move, read the review at the end to see how many points your choices cost, and switch to <b>Trainer</b> to drill tricky situations one at a time.</p>
+      <div class="map"><span>How the fruit line up (same colours, same odds):</span><span><b style="color:var(--jumble)">●</b> Redcurrant ↔ Jumbleberry</span><span><b style="color:var(--sugar)">●</b> Cloudberry ↔ Sugarberry</span><span><b style="color:var(--pickle)">●</b> Gooseberry ↔ Pickleberry</span><span><b style="color:var(--moon)">●</b> Mulberry ↔ Moonberry</span><span><b style="color:var(--fly)">●</b> Beetle ↔ Fly</span></div>
+    </div>
+    <bramble-dice></bramble-dice>
+    <div class="col" style="margin-inline:auto;width:100%"><a class="cta" href="play.html">Play full screen</a></div>
+  </section>
+
+  <section class="col" id="ai">
+    <p class="eyebrow">Can an AI learn it?</p>
+    <h2>Teaching machines to play, and grading them</h2>
+    <p>Because perfect play is known exactly, every player can be graded move by move. We trained two learning AIs that start knowing nothing about the odds and improve by playing. We also asked Claude Opus 5.5, Anthropic's AI model, to play using only the rules: no solver, no code, just its own reasoning.</p>
+    <p id="claude-note"></p>
+    <p>Its costliest habit is one many players share: <b>spending Basket of 3 on modest hands</b>. Examples: 17 points from <span class="hand"><i class="berry b-P">P</i><i class="berry b-J">J</i><i class="berry b-J">J</i><i class="berry b-M">M</i><i class="berry b-J">J</i></span> on a first roll, or 12 from four Jumbleberries. Perfect play saves Basket of 3 for big totals (it averages about 21 there) and often puts three or four Jumbleberries or Sugarberries in their own box.</p>
+    <div class="ai-grid" id="ai-grid"></div>
+    <figure id="ai-fig" hidden>
+      <div class="fig-title">Learning curves</div>
+      <div class="chart" id="curve"></div>
+      <figcaption>Average score of each AI's best moves as it trains. Note the log scale: each step right is ten times more practice games.</figcaption>
+    </figure>
+  </section>
+
+  <section class="col" id="watch">
+    <p class="eyebrow">Watch next</p>
+    <h2>Solving the game it's built on</h2>
+    <p>Jumbleberry Fields is a berry-themed cousin of Yahtzee, and Yahtzee has been solved with the same technique. For a video on that, watch <a href="https://www.youtube.com/watch?v=DOgb5wrb7mM" target="_blank" rel="noopener"><b>I Solved Yahtzee*</b> by Ballpark Figures</a>.</p>
+    <p>Yahtzee is the bigger puzzle. It has 13 boxes instead of 9, a 35-point bonus for the top section and extra Yahtzee bonuses, so a solver has to track running totals as well as which boxes are open. Jumbleberry Fields has no bonuses, which is why it can be solved in under a second. <a href="method.html">See how we did it, step by step.</a></p>
+  </section>
+
+  <footer class="col">
+    <p><a href="method.html"><b>How we solved the game →</b></a> · <a href="cheatsheet.html"><b>One-page cheat sheet →</b></a></p>
+    <p><b>How this was worked out.</b> Each jar is treated as a 10-sided die: 3 Jumbleberry faces, 3 Sugarberry, 2 Pickleberry, 1 Moonberry, 1 Fly, as documented on the <a href="https://webkinzguide.com/wiki/Jumbleberry_Fields" target="_blank" rel="noopener">Webkinz Guide wiki</a>. Prize lines (121 and 141) come from the same page. The game has only 512 scorecard states and 126 distinct hands, so dynamic programming finds the exact best move everywhere. Strategy results come from 200,000 simulated games each.</p>
+    <p>The helper and Bramble Dice run entirely in your browser: the same exact solver is built into the page, and your stats never leave your device.</p>
+    <p class="note">A fan-made analysis. Not affiliated with or endorsed by Webkinz or Ganz. Bramble Dice is an original game.</p>
+  </footer>
+</div>
+
+<script id="data" type="application/json">{"p_opt":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0001,0.0002,0.0002,0.0002,0.0003,0.0003,0.0004,0.0005,0.0006,0.0007,0.0008,0.0009,0.0011,0.0013,0.0016,0.0019,0.0021,0.0025,0.0028,0.0033,0.0037,0.0043,0.0049,0.0054,0.0062,0.0069,0.0078,0.0088,0.0095,0.011,0.0116,0.0133,0.0142,0.0156,0.0171,0.018,0.02,0.0207,0.0226,0.0235,0.0247,0.0262,0.0265,0.028,0.0283,0.029,0.0298,0.0292,0.0302,0.0293,0.0295,0.029,0.028,0.0279,0.0263,0.0259,0.0245,0.0233,0.0223,0.0206,0.0197,0.018,0.0168,0.0156,0.0141,0.0131,0.0116,0.0107,0.0095,0.0085,0.0076,0.0067,0.006,0.0052,0.0045,0.004,0.0034,0.003,0.0025,0.0022,0.0019,0.0016,0.0013,0.0011,0.001,0.0008,0.0007,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"p_par":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0002,0.0001,0.0001,0.0002,0.0003,0.0004,0.0004,0.0005,0.0005,0.0008,0.0007,0.0011,0.0011,0.0014,0.0016,0.0021,0.0023,0.0025,0.0036,0.0036,0.0039,0.0047,0.0055,0.0064,0.0074,0.0082,0.0092,0.0099,0.0117,0.0125,0.0141,0.0152,0.0159,0.0183,0.0187,0.0201,0.0219,0.023,0.0241,0.0256,0.0259,0.0265,0.0278,0.0281,0.0283,0.0288,0.029,0.0291,0.0286,0.0287,0.0283,0.0279,0.0266,0.026,0.0255,0.0239,0.0224,0.0219,0.0194,0.019,0.0176,0.0163,0.0152,0.0146,0.0131,0.012,0.0109,0.0096,0.0085,0.0079,0.0068,0.0063,0.0054,0.0049,0.0044,0.0035,0.0032,0.0025,0.0024,0.0021,0.0017,0.0016,0.0011,0.0011,0.0009,0.0007,0.0006,0.0005,0.0004,0.0004,0.0003,0.0003,0.0002,0.0002,0.0001,0.0001,0.0,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"p_greedy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0002,0.0003,0.0002,0.0003,0.0004,0.0004,0.0006,0.0008,0.0009,0.001,0.0011,0.0014,0.0015,0.0019,0.0022,0.0025,0.0031,0.0037,0.0041,0.0047,0.0054,0.006,0.0073,0.008,0.0088,0.0098,0.0112,0.0122,0.0143,0.0153,0.017,0.0183,0.0193,0.0219,0.0215,0.0235,0.0248,0.0264,0.0276,0.028,0.0288,0.0291,0.0303,0.0304,0.0301,0.0302,0.0295,0.0291,0.0291,0.0274,0.0272,0.026,0.0252,0.0236,0.0228,0.0208,0.0201,0.0181,0.0167,0.0156,0.0143,0.0128,0.0119,0.0108,0.0097,0.009,0.008,0.0072,0.0064,0.0054,0.0048,0.0042,0.0037,0.0034,0.0029,0.0024,0.0021,0.002,0.0015,0.0013,0.0011,0.001,0.0008,0.0007,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002,0.0002,0.0002,0.0001,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mean_opt":121.8025,"p121_ev":0.5402,"p141_ev":0.0851,"p121_best":0.5795,"p141_best":0.1098,"ladder":[{"name":"Random clicking","mean":35.0414,"p121":0.0,"p141":0.0,"lost":86.7655,"games":200000,"group":"sim"},{"name":"Random locks, biggest box","mean":63.3726,"p121":0.0,"p141":0.0,"lost":58.4079,"games":200000,"group":"sim"},{"name":"Never re-roll, biggest box","mean":63.3826,"p121":0.0,"p141":0.0,"lost":58.4079,"games":200000,"group":"sim"},{"name":"Lock the biggest group","mean":78.9939,"p121":0.0096,"p141":0.0005,"lost":42.7929,"games":200000,"group":"sim"},{"name":"High-roller (Jumble/Sugar as throw-aways)","mean":105.6681,"p121":0.1719,"p141":0.0141,"lost":16.116,"games":200000,"group":"sim"},{"name":"Best single round, no planning","mean":109.4107,"p121":0.2011,"p141":0.0137,"lost":12.3853,"games":200000,"group":"sim"},{"name":"Par sheet (this guide)","mean":119.7826,"p121":0.476,"p141":0.0685,"lost":2.0293,"games":200000,"group":"sim"},{"name":"Perfect play","mean":121.8064,"p121":0.5406,"p141":0.0843,"lost":0.0,"games":200000,"group":"solver"},{"name":"Perfect play for 121+","mean":119.3292,"p121":0.5789,"p141":0.0591,"lost":2.4766,"games":200000,"group":"solver"},{"name":"Perfect play for 141+","mean":116.1921,"p121":0.3535,"p141":0.1093,"lost":5.6021,"games":200000,"group":"solver"},{"name":"A real player's 21 games","mean":114.8571,"p121":0.2857,"p141":0.0476,"lost":null,"games":21,"group":"real"},{"name":"Claude Opus 5.5, 25 games","mean":119.88,"p121":0.6,"p141":0.04,"lost":4.9597,"games":25,"group":"real"}],"frontier":{"t":[60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180],"best":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.9999,0.9999,0.9999,0.9999,0.9998,0.9997,0.9997,0.9996,0.9994,0.9993,0.9991,0.9988,0.9985,0.9982,0.9977,0.9971,0.9964,0.9955,0.9944,0.9931,0.9915,0.9896,0.9872,0.9844,0.981,0.9772,0.9726,0.9672,0.9611,0.9539,0.946,0.9365,0.9263,0.9143,0.9014,0.8869,0.8709,0.8538,0.8346,0.8145,0.7927,0.7697,0.7456,0.7198,0.6937,0.666,0.6379,0.6092,0.5795,0.5504,0.5202,0.4908,0.4614,0.4319,0.4039,0.3754,0.3487,0.3223,0.2969,0.273,0.2496,0.2281,0.2073,0.1879,0.17,0.1529,0.1375,0.123,0.1098,0.0978,0.0868,0.0769,0.0679,0.0598,0.0525,0.0459,0.0401,0.0349,0.0303,0.0263,0.0227,0.0196,0.0169,0.0145,0.0125,0.0107,0.0091,0.0078,0.0066,0.0056,0.0047,0.004,0.0033,0.0028,0.0023,0.002,0.0016,0.0013,0.0011,0.0009,0.0008,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002],"ev":[1.0,1.0,1.0,1.0,1.0,0.9999,0.9999,0.9999,0.9999,0.9998,0.9998,0.9997,0.9997,0.9996,0.9995,0.9994,0.9992,0.999,0.9988,0.9985,0.9982,0.9978,0.9973,0.9968,0.9961,0.9953,0.9943,0.9932,0.9918,0.9903,0.9884,0.9864,0.9838,0.9811,0.9777,0.9741,0.9698,0.9649,0.9595,0.9533,0.9464,0.9386,0.9298,0.9203,0.9093,0.8977,0.8844,0.8702,0.8546,0.8375,0.8195,0.7994,0.7788,0.7562,0.7327,0.708,0.6818,0.6553,0.6272,0.5989,0.5699,0.5402,0.5109,0.4807,0.4514,0.4219,0.393,0.3649,0.337,0.3107,0.2848,0.2603,0.237,0.2147,0.1941,0.1744,0.1563,0.1395,0.1239,0.1098,0.0967,0.0851,0.0744,0.0649,0.0564,0.0487,0.0421,0.0361,0.031,0.0264,0.0224,0.019,0.0161,0.0135,0.0114,0.0095,0.0079,0.0066,0.0055,0.0045,0.0037,0.0031,0.0025,0.002,0.0017,0.0014,0.0011,0.0009,0.0007,0.0006,0.0005,0.0004,0.0003,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0],"par":[1.0,1.0,1.0,1.0,0.9999,0.9999,0.9999,0.9999,0.9998,0.9998,0.9997,0.9996,0.9996,0.9994,0.9993,0.9992,0.999,0.9988,0.9985,0.9982,0.9978,0.9973,0.9968,0.996,0.9953,0.9941,0.993,0.9916,0.9899,0.9878,0.9855,0.983,0.9794,0.9758,0.9719,0.9671,0.9616,0.9553,0.9479,0.9397,0.9304,0.9205,0.9088,0.8963,0.8822,0.8671,0.8512,0.8329,0.8142,0.7941,0.7722,0.7492,0.7251,0.6995,0.6736,0.6471,0.6193,0.5912,0.5629,0.5341,0.5051,0.476,0.4474,0.4186,0.3904,0.3625,0.3359,0.3099,0.2844,0.2605,0.2382,0.2162,0.1968,0.1778,0.1602,0.1439,0.1287,0.1141,0.101,0.0891,0.0782,0.0685,0.0601,0.0521,0.0453,0.039,0.0337,0.0288,0.0244,0.0208,0.0176,0.0151,0.0127,0.0107,0.0089,0.0074,0.0062,0.0051,0.0042,0.0035,0.0029,0.0023,0.0019,0.0016,0.0012,0.001,0.0008,0.0006,0.0005,0.0004,0.0004,0.0003,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0,0.0]},"opening":[{"roll":["J","J","S","S","P"],"p":0.0486,"lock":["P"]},{"roll":["J","S","S","P","P"],"p":0.0324,"lock":["P","P"]},{"roll":["J","J","S","P","P"],"p":0.0324,"lock":["P","P"]},{"roll":["J","S","S","P","F"],"p":0.0324,"lock":["P"]},{"roll":["J","J","S","P","F"],"p":0.0324,"lock":["P"]},{"roll":["J","S","S","P","M"],"p":0.0324,"lock":["P","M"]},{"roll":["J","J","S","P","M"],"p":0.0324,"lock":["P","M"]},{"roll":["J","S","S","S","P"],"p":0.0324,"lock":["S","S","S"]},{"roll":["J","J","J","S","P"],"p":0.0324,"lock":["J","J","J"]},{"roll":["J","J","S","S","M"],"p":0.0243,"lock":["M"]},{"roll":["J","J","S","S","F"],"p":0.0243,"lock":[]},{"roll":["J","J","S","S","S"],"p":0.0243,"lock":["S","S","S"]},{"roll":["J","J","J","S","S"],"p":0.0243,"lock":["J","J","J"]},{"roll":["J","S","P","P","M"],"p":0.0216,"lock":["P","P","M"]}],"boxes":[{"box":"Jumbleberry","par":10,"avg":6.6779,"zero":0.0041,"round":5.2201,"human":5.5238},{"box":"Sugarberry","par":10,"avg":6.6882,"zero":0.0043,"round":5.1548,"human":4.9524},{"box":"Pickleberry","par":13,"avg":11.4768,"zero":0.0045,"round":5.3918,"human":12.0},{"box":"Moonberry","par":13,"avg":14.7851,"zero":0.0356,"round":5.4444,"human":15.3333},{"box":"Basket of 3","par":18,"avg":20.8742,"zero":0.0095,"round":4.3212,"human":21.5238},{"box":"Basket of 4","par":14,"avg":15.8349,"zero":0.055,"round":4.7346,"human":11.9048},{"box":"Basket of 5","par":6,"avg":6.4267,"zero":0.449,"round":5.4879,"human":7.1429},{"box":"Mixed Basket","par":14,"avg":18.1666,"zero":0.0347,"round":4.0011,"human":16.5714},{"box":"Free Roll","par":21,"avg":20.8761,"zero":0.0,"round":5.2439,"human":19.9048}],"human_scores":[117,96,119,118,127,114,112,122,127,117,144,93,116,124,90,120,82,110,108,119,137],"claude_scores":[135,115,124,128,79,130,118,106,121,82,123,131,106,130,127,162,124,135,110,122,130,123,112,120,104],"claude_lost":4.9597,"claude":{"n":25,"mean":119.88,"lo":113.2969,"hi":126.4631,"p121":0.6,"p141":0.04,"lost":4.9597,"opt_rate":0.7868,"scores":[135,115,124,128,79,130,118,106,121,82,123,131,106,130,127,162,124,135,110,122,130,123,112,120,104],"model":"Claude Opus 5.5"},"moon":[{"name":"Most Moonberries","per_game":0.6676,"p121":0.5741,"p141":0.0927,"mean":119.4647,"recommended":true},{"name":"1 Moonberry (121+)","per_game":0.638,"p121":0.5789,"p141":0.0591,"mean":119.3292,"recommended":false},{"name":"Highest score","per_game":0.6249,"p121":0.5406,"p141":0.0843,"mean":121.8064,"recommended":false},{"name":"2 Moonberries (141+)","per_game":0.4628,"p121":0.3535,"p141":0.1093,"mean":116.1921,"recommended":false},{"name":"Par sheet (this guide)","per_game":0.5446,"p121":0.476,"p141":0.0685,"mean":119.7826,"recommended":false}],"p_moon":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0001,0.0001,0.0001,0.0002,0.0002,0.0002,0.0003,0.0003,0.0004,0.0005,0.0005,0.0006,0.0007,0.0007,0.0008,0.0009,0.001,0.0011,0.0014,0.0014,0.0019,0.0017,0.0038,0.0042,0.0046,0.0061,0.0061,0.0079,0.008,0.0092,0.0097,0.0097,0.01,0.0103,0.0115,0.0117,0.0135,0.0135,0.0142,0.0146,0.0145,0.0142,0.0123,0.0144,0.0117,0.0127,0.011,0.013,0.0121,0.0115,0.0166,0.0133,0.0164,0.0168,0.0159,0.0188,0.016,0.0567,0.049,0.0435,0.0388,0.0376,0.0321,0.0285,0.0273,0.0249,0.021,0.0186,0.016,0.0139,0.0131,0.0117,0.0115,0.0105,0.0093,0.0097,0.0076,0.0146,0.0121,0.01,0.0083,0.0079,0.0066,0.0054,0.0049,0.0043,0.0033,0.0029,0.0022,0.0019,0.0015,0.0014,0.0011,0.0009,0.0007,0.0006,0.0005,0.0004,0.0003,0.0003,0.0002,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"moon_per_game":0.6676,"par_examples":[{"id":"obvious","kind":"score","hand":["P","P","P","P","M"],"used":["Jumbleberry","Sugarberry","Basket of 5"],"round":4,"options":[{"box":"Basket of 4","pts":23,"par":14,"diff":9},{"box":"Basket of 3","pts":23,"par":18,"diff":5},{"box":"Pickleberry","pts":16,"par":13,"diff":3},{"box":"Free Roll","pts":23,"par":21,"diff":2},{"box":"Moonberry","pts":7,"par":13,"diff":-6},{"box":"Mixed Basket","pts":0,"par":14,"diff":-14}]},{"id":"threem","kind":"score","hand":["M","M","M","J","J"],"used":["Jumbleberry","Sugarberry","Pickleberry","Basket of 4"],"round":5,"options":[{"box":"Moonberry","pts":21,"par":13,"diff":8},{"box":"Basket of 3","pts":25,"par":18,"diff":7},{"box":"Free Roll","pts":25,"par":21,"diff":4},{"box":"Basket of 5","pts":0,"par":6,"diff":-6},{"box":"Mixed Basket","pts":0,"par":14,"diff":-14}]},{"id":"chase","kind":"chase","hand":["J","J","J","S","M"],"used":["Free Roll"],"round":2,"options":[{"box":"Moonberry","expect":12.3,"par":13,"diff":-0.7,"lock":["M"]},{"box":"Basket of 3","expect":16.4,"par":18,"diff":-1.6,"lock":["J","J","J","M"]},{"box":"Jumbleberry","expect":8.0,"par":10,"diff":-2.0,"lock":["J","J","J"]},{"box":"Basket of 5","expect":2.6,"par":6,"diff":-3.4,"lock":["J","J","J"]},{"box":"Mixed Basket","expect":10.6,"par":14,"diff":-3.4,"lock":["J","S","M"]},{"box":"Sugarberry","expect":6.1,"par":10,"diff":-3.9,"lock":["S"]},{"box":"Basket of 4","expect":8.6,"par":14,"diff":-5.4,"lock":["J","J","J"]},{"box":"Pickleberry","expect":7.2,"par":13,"diff":-5.8,"lock":[]}]},{"id":"dump","kind":"score","hand":["S","J","F","J","P"],"used":["Jumbleberry","Sugarberry","Basket of 3","Mixed Basket","Free Roll"],"round":6,"options":[{"box":"Basket of 5","pts":0,"par":6,"diff":-6},{"box":"Pickleberry","pts":4,"par":13,"diff":-9},{"box":"Moonberry","pts":0,"par":13,"diff":-13},{"box":"Basket of 4","pts":0,"par":14,"diff":-14}]}],"chase_table":[{"box":"Jumbleberry","avg":6.57,"qualify":0.9953},{"box":"Sugarberry","avg":6.57,"qualify":0.9953},{"box":"Pickleberry","avg":9.76,"qualify":0.9648},{"box":"Moonberry","avg":9.485,"qualify":0.7941},{"box":"Basket of 3","avg":13.7701,"qualify":0.9324},{"box":"Basket of 4","avg":7.2627,"qualify":0.6005},{"box":"Basket of 5","avg":1.9753,"qualify":0.1858},{"box":"Mixed Basket","avg":9.4202,"qualify":0.5167},{"box":"Free Roll","avg":19.365,"qualify":1.0}],"open_value":[{"box":"Jumbleberry","value":[6.6779,6.6814,6.6826,6.6914,6.6982,6.7063,6.69,6.6532,6.5771],"open":[1.0,0.9036,0.8038,0.7007,0.593,0.4819,0.3634,0.2476,0.1261]},{"box":"Sugarberry","value":[6.6882,6.6843,6.6965,6.7006,6.7031,6.7065,6.6833,6.6302,6.5615],"open":[1.0,0.9033,0.8007,0.6962,0.5859,0.4707,0.3508,0.2354,0.1119]},{"box":"Pickleberry","value":[11.4768,11.4346,11.4163,11.3685,11.2862,11.1439,10.9061,10.4793,9.7304],"open":[1.0,0.9248,0.8377,0.738,0.6292,0.5097,0.3829,0.2537,0.1158]},{"box":"Moonberry","value":[14.7851,14.6558,14.4396,14.1233,13.6861,13.0883,12.2878,11.2256,9.5028],"open":[1.0,0.9205,0.8297,0.7266,0.619,0.5102,0.3984,0.281,0.159]},{"box":"Basket of 3","value":[20.8742,20.5361,20.1707,19.7466,19.2325,18.6186,17.7687,16.3762,13.8108],"open":[1.0,0.8442,0.6985,0.5637,0.441,0.3316,0.2329,0.143,0.0664]},{"box":"Basket of 4","value":[15.8349,15.3001,14.6706,13.9817,13.2307,12.3116,11.0951,9.4946,7.3251],"open":[1.0,0.8773,0.7549,0.6323,0.5082,0.3921,0.2872,0.1862,0.0964]},{"box":"Basket of 5","value":[6.4267,5.9048,5.3382,4.7412,4.0815,3.4366,2.8419,2.3754,1.9863],"open":[1.0,0.9064,0.8196,0.7322,0.6397,0.5402,0.4233,0.2839,0.1427]},{"box":"Mixed Basket","value":[18.1666,17.9912,17.7593,17.4325,16.9751,16.2296,15.0353,12.886,9.4582],"open":[1.0,0.8098,0.6503,0.5113,0.3899,0.2769,0.1867,0.1158,0.0604]},{"box":"Free Roll","value":[20.8761,20.8274,20.7439,20.6557,20.5571,20.4207,20.2098,19.8586,19.3381],"open":[1.0,0.9101,0.8047,0.6992,0.5941,0.4866,0.3744,0.2534,0.1214]}],"zero_cost":[{"box":"Jumbleberry","cost":10.3781},{"box":"Sugarberry","cost":10.3781},{"box":"Pickleberry","cost":14.9063},{"box":"Moonberry","cost":15.3905},{"box":"Basket of 3","cost":21.1413},{"box":"Basket of 4","cost":15.025},{"box":"Basket of 5","cost":7.6101},{"box":"Mixed Basket","cost":19.4338},{"box":"Free Roll","cost":23.7778}],"counts":{"hands":126,"keeps":252,"masks":512,"situations":193536,"raw_outcomes":100000},"ai":{"q":{"curve":[[1000202,92.376],[2000086,100.0709],[3000100,104.0124],[4000073,105.725],[5000079,107.2088],[6000076,107.7653],[7000092,108.4934],[8000098,109.0446],[9000108,109.3441],[10000023,109.8168],[11000061,109.9997],[12000094,110.3781],[13000084,110.6208],[14000024,110.8251],[15000152,110.9909],[16000149,111.1135],[17000083,111.2963],[18000100,111.6038],[19000173,111.683],[20000001,111.6737],[21000033,111.8098],[22000016,111.8312],[23000030,111.9238],[24000111,111.9143],[25000139,111.9581]],"final":{"games":200000.0,"mean":111.8979,"sd":13.3821,"P(>=121)":0.2561,"P(>=141)":0.0156,"regret_per_game":9.8152,"optimal_decision_rate":0.7296},"minutes":21.8897,"games":25000139},"dqn":{"curve":[[128202,74.3659],[252334,83.7493],[357006,86.8231],[431055,92.2837],[562266,97.1829],[691821,97.3004],[831388,104.2268],[971758,107.9772],[1119681,108.5009],[1253900,108.6627],[1382419,114.0979],[1521319,115.0401],[1651850,114.6047],[1787894,116.3674],[1932026,117.7502],[2081977,116.8377],[2191397,117.6842],[2300928,117.7847],[2413349,118.0876],[2466843,118.1935],[2514363,117.8812],[2585395,118.7327],[2683233,117.8607],[2851855,118.7891],[3063686,119.4296],[3290409,119.0684],[3505303,118.7866],[3655981,117.7464],[3810519,120.0443],[3984323,120.2224],[4212612,119.6624],[4463216,119.6245],[4706894,119.1439],[4955587,120.2067],[5200820,119.6839],[5441448,120.6167],[5687769,120.8051],[5930613,121.0601],[6143452,121.1213],[6346268,120.9944]],"final":{"games":200000.0,"mean":121.044,"sd":13.5198,"P(>=121)":0.5163,"P(>=141)":0.0732,"regret_per_game":0.7298,"optimal_decision_rate":0.9207},"minutes":40.0004,"games":6346268}}}</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const $ = (id) => document.getElementById(id);
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const pct = (x, d = 0) => (100 * x).toFixed(d) + '%';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const chip = (b) => `<i class="berry b-${b}" aria-label="${({J:'Jumbleberry',S:'Sugarberry',P:'Pickleberry',M:'Moonberry',F:'Fly'})[b]}">${b}</i>`;
+  const NAMES = {J:'Jumbleberry',S:'Sugarberry',P:'Pickleberry',M:'Moonberry',F:'Fly'};
+
+  // hero numbers
+  $('h-avg').textContent = D.mean_opt.toFixed(1);
+  $('h-121').textContent = pct(D.p121_best);
+  $('h-141').textContent = pct(D.p141_best);
+  $('h-moon').textContent = D.moon_per_game.toFixed(2);
+
+  // ---------- generic chart scaffolding (re-rendered on resize so text stays readable)
+  function frame(host, h, m) {
+    host.innerHTML = '';
+    const w = Math.max(280, host.clientWidth);
+    const svg = el('svg', { viewBox: `0 0 ${w} ${h}`, width: w, height: h, role: 'img' }, host);
+    const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; host.appendChild(tip);
+    return { svg, tip, w, h, m, iw: w - m.l - m.r, ih: h - m.t - m.b };
+  }
+  function axes(f, xs, ys, xticks, yticks, yfmt) {
+    const g = el('g', {}, f.svg);
+    yticks.forEach((t) => {
+      const y = f.m.t + ys(t);
+      el('line', { x1: f.m.l, x2: f.m.l + f.iw, y1: y, y2: y, stroke: css('--grid'), 'stroke-width': 1 }, g);
+      el('text', { x: f.m.l - 8, y: y + 4, 'text-anchor': 'end' }, g).textContent = yfmt(t);
+    });
+    el('line', { x1: f.m.l, x2: f.m.l + f.iw, y1: f.m.t + f.ih, y2: f.m.t + f.ih, stroke: css('--line'), 'stroke-width': 1 }, g);
+    xticks.forEach((t) => {
+      el('text', { x: f.m.l + xs(t), y: f.m.t + f.ih + 18, 'text-anchor': 'middle' }, g).textContent = t;
+    });
+  }
+  function vline(f, xs, x, label, row) {
+    const top = 10 + row * 14;
+    el('line', { x1: f.m.l + xs(x), x2: f.m.l + xs(x), y1: top - 8, y2: f.m.t + f.ih, stroke: css('--muted'), 'stroke-width': 1 }, f.svg);
+    const t = el('text', { x: f.m.l + xs(x) + 5, y: top }, f.svg); t.textContent = label;
+  }
+  function crosshair(f, onMove) {
+    const line = el('line', { y1: f.m.t, y2: f.m.t + f.ih, stroke: css('--ink-2'), 'stroke-width': 1, visibility: 'hidden' }, f.svg);
+    const hit = el('rect', { x: f.m.l, y: f.m.t, width: f.iw, height: f.ih, fill: 'transparent' }, f.svg);
+    const move = (clientX) => {
+      const r = f.svg.getBoundingClientRect();
+      const px = Math.min(Math.max((clientX - r.left) * (f.w / r.width) - f.m.l, 0), f.iw);
+      const res = onMove(px); if (!res) return;
+      line.setAttribute('x1', f.m.l + res.x); line.setAttribute('x2', f.m.l + res.x); line.setAttribute('visibility', 'visible');
+      f.tip.innerHTML = res.html; f.tip.hidden = false;
+      f.tip.style.left = Math.min(Math.max((f.m.l + res.x) * r.width / f.w, 70), r.width - 70) + 'px';
+      f.tip.style.top = (f.m.t + res.y) * r.height / f.h + 'px';
+    };
+    hit.addEventListener('pointermove', (e) => move(e.clientX));
+    hit.addEventListener('pointerdown', (e) => move(e.clientX));
+    hit.addEventListener('pointerleave', () => { f.tip.hidden = true; line.setAttribute('visibility', 'hidden'); });
+  }
+
+  // ---------- 1. exact distribution of perfect play
+  const cum = []; D.p_opt.reduce((a, v, i) => (cum[i] = a + v), 0);
+  const atLeast = (s) => 1 - (s > 0 ? cum[s - 1] : 0);
+  let distKey = 'opt';
+  const DIST = {
+    opt: { p: D.p_opt, cap: 'Exact distribution of final scores when every move maximises the average score. The darker area is the share of games that reach 121. Hover for details.' },
+    moon: { p: D.p_moon, cap: 'Playing for the most Moonberries (1 million simulated games). It gives up a little average score to push more games past 141. The darker area is the share of games that reach 121.' },
+  };
+  function distCum(p) { const c = []; p.reduce((a, v, i) => (c[i] = a + v), 0); return (s) => 1 - (s > 0 ? c[s - 1] : 0); }
+  document.querySelectorAll('[data-dist]').forEach((b) => b.addEventListener('click', () => {
+    distKey = b.dataset.dist;
+    document.querySelectorAll('[data-dist]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    drawDist();
+  }));
+  function drawDist() {
+    const f = frame($('dist'), 280, { l: 44, r: 12, t: 44, b: 28 });
+    const P = DIST[distKey].p, atLeastP = distCum(P);
+    $('dist-cap').textContent = DIST[distKey].cap;
+    const x0 = 60, x1 = 190, ymax = Math.max(0.034, Math.max(...P) * 1.08);
+    const xs = (x) => (x - x0) / (x1 - x0) * f.iw, ys = (y) => f.ih - y / ymax * f.ih;
+    axes(f, xs, ys, [60, 80, 100, 120, 140, 160, 180], [0, 0.01, 0.02, 0.03], (t) => (t * 100) + '%');
+    const pts = []; for (let s = x0; s <= x1; s++) pts.push([s, P[s]]);
+    const area = (from, to, fill, op) => {
+      let d = `M${f.m.l + xs(from)},${f.m.t + f.ih}`;
+      pts.filter(([s]) => s >= from && s <= to).forEach(([s, p]) => (d += `L${f.m.l + xs(s)},${f.m.t + ys(p)}`));
+      d += `L${f.m.l + xs(to)},${f.m.t + f.ih}Z`;
+      el('path', { d, fill, 'fill-opacity': op }, f.svg);
+    };
+    area(x0, 121, css('--s-perfect'), 0.14); area(121, x1, css('--s-perfect'), 0.38);
+    el('path', { d: 'M' + pts.map(([s, p]) => `${f.m.l + xs(s)},${f.m.t + ys(p)}`).join('L'), fill: 'none', stroke: css('--s-perfect'), 'stroke-width': 2 }, f.svg);
+    vline(f, xs, 121, '121 · 1 Moonberry', 0); vline(f, xs, 141, '141 · 2 Moonberries', 1);
+    const lab = el('text', { x: f.m.l + xs(150), y: f.m.t + ys(0.018), fill: css('--ink') }, f.svg);
+    lab.textContent = `${pct(atLeastP(121), 1)} reach 121`;
+    const lab2 = el('text', { x: f.m.l + xs(150), y: f.m.t + ys(0.018) + 15, fill: css('--ink') }, f.svg);
+    lab2.textContent = `${pct(atLeastP(141), 1)} reach 141`;
+    crosshair(f, (px) => {
+      const s = Math.round(x0 + px / f.iw * (x1 - x0));
+      return { x: xs(s), y: ys(P[s]), html: `Score <b>${s}</b>: ${pct(P[s], 1)} of games<br>${pct(atLeastP(s), 1)} score ${s} or more` };
+    });
+  }
+
+  // ---------- score checker
+  const parCum = []; D.p_par.reduce((a, v, i) => (parCum[i] = a + v), 0);
+  function check() {
+    const v = Math.round(Number($('score-in').value));
+    const out = $('score-out');
+    if (!Number.isFinite(v) || v < 0 || v > 237) { out.innerHTML = 'Enter a final score between 0 and 237.'; return; }
+    const beatPerfect = v > 0 ? cum[v - 1] : 0;
+    const prize = v >= 141 ? 'Two Moonberries!' : v >= 121 ? 'One Moonberry.' : `${121 - v} short of a Moonberry.`;
+    out.innerHTML = `<b>${prize}</b> A perfect player scores below ${v} in <b>${pct(beatPerfect)}</b> of games` +
+      (v >= 141 ? ', so this is a top-tier game.' : v >= 121 ? '.' : `, so ${v} is ${beatPerfect < 0.2 ? 'a rough game even by perfect standards' : 'within normal luck for good play'}.`);
+  }
+  $('score-in').addEventListener('input', check);
+
+  // ---------- 2. ladder
+  const groupColor = { sim: '--s-sim', real: '--s-real', solver: '--s-perfect' };
+  function drawLadder() {
+    const rows = [...D.ladder].sort((a, b) => b.mean - a.mean);
+    const max = 140, ref = $('ladder-ref');
+    ref.innerHTML = `<div class="lref-label" style="left:${121 / max * 100}%">121</div>`;
+    const host = $('ladder'); host.innerHTML = '';
+    rows.forEach((r) => {
+      const row = document.createElement('div'); row.className = 'lrow'; row.tabIndex = 0; row.setAttribute('role', 'listitem');
+      const detail = `<b>${r.name}</b>: average ${r.mean.toFixed(1)} · reaches 121 in ${pct(r.p121)} · 141 in ${pct(r.p141)}` +
+        (r.lost == null ? '' : ` · gives up ${r.lost.toFixed(1)} points a game vs perfect`) +
+        (r.games < 100 ? ` · only ${r.games} games, so luck plays a big part` : '');
+      row.setAttribute('aria-label', detail.replace(/<[^>]+>/g, ''));
+      const w = r.mean / max * 100;
+      row.innerHTML = `<div class="lname">${r.name}</div><div class="ltrack"><div class="lref" style="left:${121 / max * 100}%"></div>` +
+        `<div class="lbar" style="width:${w}%;background:var(${groupColor[r.group]})"></div>` +
+        `<div class="lval" style="left:calc(${w}% + 6px)">${r.mean.toFixed(1)}</div></div>`;
+      const show = () => ($('ladder-detail').innerHTML = detail);
+      row.addEventListener('pointerenter', show); row.addEventListener('focus', show); row.addEventListener('click', show);
+      host.appendChild(row);
+    });
+  }
+
+  // ---------- 3. par card (laid out like the game's scorecard)
+  const cardOrder = ['Jumbleberry', 'Sugarberry', 'Pickleberry', 'Moonberry', 'Basket of 3', 'Basket of 4', 'Basket of 5', 'Mixed Basket', 'Free Roll'];
+  const why = {
+    'Jumbleberry': 'Valued at its maximum. Never a dump box.', 'Sugarberry': 'Valued at its maximum. Never a dump box.',
+    'Pickleberry': 'Four Pickleberries (16) clears par.', 'Moonberry': 'Two Moonberries (14) clears par.',
+    'Basket of 3': 'Take a decent one early.', 'Basket of 4': 'Worth chasing from three of a kind.',
+    'Basket of 5': 'The throw-away box. Zero it when a round goes badly.', 'Mixed Basket': 'Take it when you get it.',
+    'Free Roll': 'Highest par. Spend it on a big total or to rescue a round.' };
+  const icon = { 'Jumbleberry': 'J', 'Sugarberry': 'S', 'Pickleberry': 'P', 'Moonberry': 'M' };
+  const byName = Object.fromEntries(D.boxes.map((b) => [b.box, b]));
+  $('parcard').innerHTML = cardOrder.map((n) => {
+    const b = byName[n];
+    return `<div class="cell" role="cell"><div class="bx">${icon[n] ? chip(icon[n]) : ''}${n}</div><div class="par">${b.par}</div><div class="why">${why[n]}</div></div>`;
+  }).join('');
+  const parRow = D.ladder.find((r) => r.name.startsWith('Par sheet'));
+  $('par-avg').textContent = parRow.mean.toFixed(1);
+  $('par-pct').textContent = pct(parRow.mean / D.mean_opt);
+  $('par-121').textContent = pct(parRow.p121);
+
+
+  // ---------- par-sheet examples (numbers from page_data.json, checked against the exact solver)
+  const EX_TEXT = {
+    obvious: { title: 'Four Pickleberries and a Moonberry', tag: 'clear call', when: 'Last roll',
+      lesson: 'Basket of 4 beats its par by the most (+9), so score it there. Basket of 3 and Free Roll would pay the same 23 points, but they are worth more kept open for later.' },
+    threem: { title: 'Three Moonberries: take 21, not 25', tag: 'fewer points wins', when: 'Last roll',
+      lesson: '25 in Basket of 3 sounds better than 21 in Moonberry, but par disagrees: 21 is 8 over Moonberry\'s par, 25 only 7 over Basket of 3\'s. A 21 in Moonberry is rare. Basket of 3 is easy to fill later.' },
+    chase: { title: 'Throw back three of a kind', tag: 'what to lock', when: 'First roll',
+      lesson: 'Nothing beats par from here, so chase the box that falls short by the least: Moonberry. Lock just the Moonberry and re-roll the three Jumbleberries. Three Jumbleberries only add 6 points to a basket, while every extra Moonberry adds 7.' },
+    dump: { title: 'When the round goes badly', tag: 'picking a zero', when: 'Last roll',
+      lesson: 'Every box is below par, so take the smallest loss: a zero in Basket of 5 (−6). Four points in Pickleberry costs more (−9), because Pickleberry averages over 11 points.' },
+  };
+  function renderExamples() {
+    $('par-examples').innerHTML = D.par_examples.map((ex, i) => {
+      const t = EX_TEXT[ex.id], scale = Math.max(...ex.options.map((o) => Math.abs(o.diff)), 1);
+      const rows = ex.options.slice(0, 5).map((o, j) => {
+        const w = Math.abs(o.diff) / scale * 48, pos = o.diff >= 0;
+        const sub = ex.kind === 'score' ? `${o.pts} pts − par ${o.par}` : `chase: expect ${o.expect} vs par ${o.par} · lock ${o.lock.length ? o.lock.join(' ') : 'nothing'}`;
+        const sign = o.diff > 0 ? '+' : o.diff < 0 ? '−' : '';
+        return `<div class="brow ${j === 0 ? 'win' : ''}"><div class="bname">${j === 0 ? '✓ ' : ''}${o.box}<small>${sub}</small></div>
+          <div class="btrack" aria-hidden="true"><div class="bfill ${pos ? 'pos' : 'neg'}" style="${pos ? 'left:50%' : `left:${50 - w}%`};width:${w}%"></div></div>
+          <div class="bval">${sign}${Math.abs(o.diff)}</div></div>`;
+      }).join('');
+      const used = ex.used.map((u) => `<span class="pill">${u}</span>`).join(' ');
+      const hand = `<span class="hand">${ex.hand.map(chip).join('')}</span>`;
+      return `<details class="ex"${i === 0 ? ' open' : ''}><summary>${t.title}<span class="tag">${t.tag}</span></summary>
+        <div class="ex-body">
+          <div class="ex-setup"><span>Round ${ex.round}, ${t.when.toLowerCase()}:</span>${hand}</div>
+          <div class="ex-setup"><span>Already used:</span>${used}</div>
+          <div class="barlist">${rows}</div>
+          <p class="ex-lesson">${t.lesson}</p>
+        </div></details>`;
+    }).join('');
+  }
+  renderExamples();
+
+
+  // ---------- box by box: chase rules + keep-it-open small multiples
+  const CHASE_RULE = {
+    'Jumbleberry': 'Keep every Jumbleberry, re-roll the rest.', 'Sugarberry': 'Keep every Sugarberry, re-roll the rest.',
+    'Pickleberry': 'Keep every Pickleberry, re-roll the rest.', 'Moonberry': 'Keep every Moonberry, re-roll the rest.',
+    'Basket of 3': 'Keep your biggest group (a Pickleberry pair beats a Jumble or Sugar pair) plus any Moonberry. Once you have three, re-roll the cheap leftovers.',
+    'Basket of 4': 'Keep your biggest group and nothing else.', 'Basket of 5': 'Keep your biggest group and nothing else.',
+    'Mixed Basket': 'Keep one of each berry type you have. With no Moonberry on the first roll, keep only a Pickleberry.',
+    'Free Roll': 'Keep Pickleberries and Moonberries, re-roll Jumbleberries, Sugarberries and Flies.',
+  };
+  $('chase-body').innerHTML = D.chase_table.map((r) => `<tr><td>${r.box}</td><td class="rule">${CHASE_RULE[r.box]}</td>
+    <td class="r num">${r.avg.toFixed(1)}</td><td class="r num">${pct(r.qualify, 1)}</td></tr>`).join('');
+  function drawMults() {
+    $('mults').innerHTML = D.open_value.map((r) => {
+      const W = 160, H = 56, P = 4, ys = (v) => H - P - v / 22 * (H - 2 * P), xs = (i) => P + i / 8 * (W - 2 * P);
+      const d = r.value.map((v, i) => `${i ? 'L' : 'M'}${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join('');
+      const area = d + `L${xs(8)},${H - P}L${xs(0)},${H - P}Z`;
+      return `<div class="mult ${r.box === 'Basket of 5' ? 'dump' : ''}" role="listitem" aria-label="${r.box}: worth ${r.value[0].toFixed(1)} points if open in round 1, ${r.value[8].toFixed(1)} if still open in round 9">
+        <b>${r.box}</b><span class="rng">${r.value[0].toFixed(1)} → ${r.value[8].toFixed(1)}</span>
+        <svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><line x1="${P}" x2="${W - P}" y1="${H - P}" y2="${H - P}" stroke="${css('--line')}"/>
+        <path d="${area}" fill="${css('--accent')}" fill-opacity=".12"/><path d="${d}" fill="none" stroke="${css('--accent')}" stroke-width="2"/>
+        <circle cx="${xs(8)}" cy="${ys(r.value[8])}" r="3" fill="${css('--accent')}"/></svg></div>`;
+    }).join('');
+  }
+
+  // ---------- 4. opening moves
+  $('open-body').innerHTML = D.opening.map((o) => `<tr><td><span class="hand">${o.roll.map(chip).join('')}</span></td>` +
+    `<td>${o.lock.length ? `<span class="hand">${o.lock.map(chip).join('')}</span>` : '<span class="reroll">re-roll all five</span>'}</td>` +
+    `<td class="r num">${pct(o.p, 1)}</td></tr>`).join('');
+
+  // ---------- 5. frontier
+  function drawFront() {
+    const f = frame($('front'), 280, { l: 44, r: 12, t: 26, b: 28 });
+    const F = D.frontier, x0 = 60, x1 = 180;
+    const xs = (x) => (x - x0) / (x1 - x0) * f.iw, ys = (y) => f.ih - y * f.ih;
+    axes(f, xs, ys, [60, 80, 100, 120, 140, 160, 180], [0, 0.25, 0.5, 0.75, 1], (t) => (t * 100) + '%');
+    vline(f, xs, 121, '121', 0); vline(f, xs, 141, '141', 0);
+    const series = [['best', '--s-perfect', 'Best possible'], ['ev', '--s-real', 'Perfect play'], ['par', '--s-par', 'Par sheet']];
+    series.forEach(([k, c]) => {
+      el('path', { d: 'M' + F.t.map((t, j) => `${f.m.l + xs(t)},${f.m.t + ys(F[k][j])}`).join('L'), fill: 'none', stroke: css(c), 'stroke-width': 2 }, f.svg);
+    });
+    crosshair(f, (px) => {
+      const t = Math.round(x0 + px / f.iw * (x1 - x0)), j = F.t.indexOf(t);
+      return { x: xs(t), y: ys(F.best[j]), html: `Target <b>${t}</b><br>Best possible ${pct(F.best[j], 1)}<br>Perfect play (avg) ${pct(F.ev[j], 1)}<br>Par sheet ${pct(F.par[j], 1)}` };
+    });
+  }
+  const pr = ['Perfect play', 'Perfect play for 121+', 'Perfect play for 141+', 'Par sheet (this guide)'].map((n) => D.ladder.find((r) => r.name === n));
+  $('prize-body').innerHTML = pr.map((r) => `<tr><td>${r.name}</td><td class="r num">${r.mean.toFixed(1)}</td><td class="r num">${pct(r.p121)}</td><td class="r num">${pct(r.p141, 1)}</td></tr>`).join('');
+
+  // ---------- 6. AI
+  const claudeRow = D.ladder.find((r) => r.name.startsWith('Claude'));
+  const cards = [];
+  if (D.ai.q) cards.push({ who: 'Q-learning (lookup table)', val: D.ai.q.final.mean, sub: `after ${(D.ai.q.games / 1e6).toFixed(0)} million practice games · gives up ${D.ai.q.final.regret_per_game.toFixed(1)} points a game` });
+  if (D.ai.dqn) cards.push({ who: 'Deep Q-network (neural net)', val: D.ai.dqn.final.mean, sub: `after ${(D.ai.dqn.games / 1e6).toFixed(1)} million practice games · gives up ${D.ai.dqn.final.regret_per_game.toFixed(1)} points a game` });
+  cards.push({ who: 'Claude Opus 5.5, reasoning from the rules', val: D.mean_opt - D.claude_lost, sub: `skill estimate from ${claudeRow.games} graded games · actual average ${claudeRow.mean.toFixed(1)} · gives up ${D.claude_lost.toFixed(1)} points a game` });
+  const c = D.claude;
+  $('claude-note').innerHTML = `Over <b>${c.n} games</b>, Claude Opus 5.5 averaged <b>${c.mean.toFixed(1)}</b> (95% range for its true average: ${c.lo.toFixed(1)} to ${c.hi.toFixed(1)}), reached 121 in ${pct(c.p121)} of games and 141 in ${pct(c.p141)}. Grading every move, it gave away <b>${c.lost.toFixed(1)} points a game</b> versus perfect play and made the perfect move ${pct(c.opt_rate)} of the time. That puts its skill at about <b>${(D.mean_opt - c.lost).toFixed(1)}</b>.`;
+  $('moon-body').innerHTML = D.moon.map((r) => `<tr><td>${r.recommended ? '<b>' + r.name + '</b> (recommended)' : r.name}</td><td class="r num">${(100 * r.per_game).toFixed(1)}</td><td class="r num">${pct(r.p121)}</td><td class="r num">${pct(r.p141, 1)}</td><td class="r num">${r.mean.toFixed(1)}</td></tr>`).join('');
+  cards.push({ who: 'Perfect play (exact solver)', val: D.mean_opt, sub: 'solved in under a second, no practice needed' });
+  $('ai-grid').innerHTML = cards.map((c) => `<div class="ai"><span class="who">${c.who}</span><b class="num">${c.val.toFixed(1)}</b><span>${c.sub}</span></div>`).join('');
+
+  function drawCurve() {
+    if (!D.ai.q && !D.ai.dqn) return;
+    $('ai-fig').hidden = false;
+    const f = frame($('curve'), 260, { l: 44, r: 96, t: 16, b: 28 });
+    const lx0 = 4, lx1 = 8;  // 10^4 .. 10^8 games
+    const xs = (g) => (Math.log10(g) - lx0) / (lx1 - lx0) * f.iw, ys = (y) => f.ih - (y - 40) / (130 - 40) * f.ih;
+    axes(f, xs, ys, [], [40, 60, 80, 100, 120], (t) => t);
+    [1e4, 1e5, 1e6, 1e7, 1e8].forEach((g) => { const t = el('text', { x: f.m.l + xs(g), y: f.m.t + f.ih + 18, 'text-anchor': 'middle' }, f.svg); t.textContent = g >= 1e6 ? (g / 1e6) + 'M' : (g / 1e3) + 'k'; });
+    const href = (v, lab) => {
+      el('line', { x1: f.m.l, x2: f.m.l + f.iw, y1: f.m.t + ys(v), y2: f.m.t + ys(v), stroke: css('--muted'), 'stroke-width': 1 }, f.svg);
+      el('text', { x: f.m.l + f.iw + 6, y: f.m.t + ys(v) + 4 }, f.svg).textContent = lab;
+    };
+    href(D.mean_opt, 'Perfect ' + D.mean_opt.toFixed(1));
+    [['q', '--s-perfect', 'Q-learning'], ['dqn', '--s-real', 'Deep Q-net']].forEach(([k, c, lab]) => {
+      const a = D.ai[k]; if (!a) return;
+      const pts = a.curve.filter(([g]) => g >= 1e4);
+      el('path', { d: 'M' + pts.map(([g, v]) => `${f.m.l + xs(g)},${f.m.t + ys(v)}`).join('L'), fill: 'none', stroke: css(c), 'stroke-width': 2 }, f.svg);
+      const [g, v] = pts[pts.length - 1];
+      el('circle', { cx: f.m.l + xs(g), cy: f.m.t + ys(v), r: 4, fill: css(c), stroke: css('--surface'), 'stroke-width': 2 }, f.svg);
+      el('text', { x: f.m.l + xs(g) + 8, y: f.m.t + ys(v) + 16, fill: css('--ink') }, f.svg).textContent = `${lab} ${v.toFixed(1)}`;
+    });
+  }
+
+  function drawAll() { drawDist(); drawLadder(); drawFront(); drawCurve(); drawMults(); }
+  check(); drawAll();
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+  const mq = window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener && mq.addEventListener('change', drawAll);
+  new MutationObserver(drawAll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
+<script src="jbf-engine.js"></script>
+<script src="jbf-camera.js"></script>
+<script src="jbf-advisor.js"></script>
+<script src="phone-link.js"></script>
+<script src="leaderboard-config.js"></script>
+<script src="bramble-dice.js"></script>
+<script>
+  (function () {
+    const sync = () => document.querySelectorAll('bramble-dice, jbf-advisor').forEach((el) => {
+      const t = document.documentElement.getAttribute('data-theme');
+      if (t === 'dark' || t === 'light') el.setAttribute('theme', t); else el.removeAttribute('theme');
+    });
+    sync(); new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  })();
+</script>
+</body>
+</html>

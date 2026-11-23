@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Jumbleberry Fields Helper</title>
+<meta name="description" content="Point your phone at Jumbleberry Fields and it shows which jars to lock and which box to click, using perfect-play math. Free, unofficial fan tool.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jumbleberry Fields, Solved">
+<meta property="og:title" content="Jumbleberry Fields Helper">
+<meta property="og:description" content="Point your phone at Jumbleberry Fields and it shows which jars to lock and which box to click, using perfect-play math. Free, unofficial fan tool.">
+<meta property="og:url" content="https://carterkowel.github.io/webkinz/helper.html">
+<meta property="og:image" content="https://carterkowel.github.io/webkinz/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Jumbleberry Fields, solved: perfect play averages 121.8 points">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,700;6..12,800&display=swap">
+<style>
+/* Layout: phone-first single column; the helper sits under a short header, instructions fold away below. */
+:root { --bg:#efedf6; --ink:#221d33; --ink2:#575069; --accent:#5b3aa8; --line:#dedae8; --card:#ffffff; --accent-ink:#ffffff; --warn:#b3261e;
+  --font-display:'Fredoka','Trebuchet MS',system-ui,sans-serif; --font-body:'Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0f0d15; --ink:#f0edf6; --ink2:#c4bfd2; --accent:#b39af0; --line:#322e3f; --card:#1e1b27; --accent-ink:#15131c; --warn:#ff8a80; color-scheme:dark; } }
+:root[data-theme="dark"] { --bg:#0f0d15; --ink:#f0edf6; --ink2:#c4bfd2; --accent:#b39af0; --line:#322e3f; --card:#1e1b27; --accent-ink:#15131c; --warn:#ff8a80; color-scheme:dark; }
+body { background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.5; }
+.wrap { max-width:36rem; margin-inline:auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:1.2rem 3rem; display:grid; gap:.9rem; }
+h1 { font-family:var(--font-display); font-weight:600; font-size:clamp(1.6rem, 1.3rem + 1.5vw, 2.2rem); margin:0; line-height:1.15; }
+h1 span { color:var(--accent); }
+p { margin:0; color:var(--ink2); font-size:.95rem; }
+details { border-top:1px solid var(--line); padding-top:.8rem; color:var(--ink2); font-size:.95rem; }
+summary { cursor:pointer; font-weight:700; color:var(--ink); }
+details ol { padding-left:1.2rem; display:grid; gap:.35rem; }
+:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+/* Camera start card: shown when the page is opened from the QR code (helper.html#live) */
+.start { background:var(--card); border:1.5px solid var(--accent); border-radius:16px; padding:16px; display:grid; gap:10px; }
+.start[hidden] { display:none; }
+.start h2 { margin:0; font-family:var(--font-display); font-weight:600; font-size:1.3rem; }
+.start .go { background:var(--accent); color:var(--accent-ink); border:0; border-radius:14px; min-height:56px; font:800 1.15rem var(--font-body); cursor:pointer; }
+.start .go:disabled { opacity:.45; cursor:default; }
+.start ol { margin:0; padding-left:1.2rem; display:grid; gap:.3rem; color:var(--ink2); font-size:.95rem; }
+.start .msg { color:var(--warn); font-weight:700; }
+.start .msg:empty { display:none; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Jumbleberry Fields <span>helper</span></h1>
+  <section class="start" id="start" hidden aria-labelledby="start-h">
+    <h2 id="start-h">Use your phone as a live guide</h2>
+    <button class="go" type="button">Start the camera</button>
+    <p class="msg" role="status"></p>
+    <ol>
+      <li>Open Jumbleberry Fields on your computer.</li>
+      <li>Tap <b>Start the camera</b> and allow it.</li>
+      <li>Prop your phone up facing the screen, with the jars, SCORE and scorecard all in view. It shows which jars to lock, when to press ROLL and which box to click. You can start mid-game.</li>
+    </ol>
+    <p>Playing for <b class="goal">the most Moonberries over time</b>. To change that, pick another goal in the helper below.</p>
+    <p>The camera picture is read on your phone and never uploaded or saved.</p>
+  </section>
+  <p>Keep this open on your phone while you play in Webkinz. Tap in your berries and it tells you exactly which jars to lock or which box to fill, using the same perfect-play math as the <a href="index.html" style="color:var(--accent)">Jumbleberry Fields, Solved</a> guide.</p>
+  <phone-link href="#live" label="Playing on a computer? Scan to use your phone as a live guide" note="Point your phone's camera at the code. It opens this helper ready to start the live camera. No app or sign-in needed."></phone-link>
+  <jbf-advisor></jbf-advisor>
+  <details>
+    <summary>How to use it</summary>
+    <ol>
+      <li>Pick a goal. <b>Most Moonberries</b> wins the most prizes over time. If you'd rather pick one target, play for 1 Moonberry: over many games it earns about 38% more Moonberries than always chasing 2.</li>
+      <li>Roll in Webkinz, then tap the five berries in the helper, left to right. Or let your phone's camera do it: press <b>Live camera</b> and point it at your game screen, with the jars, SCORE and scorecard in view. It marks which jars to lock and won't say ROLL until they're locked, highlights the box to click and its points, and fills in the scorecard as you go. You can start it mid-game: it picks up the boxes you've used and reads your SCORE (if it can't, it asks you to type it). You can also press <b>Read jars from a photo</b> to snap one picture. Either way, check the jars match and tap any jar to fix it.</li>
+      <li>Do what it says. If it says to lock jars, lock them in the game, roll, then press <b>I locked them and rolled</b> and enter only the new berries.</li>
+      <li>When it says to score, fill that box in the game and press <b>I scored it</b>. The helper keeps the scorecard for you.</li>
+      <li>Your game in progress is saved on this device, so you can close the page and come back.</li>
+    </ol>
+    <p>Rather learn it yourself? Read the <a href="cheatsheet.html" style="color:var(--accent)">one-page cheat sheet</a>.</p>
+    <p>Unofficial fan tool. Not affiliated with or endorsed by Webkinz or Ganz.</p>
+  </details>
+</main>
+<script src="jbf-engine.js"></script>
+<script src="jbf-camera.js"></script>
+<script src="jbf-advisor.js"></script>
+<script src="phone-link.js"></script>
+<script>
+  (function () {
+    const sync = () => document.querySelectorAll('jbf-advisor').forEach((el) => {
+      const t = document.documentElement.getAttribute('data-theme');
+      if (t === 'dark' || t === 'light') el.setAttribute('theme', t); else el.removeAttribute('theme');
+    });
+    sync(); new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  })();
+  // Opened from the QR code (helper.html#live): show the camera start card, one tap from the camera
+  (function () {
+    const card = document.getElementById('start');
+    const show = () => {
+      if (!/^#live\b/.test(location.hash)) return;
+      card.hidden = false;
+      const btn = card.querySelector('.go'), msg = card.querySelector('.msg'), adv = document.querySelector('jbf-advisor');
+      const GOAL = { moon: 'the most Moonberries over time', t121: '1 Moonberry (121+)', t141: '2 Moonberries (141+)', avg: 'the highest score' };
+      const goal = () => { card.querySelector('.goal').textContent = GOAL[adv.s && adv.s.goal] || GOAL.moon; };
+      goal();
+      if (!window.isSecureContext) {
+        btn.disabled = true;
+        msg.textContent = 'The live camera only works on the https:// version of this page. For now, use “Read jars from a photo” in the helper below.';
+      } else if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+        btn.disabled = true;
+        msg.textContent = "This browser can't use a live camera. Try Safari or Chrome, or use “Read jars from a photo” in the helper below.";
+      }
+      if (btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+      adv.addEventListener('click', () => setTimeout(goal, 0));   // the goal buttons live inside the helper
+      btn.addEventListener('click', async () => {
+        msg.textContent = '';
+        await adv.startLive();
+        if (!adv.liveOn && adv.cam) msg.textContent = adv.cam.msg;   // blocked, or no camera
+      });
+    };
+    show(); addEventListener('hashchange', show);
+  })();
+</script>
+</body>
+</html>

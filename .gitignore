@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+.ipynb_checkpoints/
+
+# Regenerable caches and large model files
+# (python baselines.py / ThresholdSolver() / rl_qlearning.py recreate them)
+jumbleberry_fields/data/strategy_sims.npz
+jumbleberry_fields/data/agent_current_game*.json
+jumbleberry_fields/models/threshold_solver.npz
+jumbleberry_fields/models/q_learning.npz
+
+# Screenshot of the real Webkinz game (Ganz artwork): keep it local, don't publish it
+images/jumbleberry1.png
+# Copies of the pages for publishing as Claude artifacts (they link to private claude.ai pages)
+site/artifact/

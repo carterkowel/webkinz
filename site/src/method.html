@@ -1,0 +1,235 @@
+<title>Solving Jumbleberry Fields</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: the report's reading column and tokens; a stepper for one round, then a live solver panel. */
+:root {
+  --bg: #f4f6ef; --surface: #ffffff; --ink: #231d33; --ink-2: #57516a; --muted: #8a8598;
+  --line: #dcdfd2; --grid: #e6e8de; --accent: #5b3aa8; --accent-soft: #ece6f8;
+  --jumble: #d8433b; --sugar: #e2a60f; --pickle: #4b9a39; --moon: #6f45c6; --fly: #46434f; --chip-ink: #ffffff;
+  --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --col: 44rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e;
+    --line: #322e3f; --grid: #2a2735; --accent: #b39af0; --accent-soft: #2a2340;
+    --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15131c; --surface: #1e1b27; --ink: #f0edf6; --ink-2: #c4bfd2; --muted: #8f8a9e;
+  --line: #322e3f; --grid: #2a2735; --accent: #b39af0; --accent-soft: #2a2340;
+  --jumble: #e5534a; --sugar: #e9b52c; --pickle: #5aab47; --moon: #8f6ee8; --fly: #6a6774; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+.page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.col { max-width: var(--col); margin-inline: auto; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.2rem, 1.5rem + 3.5vw, 3.6rem); }
+h1 span { color: var(--accent); }
+h2 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2rem); }
+h3 { font-size: 1.15rem; }
+p { margin: 0; }
+a { color: var(--accent); }
+.eyebrow { font-family: var(--font-data); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+section, header { display: grid; gap: 1rem; padding-block: 3rem 0.5rem; }
+.lede { font-size: 1.12rem; color: var(--ink-2); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.back { font-size: 0.92rem; }
+.berry { display: inline-grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; color: var(--chip-ink);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.78rem; line-height: 1; flex: none; font-style: normal; }
+.b-J { background: var(--jumble); } .b-S { background: var(--sugar); color: #231d33; } .b-P { background: var(--pickle); }
+.b-M { background: var(--moon); } .b-F { background: var(--fly); }
+.counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.8rem; }
+.count { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 0.9rem 1rem; display: grid; gap: 0.15rem; }
+.count b { font-family: var(--font-display); font-weight: 600; font-size: 2rem; line-height: 1; color: var(--accent); }
+.count span { color: var(--ink-2); font-size: 0.9rem; }
+.compare { font-size: 0.95rem; color: var(--ink-2); }
+.steps { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: stretch; }
+.step { flex: 1 1 8.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0.6rem 0.75rem; display: grid; gap: 0.15rem; position: relative; }
+.step b { font-size: 0.95rem; } .step span { font-size: 0.82rem; color: var(--ink-2); line-height: 1.35; }
+.step .n { font-family: var(--font-data); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.step.choice { border-color: var(--accent); }
+.note { font-size: 0.9rem; color: var(--muted); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th { text-align: left; font-family: var(--font-data); font-weight: 500; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); }
+td { padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--grid); vertical-align: middle; }
+td.r, th.r { text-align: right; }
+.formula { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0.8rem 1rem; font-family: var(--font-data); font-size: 0.85rem; line-height: 1.7; overflow-x: auto; white-space: pre; }
+/* live solver panel */
+.lab { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1rem 1.1rem; display: grid; gap: 0.9rem; }
+.lab-row { display: grid; gap: 0.35rem; }
+.lab-row > span { font-family: var(--font-data); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chips button, .seg button { font: inherit; font-size: 0.85rem; border: 1.5px solid var(--line); background: transparent; color: var(--ink-2); border-radius: 999px; padding: 0.2rem 0.7rem; cursor: pointer; }
+.chips button[aria-pressed="false"] { text-decoration: line-through; opacity: 0.6; }
+.chips button[aria-pressed="true"], .seg button[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); }
+.seg { display: flex; gap: 0.35rem; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.jars { display: flex; gap: 0.4rem; }
+.jars button { width: 2.6rem; height: 2.6rem; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.jars .berry { width: 1.8rem; height: 1.8rem; font-size: 0.85rem; }
+.out { display: grid; gap: 0.3rem; }
+.orow { display: grid; grid-template-columns: 1fr 1fr 4.5rem; gap: 0.6rem; align-items: center; padding: 0.3rem 0.4rem; border-radius: 8px; font-size: 0.92rem; }
+.orow.best { background: var(--accent-soft); font-weight: 800; }
+.otrack { height: 0.7rem; background: var(--grid); border-radius: 3px; overflow: hidden; }
+.otrack div { height: 100%; background: var(--accent); }
+.oval { text-align: right; font-family: var(--font-data); font-size: 0.85rem; }
+.explain { font-size: 0.92rem; color: var(--ink-2); }
+@media (max-width: 34rem) { .orow { grid-template-columns: 1fr 4rem; } .otrack { grid-column: 1 / -1; grid-row: 2; } }
+footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color: var(--ink-2); }
+</style>
+
+<div class="page">
+  <header class="col">
+    <a class="back" href="{{REPORT_URL}}">← Back to Jumbleberry Fields, Solved</a>
+    <p class="eyebrow">How it works</p>
+    <h1>Solving Jumbleberry Fields, <span>step by step</span></h1>
+    <p class="lede">"Solved" means we know the best possible move in every situation the game can produce, and exactly how much each move is worth. Here is how a computer works that out, why this game solves in under a second while Yahtzee needs hundreds of millions of positions, and how we checked the answer.</p>
+  </header>
+
+  <section class="col" id="count">
+    <p class="eyebrow">1 · Count the game</p>
+    <h2>Fewer situations than it looks</h2>
+    <p>Five jars, each showing one of five things, can land 3,125 ways. But only <b>how many</b> of each berry you have matters, not which jar holds which. That leaves just <b>126 different hands</b>. Every move you make is a <b>lock</b>, meaning a set of berries to keep, and there are only 252 different locks. Nine boxes that are each open or used give <b>512 scorecards</b>.</p>
+    <div class="counts">
+      <div class="count"><b class="num" id="c-hands">126</b><span>different hands of 5 berries</span></div>
+      <div class="count"><b class="num" id="c-keeps">252</b><span>different locks you can make</span></div>
+      <div class="count"><b class="num" id="c-masks">512</b><span>scorecards (each box open or used)</span></div>
+      <div class="count"><b class="num" id="c-sit">193,536</b><span>decision points: 512 scorecards × 3 rolls × 126 hands</span></div>
+    </div>
+    <p>The points already on your card don't change your best move, because Jumbleberry Fields has no bonuses. Only <b>which boxes are still open</b> matters for the future. That is the big shortcut. Yahtzee needs to remember your top-section total for its 35-point bonus and whether you can still earn Yahtzee bonuses, which is why <a href="https://www.youtube.com/watch?v=DOgb5wrb7mM" target="_blank" rel="noopener">Ballpark Figures' Yahtzee solve</a> had to work through about 405 million positions.</p>
+  </section>
+
+  <section class="col" id="backwards">
+    <p class="eyebrow">2 · Work backwards</p>
+    <h2>Start at the last roll of the game</h2>
+    <p>Planning forward is hopeless: every choice branches into hundreds of futures. So the solver starts at the end, where the answer is obvious, and steps backwards one decision at a time. A round looks like this, and the solver fills in every box from right to left:</p>
+    <div class="steps" role="list">
+      <div class="step" role="listitem"><span class="n">start of round</span><b>Value of the scorecard</b><span>Average of all 126 first rolls</span></div>
+      <div class="step" role="listitem"><span class="n">roll 1</span><b>See a hand</b><span>126 possible hands</span></div>
+      <div class="step choice" role="listitem"><span class="n">choice</span><b>Pick a lock</b><span>Average over every way the re-rolled jars land</span></div>
+      <div class="step choice" role="listitem"><span class="n">roll 2 → choice</span><b>Pick a lock again</b><span>Same idea, one roll left</span></div>
+      <div class="step choice" role="listitem"><span class="n">roll 3 → choice</span><b>Pick a box</b><span>Points now + value of the scorecard that's left</span></div>
+    </div>
+    <p><b>The last round.</b> Suppose only Free Roll is left. After your third roll there's nothing to decide. After your second roll, the solver tries every lock. For each one it lists every way the other jars can land, multiplies each result by its chance, and adds them up. The lock with the highest average wins: keep Pickleberries and Moonberries, re-roll the rest. One roll earlier it does the same, using those averages as the payoff. Averaged over first rolls, a lone Free Roll is worth <b>19.4 points</b>.</p>
+    <p><b>Every earlier round</b> works the same way, with one addition. When you pick a box, the payoff is the points you score now plus the value of the scorecard that's left, which the solver has already worked out because it is going backwards. After 511 scorecards it reaches the empty card: <b class="num" id="v0">121.80</b> points on average with perfect play.</p>
+    <div class="formula" aria-label="The recursion in words">value(card) =
+  average over first rolls of
+    best lock → average over re-rolls of
+      best lock → average over re-rolls of
+        best box: points now + value(card with that box used)</div>
+    <p class="note">In code this is about 30 lines (<code>solver.py</code>, and <code>jbf-engine.js</code> for the browser). It runs in under a tenth of a second.</p>
+  </section>
+
+  <section class="col" id="lab-sec">
+    <p class="eyebrow">3 · Watch it think</p>
+    <h2>Ask the solver about any situation</h2>
+    <p>Pick which boxes are still open, which roll you're on, and tap the jars to change berries. The solver ranks every possible move by the average final score it leads to, counting from this round on.</p>
+    <div class="lab">
+      <div class="lab-row"><span>Open boxes (tap to mark used)</span><div class="chips" id="lab-boxes"></div></div>
+      <div class="lab-row"><span>Roll</span><div class="seg" id="lab-roll"></div></div>
+      <div class="lab-row"><span>Jars (tap to change)</span><div class="jars" id="lab-jars"></div></div>
+      <div class="explain" id="lab-explain"></div>
+      <div class="out" id="lab-out" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="col" id="prizes">
+    <p class="eyebrow">4 · Playing for prizes</p>
+    <h2>When the score you need matters</h2>
+    <p>Maximising the average ignores the prize lines. To play for them, the solver needs one more fact: <b>how many points you've banked</b>. Anything above 141 counts the same, so the banked score only needs 142 values (0 to 141). That turns 512 scorecards into about 73,000. The payoff at the end is no longer points but Moonberries: 1 for 121 to 140 and 2 for 141 or more. Running the same backwards process gives the best achievable chance of each prize from any position, and the strategy that wins the most Moonberries over time: <b class="num" id="moon">0.67</b> a game. It takes about a second.</p>
+    <p>This is the part a Yahtzee solve usually leaves out. Beating a target is a different goal from scoring the most on average, and here we could solve it exactly.</p>
+  </section>
+
+  <section class="col" id="worth">
+    <p class="eyebrow">5 · What the numbers say</p>
+    <h2>What each box is worth to keep</h2>
+    <p>Because every scorecard has a value, we can ask what it costs to throw away your first round as a zero in each box. This is the solver's own ranking of which box to sacrifice:</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Zero in round 1</th><th class="r">Points it costs on average</th></tr></thead>
+      <tbody id="zero-body"></tbody></table></div>
+    <p>Basket of 5 is by far the cheapest box to give up. Free Roll and Basket of 3 are the most expensive. The par sheet on the main page is built from the same idea.</p>
+  </section>
+
+  <section class="col" id="checks">
+    <p class="eyebrow">6 · Checking the answer</p>
+    <h2>How we know it's right</h2>
+    <ul>
+      <li><b>Simulation agrees.</b> 200,000 simulated games played with the solver's moves averaged <b>121.81</b>, against the exact <b>121.80</b>. The prize odds matched to a tenth of a percent.</li>
+      <li><b>Two independent versions agree.</b> The Python solver and the browser version give the same values to four decimal places.</li>
+      <li><b>Scoring is tested.</b> Automated tests check every one of the 126 hands in every box against the original game code.</li>
+      <li><b>Learning machines agree.</b> A neural network that taught itself from 6 million practice games, never told the odds, ended up within 0.8 points of the solver.</li>
+    </ul>
+  </section>
+
+  <footer class="col">
+    <p><b>Further reading.</b> Ballpark Figures' video <a href="https://www.youtube.com/watch?v=DOgb5wrb7mM" target="_blank" rel="noopener">I Solved Yahtzee*</a>, its <a href="https://ballparkfigures.substack.com/p/yahtzee" target="_blank" rel="noopener">blog post</a> and <a href="https://github.com/Ballpark-Figures/yahtzee" target="_blank" rel="noopener">code</a> apply the same backwards technique to Yahtzee. Tom Verhoeff's work on optimal solitaire Yahtzee is the classic reference.</p>
+    <p><a href="{{REPORT_URL}}">← Back to Jumbleberry Fields, Solved</a></p>
+    <p class="note">A fan-made analysis. Not affiliated with or endorsed by Webkinz or Ganz.</p>
+  </footer>
+</div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script src="jbf-engine.js"></script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const $ = (id) => document.getElementById(id);
+  const B = ['J', 'S', 'P', 'M', 'F'], BN = { J: 'Jumbleberry', S: 'Sugarberry', P: 'Pickleberry', M: 'Moonberry', F: 'Fly' };
+  const BOX = ['Jumbleberry', 'Sugarberry', 'Pickleberry', 'Moonberry', 'Basket of 3', 'Basket of 4', 'Basket of 5', 'Mixed Basket', 'Free Roll'];
+  const chip = (b) => `<i class="berry b-${b}" aria-label="${BN[b]}">${b}</i>`;
+
+  $('c-sit').textContent = D.counts.situations.toLocaleString();
+  $('v0').textContent = D.mean_opt.toFixed(2);
+  $('moon').textContent = D.moon_per_game.toFixed(2);
+  $('zero-body').innerHTML = [...D.zero_cost].sort((a, b) => a.cost - b.cost)
+    .map((z) => `<tr><td>${z.box}</td><td class="r num">${z.cost.toFixed(1)}</td></tr>`).join('');
+
+  // ---- live solver panel
+  const st = { open: Array(9).fill(true), roll: 1, jars: [0, 1, 2, 3, 4] };
+  function render() {
+    $('lab-boxes').innerHTML = BOX.map((b, i) => `<button type="button" data-box="${i}" aria-pressed="${st.open[i]}">${b}</button>`).join('');
+    $('lab-roll').innerHTML = [1, 2, 3].map((r) => `<button type="button" data-roll="${r}" aria-pressed="${st.roll === r}">Roll ${r}</button>`).join('');
+    $('lab-jars').innerHTML = st.jars.map((j, i) => `<button type="button" data-jar="${i}" aria-label="Jar ${i + 1}: ${BN[B[j]]}, tap to change">${chip(B[j])}</button>`).join('');
+    const mask = st.open.reduce((m, o, i) => (o ? m : m | (1 << i)), 0);
+    if (mask === 511) {
+      $('lab-out').innerHTML = '';
+      $('lab-explain').textContent = 'Leave at least one box open.';
+      return;
+    }
+    const hand = [0, 0, 0, 0, 0]; st.jars.forEach((j) => hand[j]++);
+    const opts = BerryEngine.rankOptions('avg', { mask, score: 0, roll: st.roll, hand });
+    const shown = opts.slice(0, 8), best = opts[0].ev, lo = Math.min(...shown.map((o) => o.ev)), span = Math.max(best - lo, 1e-9);
+    const nOpen = st.open.filter(Boolean).length, nLock = opts.filter((o) => o.type === 'keep').length;
+    $('lab-explain').innerHTML = `With these ${nOpen} boxes open, a fresh round is worth <b>${BerryEngine.roundStartValue('avg', mask).toFixed(1)}</b> points from here on average. ` +
+      (st.roll < 3 ? `This hand allows ${nLock} different locks; for each, the solver averages over every way the other jars can land.` : 'No re-rolls left, so the only choice is the box.');
+    const desc = (o) => {
+      if (o.type === 'score') return `Score ${o.points} in ${BOX[o.box]}`;
+      const k = []; o.keep.forEach((n, b) => { for (let i = 0; i < n; i++) k.push(B[b]); });
+      return k.length ? `Lock <span style="display:inline-flex;gap:2px;vertical-align:middle">${k.map(chip).join('')}</span>` : 'Re-roll all five';
+    };
+    $('lab-out').innerHTML = opts.slice(0, 8).map((o, i) => `<div class="orow ${i === 0 ? 'best' : ''}"><div>${desc(o)}</div>
+      <div class="otrack" aria-hidden="true"><div style="width:${(8 + 92 * (o.ev - lo) / span).toFixed(1)}%"></div></div>
+      <div class="oval">${i === 0 ? o.ev.toFixed(1) : '−' + (best - o.ev).toFixed(1)}</div></div>`).join('') +
+      (opts.length > 8 ? `<div class="note">${opts.length - 8} more moves not shown. The top number is expected points from this round on; the others show how much less they're worth.</div>` : '');
+  }
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.box !== undefined) st.open[+t.dataset.box] = !st.open[+t.dataset.box];
+    else if (t.dataset.roll !== undefined) st.roll = +t.dataset.roll;
+    else if (t.dataset.jar !== undefined) st.jars[+t.dataset.jar] = (st.jars[+t.dataset.jar] + 1) % 5;
+    else return;
+    render();
+  });
+  render();
+})();
+</script>
