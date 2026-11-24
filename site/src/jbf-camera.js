@@ -422,8 +422,11 @@
     const quad = (box) => [[box[0], box[1]], [box[2], box[1]], [box[2], box[3]], [box[0], box[3]]].map(([u, v]) => { const [x, y] = P(u, v); return [x / w, y / h]; });
     const white = (hh, ss, vv) => ss < 0.3 && vv > 0.7;
     // a scored box shows a white number under its label. Glare makes the whole bar white, so compare with the sides.
+    // how much of a layout box is inside the camera picture: a box cut off by the edge would read as blank
+    const inFrame = (box) => frac(P, box, 8, 4, () => true);
     const cells = [], raw = [];
     for (let b = 0; b < 9; b++) {
+      if (inFrame(cellBox(b, 'num')) < 0.95) { cells.push(null); raw.push(null); continue; }   // can't tell
       const num = frac(P, cellBox(b, 'num'), 30, 14, white);
       const side = Math.max(frac(P, cellBox(b, 'sideL'), 12, 10, white), frac(P, cellBox(b, 'sideR'), 12, 10, white));
       cells.push(num < 0.025 ? false : side > 0.2 ? null : num >= 1.3 * side);
@@ -435,7 +438,7 @@
     return {
       P, fit: +best.s.toFixed(2), raw, prm: [best.sy, best.a, best.k].map((x) => +x.toFixed(2)),
       cells,                                            // true = shows a number, false = blank, null = can't tell (glare)
-      rollActive: green > 0.4 ? true : green < 0.1 ? false : null,   // greyed out = no rolls left
+      rollActive: inFrame(ROLL_BTN) < 0.95 ? null : green > 0.4 ? true : green < 0.1 ? false : null,   // greyed out = no rolls left
       counter,                                          // { left: 3|2|1|0 } rolls left this round, or null if not in view
       quads: { roll: quad(ROLL_BTN), score: quad(SCORE_BOX), cells: [0, 1, 2, 3, 4, 5, 6, 7, 8].map((b) => quad(cellBox(b, 'cell'))) },
     };

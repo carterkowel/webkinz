@@ -37,6 +37,21 @@ This repo publishes **`dist/`** to GitHub Pages with [`.github/workflows/pages.y
 
 Both elements style themselves (shadow DOM), so they won't clash with your site's CSS. They follow the visitor's light/dark setting, or you can force one with `theme="light"` or `theme="dark"`.
 
+### Embedded on carterkowel.github.io
+
+Bramble Dice is also embedded on the personal site at <https://carterkowel.github.io/projects/jumbleberry-fields/>. That page loads these three files by full address, in this order, and uses `<bramble-dice theme="light|dark">`:
+
+```html
+<script src="https://carterkowel.github.io/webkinz/jbf-engine.js"></script>
+<script src="https://carterkowel.github.io/webkinz/leaderboard-config.js"></script>
+<script src="https://carterkowel.github.io/webkinz/bramble-dice.js"></script>
+```
+
+So that page keeps working:
+* **Keep the names stable.** Don't rename `jbf-engine.js`, `leaderboard-config.js`, `bramble-dice.js`, the `<bramble-dice>` tag or the `theme` attribute without updating the personal site too.
+* **No relative paths in the component.** `bramble-dice.js` must not load anything (images, fonts, data, other scripts) by a relative path, because on the personal site it would resolve against `/projects/`, not `/webkinz/`. Today it draws everything inline and only calls the Firestore API by full address.
+* **Leaderboard from any page on the host.** The API key's HTTP-referrer restriction must cover the whole host (`https://carterkowel.github.io/*`), not just `/webkinz/*`. The Firestore rules don't look at which page sent a request.
+
 ## Leaderboard setup (about 10 minutes, free)
 
 The leaderboard uses **Google Firebase Firestore** on the free **Spark** plan. It needs no credit card, and unlike some free databases it never pauses a quiet project. The free daily allowance is 50,000 reads and 20,000 writes. Each leaderboard view reads at most 15 entries and each submitted game writes one, so a small community won't come close.
@@ -70,6 +85,15 @@ python ../site/build.py                                     # writes site/dist a
 
 Edit the pages in `src/`. `report.html` gets its numbers from `page_data.json` at build time.
 
+## Tests
+
+```bash
+node site/test_engine.js       # the browser solver matches the Python one
+node site/test_live.js         # whole games through the live camera helper, with misreads
+```
+
+`test_live.js` plays games with a scripted perfect player and feeds the helper what the camera would report each frame, with bursts of misreads (the x3 sign, ROLL, lids, jars, scorecard, SCORE, losing the game for a moment). It reports how often the helper's round runs ahead of the game, how often its advice comes from the wrong scorecard (and the longest such stretch), and whether the final total is right. A perfect camera must be perfect; everyday wobble must stay within one round, under 3% wrong advice, and right at the end in 90% of games. `SEED=n` plays a different set of games; `ADVISOR=path` tests another copy of `jbf-advisor.js`. Run it after any change to the live camera logic.
+
 ## Notes
 
 * **Personal stats are local.** Each player's own game history and an in-progress helper game live in their browser (`localStorage`).
@@ -78,10 +102,14 @@ Edit the pages in `src/`. `report.html` gets its numbers from `page_data.json` a
 * **Phone QR code.** On a computer, the helper page and the report (top of the page and the helper section) show a QR code (`phone-link.js`, drawn with `qrcode-generator` from cdnjs). It opens `helper.html#live` on the phone, which puts a big **Start the camera** button at the top, so the live camera is one tap away. The code is built from the page's own address, so it works on any host with no setup. It stays hidden on phones, on local `file://` copies, and in the Claude artifact copies. On a computer the helper's own camera buttons sit folded away at the bottom (**Camera options**), since the camera is meant for a phone pointed at the game.
 * **Live camera needs https.** Phone browsers only allow a live camera feed on `https://` pages (or `localhost`). Any real host (Netlify, GitHub Pages) is https. On a plain `http://` address, such as a laptop on home Wi-Fi, the helper explains this and the photo button still works.
 * **What the live camera reads.** From the row of jars it locates the rest of the game screen: the red lids on locked jars, the ROLL button (greyed out means no rolls are left), the x3 / x2 / x1 sign next to it (rolls left this round), the scorecard (which boxes show points) and the SCORE. Nothing needs confirming:
-  * **A box was clicked** when the sign goes back to x3, a greyed-out ROLL lights up, the lids unlock or the SCORE goes up (the berries stay in the jars). The SCORE's jump or the scorecard says which box. Hovering the mouse over a box also shows its points, so that alone doesn't count.
-  * **A roll** that brings up the same berries shows on the sign.
+  * **A box was clicked** when the sign goes back to x3, a greyed-out ROLL lights up, the lids unlock or the SCORE goes up (the berries stay in the jars). Any one of these can be misread for a moment, so it takes two that agree, or one that holds for a few seconds, and nothing else on screen saying otherwise (the sign still showing rolls left, ROLL still greyed out, or the SCORE not moving). The SCORE's jump or the scorecard says which box. Hovering the mouse over a box also shows its points, so a box only counts as filled once it has shown points for 1.5 seconds.
+  * **Taking a click back:** until the game confirms a click (the SCORE goes up, or the x3 sign holds), the helper keeps the game as it was. If the sign still shows the rolls left from before, or the SCORE doesn't move, or the box stays blank on the scorecard, it puts the berries back and says "No box was clicked yet."
+  * **A new round** needs proof too: a click puts up x3 before the next roll, so x2 with no x3 in between is the same round (and a jar that changed is a misread). Without the sign in view, the helper waits for the SCORE to say whether a box was clicked first.
+  * **A roll** that brings up the same berries shows on the sign (x3, then a roll sign for a few seconds).
   * **The game is over** when the end screen replaces the board in round 9.
-  * **Catching up:** if the camera missed a few rounds, the helper takes the used boxes from the scorecard and the total from the SCORE. If the game's SCORE and the helper's total disagree for about 5 seconds, it uses the game's.
+  * **Catching up:** if the camera missed a few rounds, the helper takes the used boxes from the scorecard and the total from the SCORE. A box the helper has as used but the scorecard keeps showing blank (2 to 6 seconds) is opened again. If the game's SCORE and the helper's total disagree for 4 seconds, it uses the game's, but only once the scorecard and the helper agree on which boxes are used, so a wrong box is fixed rather than hidden.
+  * **Edges of the picture:** a box or the ROLL button cut off by the edge of the camera picture counts as "can't tell", not blank or greyed out.
+  * **Boxes scored 0** don't move the SCORE, but the game shows "0" in the box, so the scorecard settles them: a "0" box the helper missed is filled in after 5 seconds (longer than a hover), and a box the helper filled that stays blank is opened again.
   * **Steady advice:** what to do stays on screen while the camera wobbles; it only asks you to point the camera after about 2.5 seconds without the game.
   * **Fixing by hand:** the roll and the score in the camera view's top line can be tapped, for the rare time the camera can't tell.
 * **Hold the phone sideways.** The game is wider than it is tall, so sideways it fills more of the camera picture and reads better; upright, the x3 sign is often cut off. Sideways, the advice moves to a side panel so nothing covers the game. The helper gives tips when the game is cut off or too small ("Turn your phone sideways", "Aim a little lower", "Move a little closer").

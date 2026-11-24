@@ -50,6 +50,10 @@ section { display: grid; gap: 1.1rem; padding-block: 3.2rem 0.5rem; }
 .hero { padding-block: 3.5rem 1rem; display: grid; gap: 1.4rem; }
 .hero h1 { font-size: clamp(2.6rem, 1.6rem + 4.5vw, 4.4rem); letter-spacing: -0.01em; }
 .hero h1 span { color: var(--accent); }
+.about { background: var(--accent-soft); border-radius: 14px; padding: 1rem 1.2rem; display: grid; gap: 0.4rem; }
+.about h2 { font-size: 1.15rem; margin: 0; }
+.about p { margin: 0; }
+.about .about-note { color: var(--muted); font-size: 0.88rem; }
 .hero-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; }
 .hero-chips .berry { width: 2.3rem; height: 2.3rem; font-size: 1rem; }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 1rem; }
@@ -193,6 +197,11 @@ footer { padding-top: 3rem; display: grid; gap: 0.6rem; font-size: 0.9rem; color
     <div class="hero-chips" aria-hidden="true"><span class="berry b-M">M</span><span class="berry b-M">M</span><span class="berry b-P">P</span><span class="berry b-J">J</span><span class="berry b-S">S</span></div>
     <h1>Jumbleberry Fields, <span>solved</span></h1>
     <p class="lede">I computed the best possible move for every situation in the game, then played millions of games to see how different strategies score. Here is what perfect play looks like, how close you can get with a few simple habits, a <a href="#helper">helper</a> to use while you play, and a <a href="#play">practice game</a> you can play as often as you like. Curious how it's done? Read <a href="{{METHOD_URL}}">how I solved the game</a>. Want it all on one page? Grab the <a href="{{CHEAT_URL}}">cheat sheet</a>.</p>
+    <section class="about" aria-labelledby="about-h">
+      <h2 id="about-h">What is Jumbleberry Fields?</h2>
+      <p>Jumbleberry Fields is a nostalgic arcade game on Webkinz. It's basically a simpler version of Yahtzee (also nostalgic): roll five jars of berries up to three times a round, keep the ones you want, and fill a scorecard of nine boxes.</p>
+      <p class="about-note">This is an unofficial fan project, not affiliated with or endorsed by Webkinz or Ganz.</p>
+    </section>
     <div class="stats">
       <div class="stat"><b id="h-avg">121.8</b><span>average score with perfect play</span></div>
       <div class="stat"><b id="h-121">58%</b><span>best possible chance of 121+ (one Moonberry)</span></div>
