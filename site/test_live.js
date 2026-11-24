@@ -97,7 +97,9 @@ function runGame(sc) {
       const jars = s.jars.map((j) => (j === null ? null : LET[j]));
       const jw = N.jar(t); if (jw !== null && s.status === 'ok') { const k = Math.floor(jw * 5); jars[k] = LET[(LET.indexOf(jars[k]) + 1 + Math.floor(jw * 40) % 4) % 5]; }
       const locked = s.locked.slice(); const lw = N.lock(t); if (lw !== null) { const k = Math.floor(lw * 5); locked[k] = !locked[k]; }
-      const cells = s.cells.slice(); if (s.hover !== undefined) cells[s.hover] = true;
+      const cells = s.cells.slice();
+      if (sc.blankAfter && t > sc.blankAfter) cells.forEach((v, k) => { if (v) cells[k] = sc.blankAs; });   // tiny digits: filled boxes misread
+      if (s.hover !== undefined) cells[s.hover] = true;
       const cw = N.cell(t); if (cw !== null) { const k = Math.floor(cw * 9); cells[k] = !cells[k]; }
       const cn = N.cellNull(t); if (cn !== null) { for (let k = Math.floor(cn * 3) * 3; k < Math.floor(cn * 3) * 3 + 3; k++) cells[k] = null; }
       let left = sc.noCounter || N.ctrNull(t) !== null ? null : s.left;
@@ -131,6 +133,12 @@ const SCENARIOS = [
   { name: 'clean camera', rates: {}, check: (r) => r.gamesAhead === 0 && r.wrong === 0 && r.roll === 0 && r.finalOk === GAMES },
   { name: 'everyday wobble', check: (r) => r.maxAhead <= 1 && r.wrong < 0.03 && r.roll < 0.06 && r.finalOk >= 0.85 * GAMES, rates: { ctrNull: 0.15, ctrWrong: 0.03, roll: 0.03, lock: 0.04, jar: 0.04, cell: 0.02, cellNull: 0.05, scNull: 0.15, scWrong: 0.02, lost: 0.05 } },
   { name: 'shaky, lots of misreads', rates: { ctrNull: 0.3, ctrWrong: 0.08, roll: 0.08, lock: 0.1, jar: 0.1, cell: 0.05, cellNull: 0.1, scNull: 0.3, scWrong: 0.05, lost: 0.1 } },
+  // the phone turned upright halfway: the scorecard's digits get tiny. The camera reads filled boxes as "can't tell"
+  { name: 'tiny digits from halfway: filled boxes unreadable', blankAfter: 60000, blankAs: null, check: (r) => r.maxAhead <= 1 && r.wrong < 0.15 && r.finalOk >= 0.4 * GAMES,
+    rates: { ctrNull: 0.15, ctrWrong: 0.03, roll: 0.03, lock: 0.04, jar: 0.04, cellNull: 0.05, scNull: 0.15, scWrong: 0.02, lost: 0.05 } },
+  // worst case (how the camera read them before): filled boxes read blank. The helper must not unwind the game
+  { name: 'tiny digits from halfway: filled boxes read blank', blankAfter: 60000, blankAs: false, check: (r) => r.maxAhead <= 1 && r.wrong < 0.15 && r.finalOk >= 0.4 * GAMES,
+    rates: { ctrNull: 0.15, ctrWrong: 0.03, roll: 0.03, lock: 0.04, jar: 0.04, cellNull: 0.05, scNull: 0.15, scWrong: 0.02, lost: 0.05 } },
   { name: 'upright phone: x3 sign never in view', noCounter: true, rates: { roll: 0.03, lock: 0.04, jar: 0.04, cell: 0.02, cellNull: 0.05, scNull: 0.15, scWrong: 0.02, lost: 0.05 } },
 ];
 

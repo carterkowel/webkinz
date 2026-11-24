@@ -429,7 +429,9 @@
       if (inFrame(cellBox(b, 'num')) < 0.95) { cells.push(null); raw.push(null); continue; }   // can't tell
       const num = frac(P, cellBox(b, 'num'), 30, 14, white);
       const side = Math.max(frac(P, cellBox(b, 'sideL'), 12, 10, white), frac(P, cellBox(b, 'sideR'), 12, 10, white));
-      cells.push(num < 0.025 ? false : side > 0.2 ? null : num >= 1.3 * side);
+      // empty boxes read as no white at all; small or blurry digits (phone upright, far away) can be as faint as 1%,
+      // so only "no white" counts as blank, and faint white is "can't tell" rather than either
+      cells.push(num < 0.004 ? false : side > 0.2 ? null : num >= 0.025 && num >= 1.3 * side ? true : null);
       raw.push([+num.toFixed(3), +side.toFixed(3)]);
     }
     const green = frac(P, ROLL_BTN, 10, 3, (hh, ss, vv) => hh > 65 && hh < 115 && ss > 0.45 && vv > 0.45);
