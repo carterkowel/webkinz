@@ -35,6 +35,9 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: site/dist
+      # GitHub's artifact list can lag behind the upload ("No artifacts named github-pages were found")
+      - name: Give the upload a moment to register
+        run: sleep 30
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
