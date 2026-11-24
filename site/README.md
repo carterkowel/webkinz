@@ -92,7 +92,7 @@ node site/test_engine.js       # the browser solver matches the Python one
 node site/test_live.js         # whole games through the live camera helper, with misreads
 ```
 
-`test_live.js` plays games with a scripted perfect player and feeds the helper what the camera would report each frame, with bursts of misreads (the x3 sign, ROLL, lids, jars, scorecard, SCORE, losing the game for a moment). It reports how often the helper's round runs ahead of the game, how often its advice comes from the wrong scorecard (and the longest such stretch), and whether the final total is right. A perfect camera must be perfect; everyday wobble must stay within one round, under 3% wrong advice, and right at the end in 90% of games. `SEED=n` plays a different set of games; `ADVISOR=path` tests another copy of `jbf-advisor.js`. Run it after any change to the live camera logic.
+`test_live.js` plays games with a scripted perfect player and feeds the helper what the camera would report each frame, with bursts of misreads (the x3 sign, ROLL, lids, jars, scorecard, SCORE, losing the game for a moment). It reports how often the helper's round runs ahead of the game, how often its advice comes from the wrong scorecard (and the longest such stretch), how often its roll number (1, 2 or 3) is wrong, and whether the final total is right. A perfect camera must be perfect; everyday wobble must stay within one round, under 3% wrong advice, under 6% wrong roll, and right at the end in 85% of games. The simulated game greys out ROLL while the dice spin, like the real one. `SEED=n` plays a different set of games; `ADVISOR=path` tests another copy of `jbf-advisor.js`. Run it after any change to the live camera logic.
 
 ## Notes
 

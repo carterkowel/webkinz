@@ -145,7 +145,7 @@
     frame: 0, cur: null,                       // the latest frame read
     good: null, goodAt: -1e9, lost: 0,         // the latest frame showing the game, and since when it's been out of view (0 = in view)
     key: null, keyN: 0, keyAt: 0, st: null,    // the jars must read the same twice in a row; st = that steady reading
-    win: [], B: null, ctrAt: 0,                // recent scorecard / ROLL / roll counter readings, their vote, when the counter last changed
+    win: [], B: null, ctrAt: 0, ctrVal: null,  // recent scorecard / ROLL / roll counter readings, their vote, when the counter last changed and to what
     sc: { v: null, n: 0, at: -99, since: 0 }, drift: { v: null, at: 0 },  // the SCORE number, and since when it has disagreed with the helper
     hint: '', hintN: 0, hintShown: '',         // camera-position tip, shown once it holds for a few frames
     stale: null,                               // berries left in the jars after a box was clicked, until the next roll
@@ -154,6 +154,7 @@
     firstAt: 0, extraKey: '', extraAt: 0,      // when the game was first seen; boxes the game shows filled that we have open, and since when
     blankSince: Array(9).fill(0),              // per box: since when the game has shown it blank while we have it used (0 = not)
     litSince: Array(9).fill(0),                // per box: since when the scorecard has shown it with points (0 = not)
+    greySince: 0,                              // since when ROLL has looked greyed out (0 = not); it also greys while the dice spin
     handCtr: null,                             // the x-sign's rolls left, last seen with this hand (before any click)
     handSc: null,                              // the game's SCORE as first read with this hand: SCORE jumps are measured from it
     x3Seen: false,                             // the x3 sign has shown since the last click or roll
@@ -501,11 +502,12 @@
       if (seen) { L.good = r; L.goodAt = now; L.lost = 0; if (!L.firstAt) L.firstAt = now; } else if (!L.lost) L.lost = now;
       if (r.board) L.win.push({ t: now, cells: r.board.cells, roll: r.board.rollActive, ctr: r.board.counter ? r.board.counter.left : null });
       L.win = L.win.filter((f) => now - f.t < 2500).slice(-5);
-      const ctr0 = L.B ? L.B.ctr : null;
       L.B = this.liveVote();
-      if (L.B && L.B.ctr !== null && L.B.ctr !== ctr0) L.ctrAt = now;
+      // when the sign last changed what it says (a frame where it can't be read doesn't count as a change)
+      if (L.B && L.B.ctr !== null && L.B.ctr !== L.ctrVal) { L.ctrVal = L.B.ctr; L.ctrAt = now; }
       if (L.B && L.B.ctr !== null && L.B.ctr < 3 && this.s.jars.every((j) => j !== null)) L.handCtr = L.B.ctr;
       if (L.B && L.B.ctr === 3) L.x3Seen = true;
+      if (L.B && L.B.roll === false) { if (!L.greySince) L.greySince = now; } else if (L.B && L.B.roll === true) L.greySince = 0;
       if (r.board) r.board.cells.forEach((v, c) => { if (v === true) { if (!L.litSince[c]) L.litSince[c] = now; } else if (v === false) L.litSince[c] = 0; });
       const h = this.liveHint(r, portrait);
       if (h === L.hint) L.hintN++; else { L.hint = h; L.hintN = 1; }
@@ -613,7 +615,14 @@
       if (this.mask === 511) {
         // game over: wait for the next game, or carry on if the game wasn't actually over
         if (newGame) this.liveNewGame(now);
-        else if (L.ended && st.status === 'ok' && B && B.cells[L.ended.box] === false && same(st.jars, L.ended.s.jars)) { this.s = L.ended.s; L.ended = null; this.liveCommit(); }
+        else if (L.ended && st.status === 'ok' && B && B.cells[L.ended.box] === false) {
+          // the last box is still blank: the camera only lost the game for a moment. Back to round 9, and if
+          // the berries changed meanwhile (another roll), take them as read
+          const moved = !same(st.jars, L.ended.s.jars);
+          this.s = L.ended.s; L.ended = null; L.undo = null;
+          if (moved) return this.liveStep(now);
+          this.liveCommit();
+        }
         if (!newGame || st.status === 'empty') return;
       } else if (newGame && this.mask !== 0) {
         this.liveNewGame(now);
@@ -753,7 +762,9 @@
       }
       if (!same(st.jars, s.jars)) return;             // a new roll is being read; liveStep deals with it
       if (this.liveMissed(now)) return;
-      if (B.roll === false && (s.roll === 3 || B.ctr === 0)) L.rollOff = true;   // greyed out is only real after the last roll
+      // ROLL greyed out for a while (not just while the dice spin), and the sign not showing rolls left: no rolls left
+      const greyed = B.roll === false && !!L.greySince && now - L.greySince >= 1500 && (B.ctr === null || B.ctr === 0);
+      if (greyed && (s.roll === 3 || B.ctr === 0)) L.rollOff = true;
       if (st.locked.some(Boolean)) L.lockSeen = true;
       const adv = this.advice();
       // a box was clicked: the berries stay in the jars, but the counter goes back to x3, a greyed-out
@@ -783,9 +794,10 @@
       }
       L.pend = 0;
       // a re-roll that came up with the same berries: the counter (or a greyed-out ROLL) shows it
+      // the sign is what counts, either way (held 1.5 s); without it, ROLL greyed out for a while means the last roll
       const rollNo = B.ctr !== null && B.ctr < 3 ? 3 - B.ctr : null;
-      if (rollNo !== null && rollNo > s.roll && now - L.ctrAt > 1500 && st.at > L.ctrAt) { s.roll = rollNo; s.locked = st.locked.slice(); L.unsure = false; this.liveCommit(); }
-      else if (B.roll === false && s.roll < 3) { s.roll = 3; L.unsure = false; this.liveCommit(); }
+      if (rollNo !== null && rollNo !== s.roll && now - L.ctrAt > 1500 && st.at > L.ctrAt) { s.roll = rollNo; s.locked = st.locked.slice(); L.unsure = false; this.liveCommit(); }
+      else if (rollNo === null && greyed && s.roll < 3) { s.roll = 3; L.unsure = false; this.liveCommit(); }
       else if (rollNo === null && B.roll === true && s.roll === 3 && L.unsure) { s.roll = 2; this.liveCommit(); }   // ROLL still lit: not the last roll
       this.liveDrift(v, now);
     }

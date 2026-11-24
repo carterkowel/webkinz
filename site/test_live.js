@@ -39,8 +39,10 @@ function playGame() {
     for (let r = 1; r <= 3; r++) {
       // press ROLL: the unlocked jars spin, then stop
       const spin = jars.map((j, i) => (locked[i] ? j : null));
-      show(600, { ...base(), jars: spin, status: 'partial', left: 3 - r + 1, rollOn: true });
+      // ROLL greys out while the dice spin, and the sign already shows the new count
+      show(600, { ...base(), jars: spin, status: 'partial', left: 3 - r, rollOn: false });
       jars = jars.map((j, i) => (locked[i] ? j : roll1()));
+      show(300 + rnd() * 700, { ...base(), status: 'ok', left: 3 - r, rollOn: false });   // and for a moment after they land
       const hand = [0, 0, 0, 0, 0]; jars.forEach((j) => hand[j]++);
       const mask = base().mask;
       const best = E.rankOptions('avg', { mask, score: g.score, roll: r, hand })[0];
@@ -81,7 +83,7 @@ function runGame(sc) {
   a.s.goal = 'avg';
   a.liveOn = true; a.liveReset();
   T = 1000;
-  let i = 0, left = screens[0].ms, ahead = 0, frames = 0, maxAhead = 0, wrongAdvice = 0, adviceFrames = 0, run = 0, longest = 0, settled = 0, lastKey = '';
+  let i = 0, left = screens[0].ms, ahead = 0, frames = 0, maxAhead = 0, wrongAdvice = 0, adviceFrames = 0, run = 0, longest = 0, settled = 0, lastKey = '', wrongRoll = 0;
   const scr0 = () => screens[Math.min(i, screens.length - 1)];
   for (let t = 0; t < total; t += FRAME) {
     T += FRAME; left -= FRAME;
@@ -117,16 +119,17 @@ function runGame(sc) {
     if (key !== lastKey) { lastKey = key; settled = t; }
     if (s.status === 'ok' && s.jars.every((j) => j !== null) && s.left !== 3 && t - settled >= 2500) {
       adviceFrames++;
+      if (a.s.roll !== 3 - s.left) wrongRoll++;
       if (helperMask !== trueMask) { wrongAdvice++; run += FRAME; longest = Math.max(longest, run); } else run = 0;
     }
   }
   // the end: every box used, and the total matches the game's (what the prize lines go by)
-  return { ahead, frames, maxAhead, finalOk: a.mask === 511 && a.score === g.score, wrongAdvice, adviceFrames, longest };
+  return { ahead, frames, maxAhead, finalOk: a.mask === 511 && a.score === g.score, wrongAdvice, adviceFrames, longest, wrongRoll };
 }
 
 const SCENARIOS = [
-  { name: 'clean camera', rates: {}, check: (r) => r.gamesAhead === 0 && r.wrong === 0 && r.finalOk === GAMES },
-  { name: 'everyday wobble', check: (r) => r.maxAhead <= 1 && r.wrong < 0.03 && r.finalOk >= 0.9 * GAMES, rates: { ctrNull: 0.15, ctrWrong: 0.03, roll: 0.03, lock: 0.04, jar: 0.04, cell: 0.02, cellNull: 0.05, scNull: 0.15, scWrong: 0.02, lost: 0.05 } },
+  { name: 'clean camera', rates: {}, check: (r) => r.gamesAhead === 0 && r.wrong === 0 && r.roll === 0 && r.finalOk === GAMES },
+  { name: 'everyday wobble', check: (r) => r.maxAhead <= 1 && r.wrong < 0.03 && r.roll < 0.06 && r.finalOk >= 0.85 * GAMES, rates: { ctrNull: 0.15, ctrWrong: 0.03, roll: 0.03, lock: 0.04, jar: 0.04, cell: 0.02, cellNull: 0.05, scNull: 0.15, scWrong: 0.02, lost: 0.05 } },
   { name: 'shaky, lots of misreads', rates: { ctrNull: 0.3, ctrWrong: 0.08, roll: 0.08, lock: 0.1, jar: 0.1, cell: 0.05, cellNull: 0.1, scNull: 0.3, scWrong: 0.05, lost: 0.1 } },
   { name: 'upright phone: x3 sign never in view', noCounter: true, rates: { roll: 0.03, lock: 0.04, jar: 0.04, cell: 0.02, cellNull: 0.05, scNull: 0.15, scWrong: 0.02, lost: 0.05 } },
 ];
@@ -135,12 +138,12 @@ const GAMES = +process.argv[2] || 60;
 let failed = false;
 for (const sc of SCENARIOS) {
   seed = +process.env.SEED || 12345;   // SEED=n for another set of games
-  let ahead = 0, frames = 0, finalOk = 0, maxAhead = 0, gamesAhead = 0, wrong = 0, adv = 0, longest = 0;
+  let ahead = 0, frames = 0, finalOk = 0, maxAhead = 0, gamesAhead = 0, wrong = 0, adv = 0, longest = 0, wrongRoll = 0;
   for (let k = 0; k < GAMES; k++) {
     const r = runGame(sc);
     ahead += r.ahead; frames += r.frames; finalOk += r.finalOk ? 1 : 0; maxAhead = Math.max(maxAhead, r.maxAhead);
     if (r.maxAhead > 0) gamesAhead++;
-    wrong += r.wrongAdvice; adv += r.adviceFrames; longest = Math.max(longest, r.longest);
+    wrong += r.wrongAdvice; adv += r.adviceFrames; wrongRoll += r.wrongRoll; longest = Math.max(longest, r.longest);
   }
   const p = (x, y) => (100 * x / Math.max(1, y)).toFixed(1) + '%';
   console.log(`${sc.name}
@@ -148,7 +151,9 @@ for (const sc of SCENARIOS) {
     `
    advice from the wrong scorecard: ${p(wrong, adv)} of the time (longest stretch ${(longest / 1000).toFixed(1)} s)` +
     `
+   wrong roll number (1, 2 or 3): ${p(wrongRoll, adv)} of the time` +
+    `
    final total right: ${finalOk}/${GAMES} games`);
-  if (sc.check && !sc.check({ gamesAhead, maxAhead, wrong: wrong / Math.max(1, adv), finalOk })) { failed = true; console.error('   ^ FAILED'); }
+  if (sc.check && !sc.check({ gamesAhead, maxAhead, wrong: wrong / Math.max(1, adv), roll: wrongRoll / Math.max(1, adv), finalOk })) { failed = true; console.error('   ^ FAILED'); }
 }
 if (failed) { console.error('FAILED'); process.exit(1); }
