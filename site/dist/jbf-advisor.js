@@ -151,13 +151,17 @@
     stale: null,                               // berries left in the jars after a box was clicked, until the next roll
     startup: true, adoptPending: true, prov: [], unsure: false, rollOff: false, lockSeen: false,
     guess: null, ended: null, note: '', noteAt: -1e9, pend: 0,   // pend: when a click was first noticed, while working out which box
-    firstAt: 0, extraKey: '', extraAt: 0,      // when the game was first seen; boxes the game shows filled that we have open, and since when
-    blankSince: Array(9).fill(0),              // per box: since when the game has shown it blank while we have it used (0 = not)
+    firstAt: 0,                                // when the game was first seen
+    blankSince: Array(9).fill(0), blankN: Array(9).fill(0),   // per box we have as used: since when, and how many frames, the game has shown it blank
+    seenN: Array(9).fill(0), seenAt: Array(9).fill(0), cardOk: 0.5,   // how often and since when it has shown it filled; how well the camera reads filled boxes
     litSince: Array(9).fill(0),                // per box: since when the scorecard has shown it with points (0 = not)
     greySince: 0,                              // since when ROLL has looked greyed out (0 = not); it also greys while the dice spin
     handCtr: null,                             // the x-sign's rolls left, last seen with this hand (before any click)
     handSc: null,                              // the game's SCORE as first read with this hand: SCORE jumps are measured from it
     scKnown: null,                             // the last firm SCORE read, whenever that was
+    scBefore: null, scChangedAt: 0,            // the firm SCORE before its last change, and when it changed
+    handScPrior: null,                         // the last firm SCORE read before this hand began (the SCORE only moves on a click)
+    lit: Array(9).fill(null),                  // open boxes the game shows filled: since when, how often, and whether across a roll
     x3Seen: false,                             // the x3 sign has shown since the last click or roll
     missed: null,                              // new berries came before we could tell if a box was clicked: { hand, sc, at, rec }
     undo: null,                                // a click we recorded but the game hasn't confirmed yet: the game as it was before it
@@ -444,7 +448,7 @@
     liveReset() { this.L = liveState(); }       // startup: nothing about this game has been seen through the camera yet
     liveCommit() { this.s.sel = null; this.save(); this.render(); }
     // a new hand: forget scorecard / ROLL / counter readings from before it, so they can't be mistaken for news
-    liveFreshVotes() { Object.assign(this.L, { win: [], B: null, handCtr: null, handSc: null }); }
+    liveFreshVotes() { Object.assign(this.L, { win: [], B: null, handCtr: null, handSc: null, handScPrior: this.L.scKnown }); }
     // the SCORE once the same number has been read 3 frames running (null if not readable right now)
     liveScoreNow() { const L = this.L; return L.sc.n >= 3 && L.frame - L.sc.at <= 4 ? L.sc.v : null; }
     // the SCORE once it has held for a second: what decisions about clicks go by (a misread rarely holds that long)
@@ -452,7 +456,7 @@
     // open boxes that would add exactly what the SCORE went up by
     // (measured from the SCORE as read earlier with this hand, so an error in our own total can't fake a click)
     fitsJump(v) {
-      const s = this.s, base = this.L && this.L.handSc !== null ? this.L.handSc : null, hand = this.hand();
+      const L = this.L, s = this.s, base = L ? (L.handSc !== null ? L.handSc : L.handScPrior) : null, hand = this.hand();
       if (base === null) return [];
       const d = v - base;
       if (!(d > 0) || !s.jars.every((j) => j !== null)) return [];
@@ -541,7 +545,7 @@
       const sv = r.board && r.board.score ? r.board.score.value : null;
       if (sv !== null) { if (sv === L.sc.v) L.sc.n++; else L.sc = { v: sv, n: 1, since: now }; L.sc.at = L.frame; }
       const firmNow = this.liveScoreFirm();
-      if (firmNow !== null) L.scKnown = firmNow;
+      if (firmNow !== null && firmNow !== L.scKnown) { if (L.scKnown !== null) { L.scBefore = L.scKnown; L.scChangedAt = now; } L.scKnown = firmNow; }
       if (L.handSc === null) L.handSc = firmNow;
       this.liveWatch(now);
       this.renderLive();
@@ -570,7 +574,7 @@
     liveNewGame(now) {
       const L = this.L;
       this.s = fresh(this.s.goal);
-      Object.assign(L, { stale: null, ended: null, guess: null, prov: [], adoptPending: false, unsure: false, rollOff: false, lockSeen: false, undo: null, distrust: false, missed: null, blankSince: Array(9).fill(0), note: 'New game: good luck!', noteAt: now });
+      Object.assign(L, { stale: null, ended: null, guess: null, prov: [], adoptPending: false, unsure: false, rollOff: false, lockSeen: false, undo: null, distrust: false, missed: null, blankSince: Array(9).fill(0), blankN: Array(9).fill(0), seenN: Array(9).fill(0), seenAt: Array(9).fill(0), note: 'New game: good luck!', noteAt: now });
       this.liveCommit();
     }
     // A box was clicked. Which one: the box whose points match the SCORE's jump, or the one that now
@@ -608,9 +612,14 @@
       const pts = BerryEngine.scoreBox(hand, box);
       // until the game confirms the click (SCORE, x3 sign, the next round's roll), keep the game as it
       // was, so the click can be taken back if the camera was wrong. Not for the end screen (L.ended does that)
-      const before = JSON.parse(JSON.stringify(s));
-      L.undo = forceBox !== undefined ? null
-        : { s: before, box, pts, ctr: L.handCtr, oldSc: L.handSc, at: now, x3: 0, t: { ctr: 0, score: 0, cell: 0 } };
+      const before = JSON.parse(JSON.stringify(s)), firm = this.liveScoreFirm();
+      // the SCORE already went up by these points a moment ago: that was this click, nothing to confirm
+      const seenJump = pts > 0 && firm !== null && L.scBefore !== null && now - L.scChangedAt < 12000 && firm - L.scBefore === pts;
+      const oldSc = L.handSc !== null ? L.handSc : L.handScPrior;
+      L.undo = forceBox !== undefined || seenJump ? null
+        : { s: before, box, pts, ctr: L.handCtr, oldSc, at: now, x3: 0, t: { ctr: 0, score: 0, cell: 0 } };
+      // the SCORE this click should show: so its jump, when it's read, isn't taken for another click
+      if (!seenJump && pts > 0 && oldSc !== null && (firm === null || firm === oldSc)) L.scKnown = oldSc + pts;
       L.stale = s.jars.slice();                        // these berries stay in the jars until the next roll
       L.guess = sure ? null : { box, hand: hand.slice(), at: now };
       Object.assign(L, { rollOff: false, lockSeen: false, unsure: false, prov: [], pend: 0, distrust: false, x3Seen: false });
@@ -736,19 +745,8 @@
       if (this.liveCheckUndo(now)) return;
       this.liveReconcile(now);
       if (this.liveBlankCheck(now)) return;
+      if (this.liveScreenAdd(now)) return;
       const sc = this.liveScoreNow();
-      // the camera missed some rounds: boxes show points in the game that are open here, for 3 seconds,
-      // and the game's SCORE is ahead of ours by more than this hand could add. Take them as used, points from the SCORE
-      const extra = B && !L.adoptPending ? this.newOnScreen(B.cells) : [];
-      if (extra.join() !== L.extraKey) { L.extraKey = extra.join(); L.extraAt = now; }
-      if (extra.length && now - L.extraAt > 3000 && !this.needTotal && sc !== null && sc > this.score && !this.fitsJump(sc).length) {
-        extra.forEach((c) => { s.boxes[c] = 0; s.unk[c] = true; });
-        s.adj = null; L.extraKey = ''; this.liveCommit();
-      } else if (extra.length && now - L.extraAt > 5000 && !this.needTotal && sc !== null && sc === this.score) {
-        // a box scored 0 that we missed: it shows "0" but the SCORE didn't move (5 s, longer than a hover)
-        extra.forEach((c) => { s.boxes[c] = 0; s.unk[c] = false; });
-        L.extraKey = ''; L.note = `Recorded 0 in ${extra.map((c) => BOX[c]).join(' and ')}.`; L.noteAt = now; this.liveCommit();
-      }
       if (this.needTotal && sc !== null) {
         // joined mid-game: the SCORE fills in the points of the boxes used before the camera started
         const known = s.boxes.reduce((a, x) => a + (x || 0), 0), mx = maxPoints();
@@ -841,9 +839,10 @@
       if (this.s.boxes[u.box] === null || now - u.at > 60000) { L.undo = null; return false; }
       const sc = this.liveScoreFirm();
       if (u.oldSc !== null && sc !== null && sc > u.oldSc) {
-        // the SCORE went up: the click was real. Its jump is the box's points (a misread berry can make ours wrong)
-        const d = sc - u.oldSc;
-        if (d !== this.s.boxes[u.box] && d <= maxPoints()[u.box] && !this.s.unk[u.box]) { this.s.boxes[u.box] = d; this.liveCommit(); }
+        // the SCORE went up: the click was real. Its jump is the box's points (a misread berry can make ours wrong),
+        // but only while its berries are still in the jars: after a new roll, a jump belongs to a later click
+        const d = sc - u.oldSc, stillItsBerries = this.s.jars.every((j) => j === null);
+        if (stillItsBerries && d !== this.s.boxes[u.box] && d <= maxPoints()[u.box] && !this.s.unk[u.box]) { this.s.boxes[u.box] = d; this.liveCommit(); }
         L.undo = null; return false;
       }
       if (B && B.ctr === 3) { if (!u.x3) u.x3 = now; else if (now - u.x3 > 2000) { L.undo = null; return false; } } else u.x3 = 0;
@@ -902,27 +901,93 @@
       if (!B) return [];
       return NINE.filter((c) => s.boxes[c] !== null && B.cells[c] === false && !(u && u.box === c) && !L.prov.includes(c));
     }
-    // the scorecard shows boxes blank that we have as used, for a few seconds: they weren't scored, so open them again
-    liveBlankCheck(now) {
-      const L = this.L, s = this.s;
-      if (L.adoptPending || this.mask === 511) return false;
-      // each box's timer starts when it's first seen blank and stops only when it's seen filled (an unreadable frame doesn't count)
-      const B = L.B, nowBlank = this.liveBlankOurs();
+    // An open box that the game shows filled: a click we missed? Hovering the mouse over a box shows its points
+    // too, but only while the mouse is there; a scored box keeps them. So it counts as scored if it keeps showing
+    // points across a roll (the mouse has gone to ROLL), or while the SCORE has points our boxes don't account
+    // for, or for 15 seconds.
+    liveScreenAdd(now) {
+      const L = this.L, s = this.s, r = L.cur, cells = r && r.board ? r.board.cells : null;
+      if (!cells || L.adoptPending || this.mask === 511) return false;
+      const st = L.st, jars = st && st.status === 'ok' ? st.jars : null;
       NINE.forEach((c) => {
-        if (s.boxes[c] === null || (B && B.cells[c] === true)) L.blankSince[c] = 0;
-        else if (nowBlank.includes(c) && !L.blankSince[c]) L.blankSince[c] = now;
+        const e = L.lit[c];
+        if (s.boxes[c] !== null) { L.lit[c] = null; return; }
+        if (cells[c] === true) {
+          if (!e) L.lit[c] = { from: now, n: 1, off: 0, jars: jars && jars.slice(), hands: jars ? [jars.slice()] : [], rolled: false };
+          else {
+            e.n++; e.off = 0;
+            // a roll changes several jars (a misread changes one): the box stayed lit across a roll
+            if (jars && e.jars && jars.filter((j, i) => j !== e.jars[i]).length >= 2) e.rolled = true;
+            if (jars && !e.jars) e.jars = jars.slice();
+            if (jars && !e.hands.some((h) => same(h, jars))) e.hands.push(jars.slice());
+          }
+        } else if (cells[c] === false && e && ++e.off >= 6) L.lit[c] = null;   // blank for a second: it's gone
       });
+      const sc = this.liveScoreFirm(), known = s.boxes.reduce((a, x) => a + (x || 0), 0), mx = maxPoints();
+      const noUnk = !s.unk.some((u, c) => u && s.boxes[c] !== null);
+      const d = sc !== null && noUnk ? sc - known : null;                         // SCORE points our boxes don't account for
+      const lit = NINE.filter((c) => L.lit[c] && L.lit[c].n >= 6);
+      let add = [], pts = null;
+      const long = lit.filter((c) => L.lit[c].rolled || now - L.lit[c].from >= 15000);
+      // the box scores exactly the unexplained points with berries seen while it was lit (or with one of them misread)
+      const scores = (c, jars) => { const h = [0, 0, 0, 0, 0]; jars.forEach((j) => h[j]++); if (BerryEngine.scoreBox(h, c) === d) return true;
+        for (let i = 0; i < 5; i++) for (let b = 0; b < 5; b++) if (b !== jars[i]) { const h2 = h.slice(); h2[jars[i]]--; h2[b]++; if (BerryEngine.scoreBox(h2, c) === d) return true; }
+        return false; };
+      const handsOf = (c) => [...L.lit[c].hands, ...(s.jars.every((j) => j !== null) ? [s.jars] : []), ...(L.stale ? [L.stale] : [])];
+      const fits = d !== null && d > 0 ? lit.filter((c) => now - L.lit[c].from >= 2500 && d <= mx[c] && handsOf(c).some((h) => scores(c, h))) : [];
+      if (fits.length === 1) { add = fits; pts = d; }
+      else if (long.length) add = long.slice(0, 1);
+      if (!add.length) return false;
+      const c = add[0];
+      // shown filled while the berries it was scored with are still in the jars: this is that click (the berries
+      // stay until the next roll), so record it as the click, else the click itself would be counted again
+      const sameHand = !L.lit[c].rolled && st && st.status === 'ok' && s.jars.every((j) => j !== null) && same(st.jars, s.jars);
+      if (sameHand) {
+        this.liveScored(now, 'guess', c);
+        if (pts !== null && this.s.boxes[c] !== pts && pts <= mx[c]) { this.s.boxes[c] = pts; this.s.adj = null; }
+        L.lit[c] = null;
+        L.note = `Recorded ${this.s.boxes[c]} in ${BOX[c]}.`; L.noteAt = now;
+        this.liveCommit();
+        return true;
+      }
+      if (pts !== null) { s.boxes[c] = pts; s.unk[c] = false; s.adj = null; }
+      else if (d !== null && d > 0 && d <= mx[c]) { s.boxes[c] = d; s.unk[c] = false; s.adj = null; }
+      else { s.boxes[c] = 0; s.unk[c] = d === null || d !== 0; if (sc !== null && noUnk) s.adj = null; }
+      L.lit[c] = null; L.guess = null;
+      L.note = `Recorded ${s.unk[c] ? '' : s.boxes[c] + ' '}in ${BOX[c]} (from the scorecard).`.replace('Recorded in', 'Recorded'); L.noteAt = now;
+      if (s.unk[c]) L.note = `${BOX[c]} has been scored.`;
+      this.liveCommit();
+      return true;
+    }
+    // A box we have as used that the game shows blank: was it never scored? A filled box reads blank in about one
+    // frame in five (and sometimes several in a row), so this is careful. Never for a box the camera has clearly
+    // seen filled (filled boxes stay filled). Otherwise, when the game's SCORE is below our total by exactly that
+    // box's points; or when it has read blank for 10 seconds without once reading filled, while the other boxes
+    // read fine.
+    liveBlankCheck(now) {
+      const L = this.L, s = this.s, r = L.cur, cells = r && r.board ? r.board.cells : null;
+      if (L.adoptPending || this.mask === 511 || !cells) return false;
+      let tr = 0, rd = 0;
+      NINE.forEach((c) => {
+        if (s.boxes[c] === null) { L.seenN[c] = 0; L.seenAt[c] = 0; L.blankN[c] = 0; L.blankSince[c] = 0; return; }
+        const v = cells[c];
+        if (v === true) { L.seenN[c]++; if (!L.seenAt[c]) L.seenAt[c] = now; L.blankN[c] = 0; L.blankSince[c] = 0; tr++; rd++; }
+        else if (v === false) { L.blankN[c]++; if (!L.blankSince[c]) L.blankSince[c] = now; rd++; }
+      });
+      if (rd) L.cardOk = 0.9 * L.cardOk + 0.1 * (tr / rd);          // how well the camera reads our filled boxes lately
+      // seen filled often, over 6 seconds or more (longer than a hover): the screen confirms it
+      const confirmed = (c) => L.seenN[c] >= 8 && now - L.seenAt[c] >= 6000;
       const sc = this.needTotal ? null : this.liveScoreFirm();
-      // the SCORE matching our total says our scorecard is right: then the scorecard reading is off (small digits)
-      if (sc !== null && sc === this.score) return false;
-      const wait = (c) => (sc !== null && !s.unk[c] && sc === this.score - s.boxes[c] ? 2000 : 4000);   // quicker when the SCORE agrees
-      const blank = NINE.filter((c) => L.blankSince[c] && nowBlank.includes(c) && now - L.blankSince[c] >= wait(c));
-      if (!blank.length) return false;
-      // several boxes at once is more likely a bad reading than several clicks that never happened: the SCORE must agree
-      if (blank.length > 1 && !(sc !== null && sc === this.score - blank.reduce((a, c) => a + (s.boxes[c] || 0), 0))) return false;
-      blank.forEach((c) => { s.boxes[c] = null; s.unk[c] = false; });
-      s.adj = null; L.guess = null; blank.forEach((c) => { L.blankSince[c] = 0; });
-      L.note = `Fixed the scorecard: ${blank.map((c) => BOX[c]).join(' and ')} ${blank.length > 1 ? "weren't" : "wasn't"} scored yet.`; L.noteAt = now;
+      const cand = NINE.filter((c) => s.boxes[c] !== null && !confirmed(c) && L.blankSince[c] && !(L.undo && L.undo.box === c) && !L.prov.includes(c));
+      let drop = cand.filter((c) => sc !== null && !s.unk[c] && s.boxes[c] > 0 && sc === this.score - s.boxes[c] && now - L.blankSince[c] >= 2000);
+      if (!drop.length) {
+        drop = cand.filter((c) => now - L.blankSince[c] >= 10000 && L.blankN[c] >= 30 && L.cardOk >= 0.6
+          && (s.boxes[c] === 0 || sc === null || sc !== this.score)).slice(0, 1);     // a SCORE that matches our total says otherwise
+      }
+      if (!drop.length) return false;
+      drop.forEach((c) => { s.boxes[c] = null; s.unk[c] = false; L.blankSince[c] = 0; L.blankN[c] = 0; });
+      s.adj = null; L.guess = null;
+      L.note = `Fixed the scorecard: ${drop.map((c) => BOX[c]).join(' and ')} ${drop.length > 1 ? "weren't" : "wasn't"} scored yet.`; L.noteAt = now;
       this.liveCommit();
       return true;
     }

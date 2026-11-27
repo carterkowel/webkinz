@@ -89,8 +89,9 @@
   // One template per entry: the digit, then GW*GH ink levels (hex), rendered from each font at 72 px
   // and put through shape() below, plus the game's own digits cut from photos. Checked on the 27
   // photos where the SCORE is visible, leaving each photo out of the game digits in turn: 22 read
-  // right, 5 too blurry to be sure, none wrong. The game's 4 and 8 haven't been seen yet; the fonts
-  // stand in for them.
+  // right, 5 too blurry to be sure, none wrong. The last line adds all ten digits from 3 recordings of
+  // the live camera; tested with each recording left out, the SCORE read right in 1,141 of 1,249
+  // frames, unsure in the rest and never wrong (before: 1,091 right, 1 wrong).
   let TEMPLATES = [
     '00002200006effe605ffddff5afe11efbefc00bfeffb00affffb00affdfb00bfdafe11efa4ffddff506effe6000022000 100005ff80004eff7029ffff54ffffff37fe8fff26822fff00004ffe00005ffc00007ffb00008ff90000aff80000bff60 20000000006cdca307fffffe3dfd13ff845402ff80001cff3003dff6004efd4002eff75549ffffffebddddddd00000000 30002200007effe906ffddff66bb03ff80006cfe2000dffa100067ffb00000bffacb01dfd9ffddff709effe7000022000 4000000000002bb40000cff60008fff7004fdbf802ef49fa0bf707fb0fffffffddfffffff12225ff200002bb000000000 5000000000cfffffb1efffffa2ff644435ff9bb608ffffff759923efe00000bffcdc11efc8ffeeff507dffc5000000000 60001210002afffb11dffcffa7ff50887bff26730efeefff5eff96efddfd008ffafe10afe4ffecff806dffe8000022000 700000000cddddddbdffffffe46668ff80000bfb00004ff30000afc00001ef800003ff500005ff400005dd30000000000 80012200008effe807ffddff7afd00efa6ff9aff61cffffc1aff88ff9efb00cfeefd11dfe9ffddff91affff9100122100 90002200008effe607ffdeff4efb01efbff900dfddfe69ffe5fffeefe03772ffc68905ff7affcffd11bfffb2000121000',   // Arial Black
     '001aefa200bffffd14ff43ef57fc00af9afa008fbaf9007fbaf9007fbafa008fb8fc00af94ff42ef50bffffd1019efa20 100004fb00003efa0018eff8009fedf700ba2cf500100df400001ef300002ff100003ff000004fe000006fc000007fb00 205ceea205fffffd1cfb24ef7bd500af800000bf800006ff20005ff60005ff70004ff60001efb55557ffffffeaeeeeeee 303bfea202effffd18fb13ff524201ef40006bfb0000dfe4000057ef5000008fb8b4007fcafc23df93effffd203bfea20 4000057100003ff30000cff40007fef5002ecaf600bf39f705f808f80dfa9cfd8dfffffff44448fc400004fc000001760 507eeeee80afffff80df755531fe110004fedfd507ffffff56c812cfc000006fead6007fdafd34df93effffd103bed910 6006cfd6007fffff52ff71afb7fd00252afa37510bfdfffc1cffb9ef9bfc006fcafa004fc6fe41afa1cffffe302aefb30 7cddddddacffffffd57777df800004fd10000bf600003fe100008f900000cf600000ef300001ff100002fe100001dd100 804bffb302efddfe27fc00cf67fa00bf62ef99fd106ffff504fe67ef4bf7008facf6007fbbfb01cf94ffddfe204bffb30 903bfea202effffd19fb13ef7df5009facf700bfc8fe9bffd1cfffdfc005739fb24200cf8afa16ff35fffff8006dfd600',   // Arial Bold
@@ -110,6 +111,7 @@
     '003bffb201dfeefd16ff23ff5afd00ef9cfc00dfbcfc00cfccfc00cfccfc00dfbafd00ef96ff33ff51dfeefd103bffb20 10007fe10019ffd000bfffd000c9dfc00030dfb00001efa00001ff900002ff800003ff700004ff6003ffffff44ffffff3 205dfe9105fffffc0bfc4aff4ef604ff714205ff60000bfe20007ff80006ffa0006ff80006ff83333affffffd9ffffffd 303bffb302effffe18fc37ff513302ff600138fe2006fff50004befd200002ef97a500dfbafc36ffa3efffff403bffb40 40005eea0000cffb0006fefb001dd9fb008f59fb02ec08fc09f508fc0efaadffddfffffff3444cfd40000bfd00000aec0 509fffff90bfffff70df533311ef111001fe9fe913ffffff829b34efd000009fd58500afcdfc46ef96fffffe206cfea20 6007dfd5007ffeff42ef50afa6fd003519fb26500afceffc1aff99ff7afc00cf98fa00cf95fd12ef71cfeefe202bfea20 79ffffff89ffffff924444df500005fc00001df600005ff20000afd00001dfa00002ff900004ff800004ff800004ff800 804bffc402efccfe38fd00cf79fd10bf76ffd7fe20bffff701afffff49fb17ffbcf5009fccf800afb7ffbcff406dffb40 903bffb202efeefc18fe22ef4afa00bf7afc01df97ffcdff91cffeef801562cf712201ef49fb06fd14ffeff6006dfd600',   // Franklin Gothic Demi Cond
     '001aee9101cffffb06ff46ff4bfb00df9df900cfbdf900bfcdf900bfcdf900cfbbfc00ef96ff46ff41cffffb002afe910 1003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300003ff300 206cfea208fffffe18b43bff630004ff700004ff400009fc00002ff50000cfa00007fd10004ff96651dfffffdbffffffd 32cffd8103fdeffb01201bff200007ff10002df90001ffc10001dffa000009ff400004ff64301aff46fdeffc03befd810 400002a700001cfb00009ffc0005fffc002edbfd01bf48fe08f707fe1dffefffcbeeeeffc00005ff300004ff400002bb3 509fffff709fffff70afc66630afa00000bfc63000bffff800679eff400004ff800003ff75734cff57fffffc03befd810 60009ff40003ffa0000cfe20006ff70001effb8207fffffe2bff99ff9dfb00bfccfa00afcafe44ef93effffe203bffa20 7cffffffcbffffff822227ff40000afe10000dfb00003ff700007ff30000bfd00001efa00004ff600008ff2000028b000 804bfeb203efccfe18fe11ef69fd01ef74ff45ff309ffff704efbbfe3cfc01dfadfa00bfccfc01efa5ffccfe305cffb30 902aefb302dffffe38fe54efacfb00bfdcfc00cfd9ff9affb2dfffff7028affe10006ff70002efc1000aff40004ff9000',   // Gill Sans Bold
     '0038ba8302aeffe926eecced59fc44ce8af912aeaae8119eaae8119faaf912afa9ec44df86eecced529efee92038aa830 100688631019cc84102add94115bffb6235aefc63348dfc63236cfb53225beb52125ad9310149b7100138a60000268400 2369a842059ceea6248befd832589dd9313569a7212457852135676311588741029dc85103bfeb8422aeecb83159aa973 30599a96106aceb51036bd710016cc510038cb7310257ab8201126cc401115de514338ee44a89dfd34bcdfd81269a9730 5036bdb71158dfc711568863015553100169a85300358996100125771000146710224798117adeea11aeffe81169cb730 6001356520159a85104bda41019ed83203cfda7526efcaba58fe86bd79fc439e99fc43ae97dd78de64adbcea314677741 75bbbbbb47effffd54abbef921224cd500005da200019e810003ce600005ee500006ed400006ee500007ee610005ba500 91589a8524adddea46ccaadc68b9559b88b9559b87bb99cd74accdfd6258befc40137bc8301369951247a952036875200',   // the game's own 0, 1, 2, 3, 5, 6, 7 and 9, averaged from 27 phone photos and screenshots
+    '00368863029dffd925dedded58ec66ce89e922ae99e8129e9ae8129ea9e922ae98ec66ce85decced529dfed8203688630 101368a5004aded6005dffd50039dfc40014aec300029eb300029ea20003aea20003bea10004be910005ce9100149a610 215acb9406dffffb28db8cfe537317ee601028ed50017dd82027dc72017dc51003ce822325decaab74dffffe92abbbaa6 317bbbb8229cded71146ad820015bc51003aed9410268cda300126dd600004ce735327de76caadfd67dfffe9338aba830 4000378300016dc40003afd50017dec5004abcc5027b79c504bb69d728edadec69efeffe9599bdfd71224aea300016961 5039bbb8104ceed9105ca663017d8310018dc96201369cc8200127dc400004de624338ee65bbbdfd45dfffd8228bba720 6000369720149cb7104ad941029ec51005dfda7417efeeea49fd98de79fb32ae98eb43ae96eeaade73aeeeea4148aa841 74abbbbb45effffd539aade921224bc610005cb300029d810003be710005dd600006dd600006ee610006ee710005a9510 8037aa83028dddd813bd77db23cc44bb229d99d9129eeee925cd99dc58ea229e89ea33ae97eeaaee74beffea3148aa841 9148aa8414aeeeea37edaadd69ea34be89ea33be97ed99de83aeeefe7148adfc50025be920249ca4117ac941027963100',   // the game's own 0-9 from about 1,500 frames of 3 live-camera recordings (sideways and upright)
   ].join(' ');
   let TPL = null, lastField = null;
   const unit = (v) => {
@@ -420,25 +422,135 @@
     if (best.s < 0.7) return null;                         // scorecard not in view (or not lined up)
     const P = model(best.sy, best.a, best.k);
     const quad = (box) => [[box[0], box[1]], [box[2], box[1]], [box[2], box[3]], [box[0], box[3]]].map(([u, v]) => { const [x, y] = P(u, v); return [x / w, y / h]; });
+    // The fitted layout comes from the jar row; seen at an angle, the scorecard is often a little tilted against
+    // it, enough to put the number line onto the labels. So find the scorecard's own top and bottom edges: scan
+    // down through it and note where its bright boxes meet the brown frame. Each edge is a straight line in (u, v).
+    const brown = (hh, ss, vv) => hh >= 14 && hh < 45 && vv < 0.7;
+    const card = (hh, ss, vv) => ss > 0.3 && vv > 0.45 && !brown(hh, ss, vv);
+    const CARD_H = 3 * ROW_H, tops = [], bots = [];
+    for (let i = 0; i < 24; i++) {
+      const u = GRID_U0 + (0.04 + 0.92 * i / 23) * 3 * COL_W, DV = 0.01, gapMax = 10;   // gap: a label's dark text
+      let best = null, a = -1, last = -1;
+      const end = () => { if (a >= 0) { const len = (last - a) * DV; if (len > 0.65 * CARD_H && len < 1.4 * CARD_H && (!best || Math.abs(len - CARD_H) < Math.abs(best.len - CARD_H))) best = { a, b: last, len }; } a = -1; };
+      const V0 = GRID_V0 - 0.6, N = Math.round((CARD_H + 1.2) / DV);
+      for (let j = 0; j <= N; j++) {
+        const [x, y] = P(u, V0 + j * DV), xi = Math.round(x), yi = Math.round(y);
+        const inPic = xi >= 0 && yi >= 0 && xi < w && yi < h, on = inPic && card(H[yi * w + xi], S[yi * w + xi], V[yi * w + xi]);
+        if (on) { if (a < 0) a = j; last = j; } else if (a >= 0 && (j - last > gapMax || !inPic || j === N)) end();
+      }
+      end();
+      if (best) { tops.push([u, V0 + best.a * DV]); bots.push([u, V0 + best.b * DV]); }
+    }
+    // straight lines v = p + q u, least squares twice (the second time without the points far off the first line)
+    const line = (pts) => {
+      const fit = (q) => { const n = q.length, mu = q.reduce((a, p) => a + p[0], 0) / n, mv = q.reduce((a, p) => a + p[1], 0) / n;
+        let sxx = 0, sxy = 0; q.forEach(([u, v]) => { sxx += (u - mu) ** 2; sxy += (u - mu) * (v - mv); }); const k = sxx ? sxy / sxx : 0; return [mv - k * mu, k]; };
+      if (pts.length < 8) return null;
+      let [p0, q0] = fit(pts);
+      const keep = pts.filter(([u, v]) => Math.abs(v - p0 - q0 * u) < 0.06);
+      if (keep.length < 8) return null;
+      [p0, q0] = fit(keep);
+      return (u) => p0 + q0 * u;
+    };
+    const top = line(tops), bot = line(bots);
+    // the edges found must make a scorecard about the expected height, else keep the fitted layout
+    const okCard = top && bot && [GRID_U0, GRID_U0 + 3 * COL_W].every((u) => { const hgt = bot(u) - top(u); return hgt > 0.7 * CARD_H && hgt < 1.35 * CARD_H; });
+    const vTop = okCard ? top : () => GRID_V0, vBot = okCard ? bot : () => GRID_V0 + CARD_H;
+    // a point on the scorecard: across (u) and down, as a fraction of the way from its top edge to its bottom edge
+    const vAt = (u, f) => vTop(u) + f * (vBot(u) - vTop(u));
     const white = (hh, ss, vv) => ss < 0.3 && vv > 0.7;
     // a scored box shows a white number under its label. Glare makes the whole bar white, so compare with the sides.
     // how much of a layout box is inside the camera picture: a box cut off by the edge would read as blank
     const inFrame = (box) => frac(P, box, 8, 4, () => true);
-    const cells = [], raw = [];
-    for (let b = 0; b < 9; b++) {
-      if (inFrame(cellBox(b, 'num')) < 0.95) { cells.push(null); raw.push(null); continue; }   // can't tell
-      const num = frac(P, cellBox(b, 'num'), 30, 14, white);
-      const side = Math.max(frac(P, cellBox(b, 'sideL'), 12, 10, white), frac(P, cellBox(b, 'sideR'), 12, 10, white));
-      // empty boxes read as no white at all; small or blurry digits (phone upright, far away) can be as faint as 1%,
-      // so only "no white" counts as blank, and faint white is "can't tell" rather than either
-      cells.push(num < 0.004 ? false : side > 0.2 ? null : num >= 0.025 && num >= 1.3 * side ? true : null);
-      raw.push([+num.toFixed(3), +side.toFixed(3)]);
+    // A scored box shows a white number (dark outline) centred under its label. The fitted layout gets the rows'
+    // heights right but not where each box starts and ends: seen at an angle the three columns come out different
+    // widths. So find the boxes in the picture itself. Along each row, the boxes' coloured bars are long runs of
+    // their colour (red/yellow/green, then purple or blue, then blue), split by the icons. A number is a narrow
+    // patch of white inside a bar, with the bar's colour on both sides, that doesn't reach up into the label.
+    // colour families: 1 red, 2 orange/yellow, 3 green, 4 blue, 5 purple (0 = not a bright, strong colour)
+    const fam = (hh, ss, vv) => (ss < 0.35 || vv < 0.55 ? 0 : hh < 20 || hh >= 330 ? 1 : hh < 66 ? 2 : hh < 165 ? 3 : hh < 238 ? 4 : 5);
+    // a number's white is close to pure white; the pale top of the yellow box, seen from far off, is not
+    const digitWhite = (hh, ss, vv) => ss < 0.22 && vv > 0.68;
+    const ROW_FAMS = [[1, 5, 4], [2, 4, 4], [3, 4, 4]];                           // each row's three boxes, left to right
+    const DU = 0.012, U_A = GRID_U0 - 0.8, U_B = GRID_U0 + 3 * COL_W + 1.2, NU = Math.round((U_B - U_A) / DU);   // wide: perspective stretches one side
+    const scanRow = (r) => {
+      const lo = [], up = [], kind = [], out = [], dk = [], ut = [];
+      for (let i = 0; i < NU; i++) {
+        const u = U_A + (i + 0.5) * DU, votes = [0, 0, 0, 0, 0, 0];
+        let wl = 0, nl = 0, wu = 0, nu = 0, dl = 0, tu = 0;
+        for (let j = 0; j < 7; j++) {
+          const [x, y] = P(u, vAt(u, (r + 0.55 + j * 0.055) / 3)), xi = Math.round(x), yi = Math.round(y);
+          if (xi < 0 || yi < 0 || xi >= w || yi >= h) continue;
+          nl++; const p = yi * w + xi;
+          if (digitWhite(H[p], S[p], V[p])) wl++; else votes[fam(H[p], S[p], V[p])]++;
+          if (V[p] < 0.4) dl++;                                                    // a number's dark outline
+        }
+        for (let j = 0; j < 4; j++) {
+          const [x, y] = P(u, vAt(u, (r + 0.12 + j * 0.1) / 3)), xi = Math.round(x), yi = Math.round(y);
+          if (xi < 0 || yi < 0 || xi >= w || yi >= h) continue;
+          nu++; const p = yi * w + xi;
+          if (white(H[p], S[p], V[p])) wu++;
+          if (V[p] < 0.45) tu++;                                                   // the label's dark letters
+        }
+        out.push(nl < 7);                                                          // partly outside the picture
+        const l = nl ? wl / nl : 0, uw = nu ? wu / nu : 1;
+        lo.push(l); up.push(uw); dk.push(nl ? dl / nl : 0); ut.push(nu ? tu / nu : 0);
+        // 'd': white low, not white up (a number); a family digit: mostly that colour; '-': neither
+        let f = 0; for (let k = 1; k < 6; k++) if (votes[k] > votes[f] || (f === 0 && votes[k] > 0)) f = k;
+        kind.push(l >= 0.25 && uw < 0.25 ? 'd' : nl && votes[f] >= 0.5 * nl && f ? String(f) : '-');
+      }
+      // the boxes: runs of one colour family (numbers inside allowed), split where the colour changes or by a
+      // break (divider, icon) of more than 3 samples, at least half a box long
+      const runs = [];
+      let s0 = -1, f0 = '', gap = 0, other = 0;
+      const close = (e) => { if (s0 >= 0 && (e - s0) * DU >= 0.5 * COL_W) runs.push({ a: s0, b: e, f: +f0 }); s0 = -1; f0 = ''; gap = 0; other = 0; };
+      for (let i = 0; i <= NU; i++) {
+        const k = i < NU ? kind[i] : '-';
+        if (s0 < 0) { if (k !== '-' && k !== 'd') { s0 = i; f0 = k; } continue; }
+        if (k === f0 || k === 'd') { gap = 0; other = 0; continue; }
+        if (k === '-') { if (++gap > 3) close(i - gap + 1); continue; }
+        if (++other >= 3) { close(i - other + 1); i -= 3; }                       // another colour: a new box starts
+      }
+      close(NU);
+      const boxes = runs.map(({ a, b, f }) => {
+        let digit = false, white = 0, d0 = -1;
+        for (let i = a; i <= b; i++) {
+          if (i < b && kind[i] === 'd') { white++; if (d0 < 0) d0 = i; continue; }
+          // two-digit numbers: a short break between the digits belongs to the number
+          if (d0 >= 0 && i < b - 4 && [1, 2, 3, 4].some((k) => kind[i + k] === 'd') && [0, 1, 2, 3].every((k) => kind[i + k] !== String(f) || kind[i + k + 1] === 'd')) continue;
+          if (d0 >= 0) {
+            const wd = (i - d0) * DU / COL_W, mid = (d0 + i) / 2;
+            // narrow, with the bar's colour on both sides (past the number's dark outline), in the middle part
+            // of the box (numbers sit 30-60% along it; the icon's glow is at about 20%)
+            const near = (from, step) => { for (let k = 0; k < 5; k++) if (kind[from + step * k] === String(f)) return true; return false; };
+            // and a dark outline around the white (glare and pale shading have none)
+            let dark = 0; for (let k = d0 - 3; k < i + 3; k++) dark += dk[k] || 0;
+            // and the label right above it: numbers sit centred under their label (an icon's glow has the icon above)
+            let text = 0; for (let k = d0 - 2; k < i + 2; k++) text += ut[k] || 0;
+            // and clearly white (a number is solid white; pale shading is a faint, patchy white)
+            let solid = 0, nd = 0; for (let k = d0; k < i; k++) if (kind[k] === 'd') { solid += lo[k]; nd++; }   // (not the gap between two digits)
+            if (wd >= 0.015 && wd <= 0.25 && near(d0 - 1, -1) && near(i, 1) && mid > a + 0.28 * (b - a) && mid < a + 0.75 * (b - a) && dark >= 0.25 && text >= 0.5 && solid / nd >= 0.36) digit = true;
+            d0 = -1;
+          }
+        }
+        const edge = out.slice(Math.max(0, a - 8), Math.min(NU, b + 8)).some(Boolean);   // touching the picture's edge
+        return { a, b, f, digit, glare: white > 0.45 * (b - a), edge };
+      });
+      return { boxes };
+    };
+    const cells = Array(9).fill(null), raw = [];
+    for (let r = 0; r < 3; r++) {
+      const { boxes } = scanRow(r);
+      raw.push(boxes.map((x) => [x.f, +(x.a * DU + U_A).toFixed(2), +(x.b * DU + U_A).toFixed(2), x.digit ? 1 : 0]));
+      // three boxes found, in the row's colours: read each. Anything else (cut off, a hand in the way): can't tell
+      if (boxes.length !== 3 || boxes.some((x, c) => x.f !== ROW_FAMS[r][c])) continue;
+      boxes.forEach((x, c) => { cells[c * 3 + r] = x.glare ? null : x.digit ? true : x.edge ? null : false; });
     }
     const green = frac(P, ROLL_BTN, 10, 3, (hh, ss, vv) => hh > 65 && hh < 115 && ss > 0.45 && vv > 0.45);
     let counter = null;
     try { counter = readCounter(H, S, V, w, h, P); } catch (e) { counter = null; }
     return {
-      P, fit: +best.s.toFixed(2), raw, prm: [best.sy, best.a, best.k].map((x) => +x.toFixed(2)),
+      P, fit: +best.s.toFixed(2), raw, prm: [best.sy, best.a, best.k].map((x) => +x.toFixed(2)), card: okCard ? [tops.length, bots.length] : null,
       cells,                                            // true = shows a number, false = blank, null = can't tell (glare)
       rollActive: inFrame(ROLL_BTN) < 0.95 ? null : green > 0.4 ? true : green < 0.1 ? false : null,   // greyed out = no rolls left
       counter,                                          // { left: 3|2|1|0 } rolls left this round, or null if not in view
@@ -452,7 +564,8 @@
     const mask = new Uint8Array(n);
     for (let i = 0; i < n; i++) mask[i] = isCyan(i, 0.62) && S[i] < 0.55 ? 1 : 0;
     const blobs = components(mask, w, h);
-    let cand = blobs.filter((c) => c.n > 60 && c.w / c.h > 0.6 && c.w / c.h < 1.6 && c.fill > 0.38 && c.fill < 0.68);
+    // a jar's face is a diamond (half its box) with a berry in the middle: about 0.3 to 0.6 of its box is cyan
+    let cand = blobs.filter((c) => c.n > 60 && c.w / c.h > 0.6 && c.w / c.h < 1.6 && c.fill > 0.3 && c.fill < 0.68);
     cand = cand.sort((a, b) => b.n - a.n).slice(0, 14);
     let best = null;
     for (let grp of combos(cand, 5)) {
